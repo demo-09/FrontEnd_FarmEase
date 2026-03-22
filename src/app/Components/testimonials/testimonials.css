@@ -1,0 +1,55 @@
+.ls-1 { letter-spacing: 1px; }
+
+.marquee-container {
+    width: 100%;
+    overflow: hidden;
+    padding: 20px 0;
+    position: relative;
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.marquee-track {
+    display: flex;
+    width: max-content;
+    animation: scroll 30s linear infinite;
+}
+
+.marquee-track:hover {
+    animation-play-state: paused;
+}
+
+@keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.team-card {
+    width: 280px;
+    margin: 0 15px;
+    flex-shrink: 0;
+}
+
+.card-glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.card-glass:hover {
+    transform: translateY(-10px);
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(46, 125, 50, 0.1);
+}
+
+.img-wrapper img {
+    width: 80px;
+    height: 80px;
+    border: 3px solid #fff;
+    transition: transform 0.3s ease;
+}
+
+.team-card:hover img {
+    transform: scale(1.1) rotate(5deg);
+}

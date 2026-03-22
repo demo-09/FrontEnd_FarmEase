@@ -1,0 +1,115 @@
+<div class="chat-page mesh-bg">
+  <div class="chat-container">
+
+    <!-- Sidebar (Contacts) -->
+    <div class="chat-sidebar">
+      <div class="sidebar-header">
+        <h2>Messages</h2>
+        <div class="sidebar-actions">
+          <button class="icon-btn"><i class="fa-solid fa-pen-to-square"></i></button>
+          <button class="icon-btn"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+        </div>
+      </div>
+
+      <div class="search-bar">
+        <i class="fa-solid fa-search"></i>
+        <input type="text" placeholder="Search or start new chat">
+      </div>
+
+      <div class="contact-list">
+        <div *ngFor="let contact of contacts" 
+             class="contact-item" 
+             [class.active]="activeContact.id === contact.id"
+             (click)="selectContact(contact)">
+          
+          <div class="avatar-wrapper">
+            <img [src]="contact.avatar" alt="">
+            <div class="status-indicator" [class.online]="contact.online"></div>
+          </div>
+
+          <div class="contact-info">
+            <div class="contact-top">
+              <span class="contact-name">{{ contact.name }}</span>
+              <span class="time-meta" *ngIf="contact.messages.length > 0">
+                {{ contact.messages[contact.messages.length - 1].time }}
+              </span>
+            </div>
+            <div class="contact-preview" *ngIf="contact.messages.length > 0">
+              <span *ngIf="contact.messages[contact.messages.length - 1].sender === 'me'"><i class="fa-solid fa-check-double text-primary me-1"></i></span>
+              {{ contact.messages[contact.messages.length - 1].text }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Chat Area -->
+    <div class="chat-main" *ngIf="activeContact">
+      
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <div class="header-contact-info">
+          <img [src]="activeContact.avatar" class="header-avatar" alt="">
+          <div>
+            <h3 class="header-name">{{ activeContact.name }}</h3>
+            <span class="header-status">{{ activeContact.online ? 'Online' : 'Offline' }}</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn"><i class="fa-solid fa-video"></i></button>
+          <button class="icon-btn"><i class="fa-solid fa-phone"></i></button>
+          <div class="divider"></div>
+          <button class="icon-btn"><i class="fa-solid fa-search"></i></button>
+        </div>
+      </div>
+
+      <!-- Chat Messages Workspace -->
+      <div class="chat-messages-area" #chatScroll>
+        <!-- WhatsApp style background overlay -->
+        <div class="chat-bg-pattern"></div>
+
+        <div class="message-wrapper anim-fade-up" 
+             *ngFor="let msg of activeContact.messages"
+             [ngClass]="msg.sender === 'me' ? 'msg-sent' : 'msg-received'">
+          
+          <div class="message-bubble">
+            <p>{{ msg.text }}</p>
+            <span class="message-time">
+              {{ msg.time }}
+              <i *ngIf="msg.sender === 'me'" class="fa-solid fa-check-double ms-1"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div class="message-wrapper msg-received anim-fade-up" *ngIf="activeContact.isTyping">
+          <div class="message-bubble typing-bubble">
+            <div class="typing-indicator">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Message Input -->
+      <div class="chat-input-area">
+        <button class="icon-btn action-btn"><i class="fa-regular fa-face-smile"></i></button>
+        <button class="icon-btn action-btn"><i class="fa-solid fa-paperclip"></i></button>
+        
+        <input type="text" 
+               class="message-input" 
+               placeholder="Type a message..." 
+               [(ngModel)]="newMessage" 
+               (keyup.enter)="sendMessage()">
+        
+        <button class="icon-btn text-primary" *ngIf="!newMessage"><i class="fa-solid fa-microphone"></i></button>
+        <button class="send-btn" *ngIf="newMessage" (click)="sendMessage()">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+</div>

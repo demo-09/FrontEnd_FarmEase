@@ -15,7 +15,7 @@ export interface CartItem {
 @Injectable({ providedIn: 'root' })
 export class CartService {
   private http = inject(HttpClient);
-  private backendUrl = 'http://localhost:5009/api/cart';
+  private backendUrl = 'https://backend-farmease-1.onrender.com/api/cart';
 
   private _items = signal<CartItem[]>([]);
 
@@ -55,12 +55,12 @@ export class CartService {
     });
   }
 
-  addItem(product: any) {
+  addItem(product: any, qty: number = 1) {
     const dto = {
       productId: product.id || product.productId,
       productName: product.name || product.title,
       price: product.price,
-      quantity: 1,
+      quantity: qty,
       imageUrl: product.image || product.imageUrl,
       category: product.category || product.subtitle
     };

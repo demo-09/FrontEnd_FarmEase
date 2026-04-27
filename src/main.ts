@@ -17,12 +17,15 @@ import { WishlistComponent } from './app/pages/wishlist/wishlist';
 import { DataComponent } from './app/pages/data-cs/data-cs';
 import { Contact as CustomerSupport } from './app/pages/contact/contact';
 import { AddProduct } from './app/pages/add-product/add-product';
+import { ProductDetail } from './app/pages/product-detail/product-detail';
 import { Chat } from './app/pages/chat/chat';
 
 // Guard & Interceptor
 import { authGuard } from './app/core/guards/auth.guard';
 import { authInterceptor } from './app/core/interceptors/auth.interceptor';
 import { Admin } from './app/pages/admin/admin';
+import { AichatComponent } from './app/pages/aichat.component/aichat.component';
+import { OrderDetail } from './app/pages/order-detail/order-detail';
 
 
 const routes: Routes = [
@@ -31,6 +34,8 @@ const routes: Routes = [
   { path: 'Signup', component: Signup },
   { path: 'Login', component: Login },
   { path: 'About', component: About },
+  { path: 'Ai', component: AichatComponent },
+  { path: 'order-detail', component: OrderDetail },
 
   // --- SHARED SECURE ROUTES (All roles) ---
   {
@@ -61,6 +66,12 @@ const routes: Routes = [
   {
     path: 'Products',
     component: Products,
+    canActivate: [authGuard],
+    data: { roles: ['farmer', 'customer', 'admin'] }
+  },
+  {
+    path: 'product-detail/:type/:id',
+    component: ProductDetail,
     canActivate: [authGuard],
     data: { roles: ['farmer', 'customer', 'admin'] }
   },

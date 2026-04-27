@@ -1,0 +1,135 @@
+<div class="checkout-page" *ngIf="productData() as p">
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="ck-header">
+      <button class="back-link" (click)="goHome()">← Turn Back</button>
+      <h1 class="ck-title">Secure Checkout</h1>
+    </div>
+
+    <div class="ck-layout">
+
+      <!-- LEFT -->
+      <div class="ck-left">
+
+        <!-- SHIPPING -->
+        <div class="ck-card">
+          <h2>Delivery Information</h2>
+
+          <form class="mt-3">
+            <input [(ngModel)]="shippingInfo.fullName" name="fn" placeholder="Full Name" class="form-control mb-2">
+            <input [(ngModel)]="shippingInfo.phone" name="ph" placeholder="Phone" class="form-control mb-2">
+            <input [(ngModel)]="shippingInfo.pincode" name="pin" placeholder="Pincode" class="form-control mb-2">
+            <textarea [(ngModel)]="shippingInfo.address" name="addr" placeholder="Address" class="form-control mb-2"></textarea>
+            <input [(ngModel)]="shippingInfo.city" name="ct" placeholder="City" class="form-control mb-2">
+            <input [(ngModel)]="shippingInfo.state" name="st" placeholder="State" class="form-control">
+          </form>
+        </div>
+
+        <!-- PAYMENT -->
+        <div class="ck-card mt-3">
+          <h2>Payment Method</h2>
+
+          <div class="mt-3">
+
+            <label>
+              <input type="radio" name="pay" value="upi"
+                     [ngModel]="paymentMethod()"
+                     (ngModelChange)="paymentMethod.set($event)">
+              UPI
+            </label>
+
+            <label>
+              <input type="radio" name="pay" value="card"
+                     [ngModel]="paymentMethod()"
+                     (ngModelChange)="paymentMethod.set($event)">
+              Card
+            </label>
+
+            <label>
+              <input type="radio" name="pay" value="cod"
+                     [ngModel]="paymentMethod()"
+                     (ngModelChange)="paymentMethod.set($event)">
+              COD
+            </label>
+
+          </div>
+
+          <div *ngIf="paymentMethod() === 'upi'" class="text-center mt-3">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=farmease@upi">
+            <p>Scan to Pay</p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- RIGHT -->
+      <div class="ck-right">
+        <div class="ck-summary-sticky">
+
+          <h2>Order Summary</h2>
+
+          <div class="summary-item">
+            <img [src]="p.image" width="80">
+            <div>{{ p.title }}</div>
+          </div>
+
+          <hr>
+
+          <div>Subtotal: ₹{{ totalCost() }}</div>
+          <div>GST: ₹{{ tax() }}</div>
+          <div>Delivery: {{ shippingFee() === 0 ? 'FREE' : '₹'+shippingFee() }}</div>
+
+          <hr>
+
+          <h3>Total: ₹{{ grandTotal() }}</h3>
+
+          <button class="btn btn-success w-100 mt-3"
+                  [disabled]="isProcessing()"
+                  (click)="placeOrder()">
+
+            <span *ngIf="!isProcessing()">Place Order</span>
+            <span *ngIf="isProcessing()">Processing...</span>
+
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ✅ MODAL -->
+<div class="modal fade" id="orderSuccessModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center p-4">
+
+      <i class="fa-solid fa-circle-check text-success fa-3x mb-3"></i>
+
+      <h4>Order Confirmed!</h4>
+
+      <p>
+        Your order for <strong>{{ productData()?.title }}</strong> is placed.
+      </p>
+
+      <p>
+        <strong>Order ID:</strong>
+        #FE-{{ (100000 + (productData()?.price % 10000)) }}
+      </p>
+
+      <p>
+        <strong>Delivery:</strong>
+        {{ deliveryDate() }}
+      </p>
+
+      <button class="btn btn-success w-100"
+              (click)="goHome()"
+              data-bs-dismiss="modal">
+        Go Home
+      </button>
+
+    </div>
+  </div>
+</div>

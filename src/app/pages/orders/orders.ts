@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -29,9 +29,9 @@ export interface OrderDto {
 })
 export class OrdersComponent implements OnInit {
   private http = inject(HttpClient);
-  private backendUrl = 'http://localhost:5009/api/orders';
+  private backendUrl = 'https://backend-farmease-1.onrender.com/api/orders';
 
-  orders: OrderDto[] = [];
+  orders=signal<OrderDto[]>([]);
   activeFilter: string = 'All';
   filteredOrders: OrderDto[] = [];
   showToast = false;
@@ -46,8 +46,8 @@ export class OrdersComponent implements OnInit {
     this.isLoading = true;
     this.http.get<OrderDto[]>(this.backendUrl).subscribe({
       next: (data) => {
-        this.orders = data;
-        this.filteredOrders = [...this.orders];
+        this.orders.set(data);
+        this.filteredOrders = [...this.orders()];
         this.isLoading = false;
       },
       error: (err) => {
@@ -60,8 +60,8 @@ export class OrdersComponent implements OnInit {
   setFilter(filter: string) {
     this.activeFilter = filter;
     this.filteredOrders = filter === 'All'
-      ? [...this.orders]
-      : this.orders.filter(o => o.status === filter);
+      ? [...this.orders()]
+      : this.orders().filter(o => o.status === filter);
   }
 
   statusColor(status: string): string {

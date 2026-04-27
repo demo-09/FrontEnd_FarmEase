@@ -42,7 +42,7 @@ export class AddProduct {
     this.isLoading = true;
     
     // The backend handles the 'PostedBy' automatically via JWT email claim
-    this.http.post('http://localhost:5009/api/agriitems', this.product).subscribe({
+    this.http.post('https://backend-farmease-1.onrender.com/api/Machinery', this.product).subscribe({
       next: (res) => {
         this.isLoading = false;
         this.triggerToast('✅ Product added successfully!');

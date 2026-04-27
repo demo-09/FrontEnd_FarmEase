@@ -43,7 +43,7 @@ export class Cart implements OnInit {
     if (this.cartService.count() === 0) return;
     const total = this.finalTotal;
     
-    this.http.post('http://localhost:5009/api/orders', { checkoutFromCart: true }).subscribe({
+    this.http.post('https://backend-farmease-1.onrender.com/api/orders', { checkoutFromCart: true }).subscribe({
       next: () => {
         this.cartService.clearLocalCart();
         this.notify(`✅ Order placed! Total ₹${total.toLocaleString('en-IN')} — Thank you!`);

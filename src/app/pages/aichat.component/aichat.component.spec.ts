@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Order } from './order';
+import { AichatComponent } from './aichat.component';
 
-describe('Order', () => {
-  let component: Order;
-  let fixture: ComponentFixture<Order>;
+describe('AichatComponent', () => {
+  let component: AichatComponent;
+  let fixture: ComponentFixture<AichatComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Order]
-    })
-    .compileComponents();
+      imports: [AichatComponent],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(Order);
+    fixture = TestBed.createComponent(AichatComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

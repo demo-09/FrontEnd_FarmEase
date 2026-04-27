@@ -1,0 +1,183 @@
+<!-- Product Detail Page — Premium Redesign -->
+<div class="pd-page">
+
+  <!-- ── Loading ── -->
+  <div *ngIf="product() === undefined" class="pd-loading">
+    <div class="pd-spinner"></div>
+    <p>Loading product details...</p>
+  </div>
+
+  <!-- ── Not Found ── -->
+  <div *ngIf="product() === null" class="pd-not-found">
+    <div class="pd-nf-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+    <h2>Product Not Found</h2>
+    <p>This item may have been removed or the link is incorrect.</p>
+    <button class="pd-back-btn" (click)="goBack()">
+      <i class="fa-solid fa-arrow-left"></i> Back to Store
+    </button>
+  </div>
+
+  <!-- ── Main Content ── -->
+  <div *ngIf="product() as p" class="pd-content">
+
+    <!-- Back Button -->
+    <div class="pd-topbar container">
+      <button class="pd-back-btn" (click)="goBack()">
+        <i class="fa-solid fa-arrow-left"></i> Back to Store
+      </button>
+      <div class="pd-breadcrumb">
+        Home <i class="fa-solid fa-chevron-right"></i>
+        Products <i class="fa-solid fa-chevron-right"></i>
+        <span>{{ p.title }}</span>
+      </div>
+    </div>
+
+    <!-- Main Detail Section -->
+    <div class="container">
+      <div class="pd-main-card">
+        <!-- Left: Image Gallery -->
+        <div class="pd-image-side">
+          <div class="pd-img-main-wrap">
+            <img [src]="p.imageUrl || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600'"
+                 [alt]="p.title" class="pd-main-img" loading="eager">
+
+            <div class="pd-stock-badge" [class.out]="!p.inStock">
+              <i [class]="p.inStock ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'"></i>
+              {{ p.label }}
+            </div>
+
+            <button class="pd-wish-btn" (click)="toggleWishlist(p)"
+                    [class.wishlisted]="isInWishlist(p.id)"
+                    id="detail-wish-btn">
+              <i [class]="isInWishlist(p.id) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
+            </button>
+          </div>
+
+          <div class="pd-trust-strip">
+            <div class="pts-item"><i class="fa-solid fa-shield-halved"></i> Verified Quality</div>
+            <div class="pts-item"><i class="fa-solid fa-truck-fast"></i> Fast Delivery</div>
+            <div class="pts-item"><i class="fa-solid fa-rotate-left"></i> Easy Returns</div>
+          </div>
+        </div>
+
+        <!-- Right: Product Info -->
+        <div class="pd-info-side">
+          <!-- Category + Stock -->
+          <div class="pd-cat-row">
+            <span class="pd-cat-tag">{{ p.subtitle }}</span>
+            <span class="pd-stock-tag" [class.in]="p.inStock">{{ p.label }}</span>
+          </div>
+
+          <!-- Title -->
+          <h1 class="pd-title">{{ p.title }}</h1>
+
+          <!-- Rating Row -->
+          <div class="pd-rating-row">
+            <div class="pd-stars">★★★★★</div>
+            <span class="pd-rating-val">4.8</span>
+            <span class="pd-reviews">(142 reviews)</span>
+            <span class="pd-sold">· 230 sold this month</span>
+          </div>
+
+          <!-- Price -->
+          <div class="pd-price-block">
+            <span class="pd-price">{{ p.metaText }}</span>
+            <span class="pd-price-note">Inclusive of all taxes</span>
+          </div>
+
+          <!-- Description -->
+          <div class="pd-desc-block">
+            <div class="pd-desc-title">About This Product</div>
+            <p class="pd-desc">{{ p.description }}</p>
+          </div>
+
+          <!-- Quantity + Actions -->
+          <div class="pd-qty-row">
+            <div class="pd-qty-label">Quantity:</div>
+            <div class="pd-qty-stepper">
+              <button class="pd-qty-btn" (click)="qty = qty > 1 ? qty-1 : 1">
+                <i class="fa-solid fa-minus"></i>
+              </button>
+              <span class="pd-qty-val">{{ qty || 1 }}</span>
+              <button class="pd-qty-btn" (click)="qty = (qty||1) + 1">
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="pd-action-btns">
+            <button class="pd-add-cart" (click)="addToCart(p, qty || 1, $event)"
+                    [disabled]="!p.inStock" [class.in-cart]="isInCart(p.id)"
+                    id="detail-add-cart-btn">
+              <i [class]="isInCart(p.id) ? 'fa-solid fa-check' : 'fa-solid fa-cart-plus'"></i>
+              {{ isInCart(p.id) ? 'Added to Cart!' : 'Add to Cart' }}
+            </button>
+            <button class="pd-order-now" (click)="orderNow(p)"
+                    [disabled]="!p.inStock" id="detail-order-btn">
+              <i class="fa-solid fa-bolt"></i> Order Now
+            </button>
+          </div>
+
+          <!-- Features -->
+          <div class="pd-features">
+            <div class="pd-feature-item">
+              <i class="fa-solid fa-leaf"></i>
+              <div>
+                <div class="pdf-title">100% Organic</div>
+                <div class="pdf-desc">Natural farming, no harmful chemicals</div>
+              </div>
+            </div>
+            <div class="pd-feature-item">
+              <i class="fa-solid fa-star"></i>
+              <div>
+                <div class="pdf-title">Premium Quality</div>
+                <div class="pdf-desc">Quality verified by agricultural experts</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suggestions -->
+    <div *ngIf="suggestions().length > 0" class="pd-suggestions">
+      <div class="container">
+        <div class="pd-sug-header">
+          <span class="pd-sug-label">🌾 You May Also Like</span>
+          <h2 class="pd-sug-title">Similar <span>Products</span></h2>
+        </div>
+        <div class="pd-sug-grid">
+          <div class="product-card" *ngFor="let s of suggestions()"
+               (click)="viewProduct(s)" style="cursor:pointer">
+            <div class="product-img-wrap">
+              <img [src]="s.imageUrl || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400'"
+                   [alt]="s.title" class="product-img" loading="lazy">
+              <div class="product-status-badge" [class.out-stock]="!s.inStock">{{ s.label }}</div>
+              <button class="wishlist-fab" (click)="toggleWishlist(s, $event)"
+                      [class.wishlisted]="isInWishlist(s.id)">
+                <i [class]="isInWishlist(s.id) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
+              </button>
+            </div>
+            <div class="product-body">
+              <div class="product-cat">{{ s.subtitle }}</div>
+              <h3 class="product-name">{{ s.title }}</h3>
+              <div class="product-footer">
+                <div class="product-price">{{ s.metaText }}</div>
+                <div class="product-actions">
+                  <button class="product-add-btn" (click)="addToCart(s); $event.stopPropagation()"
+                          [class.in-cart]="isInCart(s.id)" [disabled]="!s.inStock">
+                    <i [class]="isInCart(s.id) ? 'fa-solid fa-check' : 'fa-solid fa-cart-plus'"></i>
+                  </button>
+                  <button class="product-view-btn" (click)="viewProduct(s); $event.stopPropagation()">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

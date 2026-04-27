@@ -1,62 +1,105 @@
-<footer class="fe-footer" *ngIf="auth.isLoggedIn() && currentUser?.role !== 'admin'">
-  <div class="footer-glow-line"></div>
-  <div class="footer-container">
+<footer class="fe-footer">
+  <div class="footer-top-border"></div>
 
-    <div class="footer-grid">
+  <div class="container footer-grid">
 
-      <!-- Brand Column -->
-      <div class="footer-brand-col">
-        <div class="footer-brand">
-          <div class="brand-icon"><i class="fa-solid fa-seedling"></i></div>
-          <span class="brand-text">farm<span class="brand-accent">Ease</span></span>
+    <!-- Brand Column -->
+    <div class="footer-col footer-brand-col">
+      <div class="footer-brand">
+        <div class="footer-brand-icon">
+          <i class="fa-solid fa-seedling"></i>
         </div>
-        <p class="footer-tagline">
-          Farming, but make it smart. A modern agri-platform built for the next generation of farmers.
-        </p>
-        <div class="footer-chips">
-          <span class="chip">#AgriTech</span>
-          <span class="chip">#Marketplace</span>
-          <span class="chip">#SmartFarming</span>
+        <span class="footer-brand-text">farm<span>Ease</span></span>
+      </div>
+      <p class="footer-tagline">
+        India's next-generation agricultural platform connecting farmers, customers, and service providers through technology and trust.
+      </p>
+      <div class="footer-socials">
+        <a href="#" class="footer-social" title="Twitter" id="footer-twitter"><i class="fa-brands fa-twitter"></i></a>
+        <a href="#" class="footer-social" title="Instagram" id="footer-instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" class="footer-social" title="Facebook" id="footer-facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" class="footer-social" title="YouTube" id="footer-youtube"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#" class="footer-social" title="LinkedIn" id="footer-linkedin"><i class="fa-brands fa-linkedin-in"></i></a>
+      </div>
+      <div class="footer-app-badges">
+        <a href="#" class="app-badge" id="footer-playstore"><i class="fa-brands fa-google-play"></i> Google Play</a>
+        <a href="#" class="app-badge" id="footer-appstore"><i class="fa-brands fa-apple"></i> App Store</a>
+      </div>
+    </div>
+
+    <!-- Platform Links -->
+    <div class="footer-col">
+      <h4 class="footer-col-title">Platform</h4>
+      <ul class="footer-links">
+        <li><a routerLink="/HomePage" class="footer-link"><i class="fa-solid fa-chevron-right"></i> Home</a></li>
+        <li><a routerLink="/About" class="footer-link"><i class="fa-solid fa-chevron-right"></i> About Us</a></li>
+        <li><a routerLink="/Products" class="footer-link"><i class="fa-solid fa-chevron-right"></i> Marketplace</a></li>
+        <li><a routerLink="/News" class="footer-link"><i class="fa-solid fa-chevron-right"></i> Agri News</a></li>
+        <li><a routerLink="/Contact" class="footer-link"><i class="fa-solid fa-chevron-right"></i> Contact</a></li>
+        <li><a routerLink="/ai" class="footer-link"><i class="fa-solid fa-chevron-right"></i> AI Assistant</a></li>
+      </ul>
+    </div>
+
+    <!-- For Users -->
+    <div class="footer-col">
+      <h4 class="footer-col-title">For Users</h4>
+      <ul class="footer-links">
+        <li><a routerLink="/Signup" class="footer-link"><i class="fa-solid fa-chevron-right"></i> Register as Farmer</a></li>
+        <li><a routerLink="/Signup" class="footer-link"><i class="fa-solid fa-chevron-right"></i> Join as Customer</a></li>
+        <li><a routerLink="/AddProduct" class="footer-link"><i class="fa-solid fa-chevron-right"></i> Add Product</a></li>
+        <li><a routerLink="/Orders" class="footer-link"><i class="fa-solid fa-chevron-right"></i> My Orders</a></li>
+        <li><a routerLink="/Wishlist" class="footer-link"><i class="fa-solid fa-chevron-right"></i> Wishlist</a></li>
+        <li><a routerLink="/Profile" class="footer-link"><i class="fa-solid fa-chevron-right"></i> My Profile</a></li>
+      </ul>
+    </div>
+
+    <!-- Contact + Newsletter -->
+    <div class="footer-col">
+      <h4 class="footer-col-title">Get In Touch</h4>
+      <div class="footer-contact-list">
+        <div class="footer-contact-item">
+          <i class="fa-solid fa-envelope footer-contact-icon"></i>
+          <span>support&#64;farmease.in</span>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fa-solid fa-phone footer-contact-icon"></i>
+          <span>1800-FARMEASE (Free)</span>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fa-solid fa-location-dot footer-contact-icon"></i>
+          <span>New Delhi, India 110001</span>
         </div>
       </div>
 
-      <!-- Links Column -->
-      <div class="footer-links-col">
-        <div class="footer-col-title">Navigate</div>
-        <nav class="footer-nav">
-          <a routerLink="/" class="footer-link"><i class="fa-solid fa-house me-2"></i>Home</a>
-          <a routerLink="/Products" class="footer-link"><i class="fa-solid fa-wheat-awn me-2"></i>Products</a>
-          <a routerLink="/Cart" class="footer-link"><i class="fa-solid fa-cart-shopping me-2"></i>Market</a>
-          <a routerLink="/ItemManagerComponent" class="footer-link"><i class="fa-solid fa-microchip me-2"></i>Inventory</a>
-          <a routerLink="/About" class="footer-link"><i class="fa-solid fa-book-open me-2"></i>About</a>
-        </nav>
-      </div>
-
-      <!-- Developer Column -->
-      <div class="footer-dev-col">
-        <div class="footer-col-title">Built By</div>
-        <div class="dev-card">
-          <div class="dev-name">Ujjaval Karangiya</div>
-          <div class="dev-desc">
-            Full-stack Developer • Angular • .NET • TypeScript<br>
-            Turning ideas into clean, scalable web experiences.
-          </div>
-          <div class="dev-socials">
-            <a href="#" class="social-btn" title="GitHub"><i class="fa-brands fa-github"></i></a>
-            <a href="#" class="social-btn" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
-            <a href="#" class="social-btn" title="Email"><i class="fa-solid fa-envelope"></i></a>
-          </div>
+      <div class="footer-newsletter">
+        <div class="fn-label">📬 Subscribe to Agri Updates</div>
+        <div class="fn-input-row">
+          <input type="email" class="fn-input" placeholder="Your email address" id="footer-email-input">
+          <button class="fn-btn" id="footer-subscribe-btn"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
       </div>
     </div>
 
-    <div class="footer-bottom">
+  </div>
+
+  <!-- Footer Bottom Bar -->
+  <div class="footer-bottom">
+    <div class="container footer-bottom-inner">
       <div class="footer-copy">
-        © 2026 <span>farmEase</span> • All Rights Reserved
+        © 2024 FarmEase Technologies Pvt. Ltd. — Made with ❤️ for Indian Farmers
       </div>
-      <div class="footer-credits">
-        Designed & Built with <i class="fa-solid fa-mug-hot"></i> + <i class="fa-solid fa-heart"></i>
+      <div class="footer-bottom-links">
+        <a href="#" class="fbl-link">Privacy Policy</a>
+        <span class="fbl-dot">·</span>
+        <a href="#" class="fbl-link">Terms of Service</a>
+        <span class="fbl-dot">·</span>
+        <a href="#" class="fbl-link">Cookie Policy</a>
+      </div>
+      <div class="footer-badges">
+        <span class="fb-badge"><i class="fa-solid fa-shield-halved"></i> SSL Secured</span>
+        <span class="fb-badge"><i class="fa-solid fa-award"></i> ISO Certified</span>
       </div>
     </div>
   </div>
+
 </footer>

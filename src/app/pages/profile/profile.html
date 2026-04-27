@@ -1,174 +1,122 @@
-<div class="profile-page mesh-bg">
-  <div class="profile-container">
+<!-- Profile Page — Premium Redesign -->
+<div class="profile-page">
 
-    <!-- Profile Hero Card -->
-    <div class="profile-hero-card anim-fade-up">
-      <!-- Banner Gradient -->
-      <div class="profile-banner"></div>
-
-      <div class="profile-hero-body">
-        <!-- Avatar -->
-        <div class="profile-avatar-wrap">
-          <div class="avatar-ring-outer"></div>
-          <img [src]="'https://ui-avatars.com/api/?name=' + (currentUser?.fullName || currentUser?.name || 'User') + '&background=16a34a&color=fff&size=120&bold=true'"
-               [alt]="currentUser?.fullName || currentUser?.name" class="profile-avatar-img">
-          <div class="avatar-verified"><i class="fa-solid fa-circle-check"></i></div>
-        </div>
-
-        <!-- Name + Info -->
-        <div class="profile-identity" *ngIf="currentUser">
-          <h1 class="profile-name">{{ (currentUser.fullName || currentUser.name) | titlecase }}</h1>
-          <div class="profile-role-row">
-            <span class="badge-role">{{ currentUser.role }}</span>
-            <span class="profile-verified">
-              <i class="fa-solid fa-seedling me-1"></i>Verified FarmEase Member
-            </span>
-          </div>
-        </div>
-
-        <!-- Quick Action Button -->
-        <button (click)="editProfile()" class="btn-glow profile-edit-btn">
-          <i class="fa-solid fa-user-pen me-2"></i>Edit Profile
-        </button>
+  <!-- Hero Section -->
+  <div class="profile-hero">
+    <div class="profile-hero-bg"></div>
+    <div class="container position-relative z-2">
+      <div class="profile-hero-content">
+        <span class="profile-badge">👤 My Account</span>
+        <h1 class="profile-title">Grower <span>Profile</span></h1>
+        <p class="profile-subtitle">Manage your credentials, orders, and FarmEase preferences securely.</p>
       </div>
     </div>
-
-    <!-- Quick Action Tiles (non-admin only) -->
-    <div class="profile-tiles anim-fade-up delay-2" *ngIf="currentUser?.role !== 'admin'">
-      <a class="profile-tile" routerLink="/Cart">
-        <div class="tile-icon amber"><i class="fa-solid fa-basket-shopping"></i></div>
-        <div class="tile-label">My Basket</div>
-        <div class="tile-sub">Active items for checkout</div>
-        <i class="fa-solid fa-arrow-right tile-arrow"></i>
-      </a>
-      <a class="profile-tile" routerLink="/Orders">
-        <div class="tile-icon blue"><i class="fa-solid fa-receipt"></i></div>
-        <div class="tile-label">Purchase History</div>
-        <div class="tile-sub">Track shipments & invoices</div>
-        <i class="fa-solid fa-arrow-right tile-arrow"></i>
-      </a>
-      <a class="profile-tile" routerLink="/WishlistComponent">
-        <div class="tile-icon red"><i class="fa-solid fa-heart-circle-check"></i></div>
-        <div class="tile-label">Saved Items</div>
-        <div class="tile-sub">Your favorite seeds & tools</div>
-        <i class="fa-solid fa-arrow-right tile-arrow"></i>
-      </a>
-    </div>
-
-    <!-- Info Cards -->
-    <div class="profile-info-row anim-fade-up delay-3" *ngIf="currentUser">
-
-      <div class="profile-info-card">
-        <div class="info-card-label">Communication</div>
-        <div class="info-row">
-          <div class="info-icon green"><i class="fa-solid fa-envelope"></i></div>
-          <div>
-            <div class="info-field-label">Email</div>
-            <div class="info-field-val">{{ currentUser.email }}</div>
-          </div>
-        </div>
-        <div class="info-row">
-          <div class="info-icon green"><i class="fa-solid fa-phone"></i></div>
-          <div>
-            <div class="info-field-label">Phone</div>
-            <div class="info-field-val">{{ currentUser.phone || 'Not provided' }}</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="profile-info-card">
-        <div class="info-card-label">Location & Logistics</div>
-        <div class="info-row">
-          <div class="info-icon amber"><i class="fa-solid fa-location-dot"></i></div>
-          <div>
-            <div class="info-field-label">Address</div>
-            <div class="info-field-val">{{ currentUser.address || 'Not provided' }}</div>
-          </div>
-        </div>
-        <div class="info-row">
-          <div class="info-icon blue"><i class="fa-solid fa-calendar-check"></i></div>
-          <div>
-            <div class="info-field-label">Member Since</div>
-            <div class="info-field-val">{{ currentUser.birthDate || 'Not provided' }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <p class="profile-footer-note">
-      <i class="fa-solid fa-copyright me-1"></i> 2026 FarmEase Tech • Helping India Grow Sustainably
-    </p>
   </div>
-</div>
 
-<!-- ═══ EDIT PROFILE MODAL ═══ -->
-<div class="edit-modal-backdrop" *ngIf="showEditModal" (click)="closeModal()">
-  <div class="edit-modal-card anim-slide-right" (click)="$event.stopPropagation()">
+  <div class="container profile-container">
+    
+    <!-- Left Column: Identity -->
+    <div class="profile-identity-col">
+      <div class="profile-card identity-card">
+        <div class="avatar-wrapper">
+          <img [src]="'https://ui-avatars.com/api/?name=' + (currentUser?.fullName || currentUser?.name || 'User') + '&background=16a34a&color=fff&size=160&bold=true'"
+               [alt]="currentUser?.fullName || currentUser?.name"
+               class="avatar-img">
+          <div class="avatar-verified" title="Verified Member">
+            <i class="fa-solid fa-check"></i>
+          </div>
+        </div>
 
-    <!-- Modal Header -->
-    <div class="edit-modal-header">
-      <div>
-        <div class="section-label">Account</div>
-        <h2 class="edit-modal-title">Edit Profile</h2>
-      </div>
-      <button class="edit-modal-close" (click)="closeModal()">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
+        <h2 class="user-name">{{ (currentUser?.fullName || currentUser?.name) | titlecase }}</h2>
+        <div class="user-role-badge">{{ currentUser?.role }}</div>
 
-    <!-- Avatar Preview -->
-    <div class="edit-avatar-row">
-      <img [src]="'https://ui-avatars.com/api/?name=' + (editForm.fullName || currentUser?.fullName || currentUser?.name || 'User') + '&background=16a34a&color=fff&size=100&bold=true'"
-           alt="Avatar Preview" class="edit-avatar-preview">
-      <div>
-        <div class="edit-avatar-name">{{ (editForm.fullName || currentUser?.fullName || currentUser?.name) | titlecase }}</div>
-        <div class="edit-avatar-hint"><i class="fa-solid fa-wand-magic-sparkles me-1"></i>Avatar auto-generated from name</div>
+        <div class="user-status">
+          <i class="fa-solid fa-seedling text-success me-1"></i> Verified FarmEase Member
+        </div>
+
       </div>
     </div>
 
-    <!-- Form (Converted from form to div to avoid submission interference) -->
-    <div class="edit-form">
+    <!-- Right Column: Details & Tiles -->
+    <div class="profile-details-col mt-5">
 
-      <div class="form-floating-dark">
-        <label>Full Name *</label>
-        <input type="text" [(ngModel)]="editForm.fullName" name="fullName" placeholder="Your full name">
+      <!-- Action Tiles (non-admin) -->
+      <div class="quick-tiles-grid" *ngIf="currentUser?.role !== 'admin'">
+        <a class="quick-tile" routerLink="/Cart">
+          <div class="qt-icon amber"><i class="fa-solid fa-basket-shopping"></i></div>
+          <div class="qt-info">
+            <div class="qt-label">My Basket</div>
+            <div class="qt-sub">Active checkout items</div>
+          </div>
+          <i class="fa-solid fa-chevron-right qt-arrow"></i>
+        </a>
+
+        <a class="quick-tile" routerLink="/Orders">
+          <div class="qt-icon blue"><i class="fa-solid fa-receipt"></i></div>
+          <div class="qt-info">
+            <div class="qt-label">Purchase History</div>
+            <div class="qt-sub">Track farm supplies</div>
+          </div>
+          <i class="fa-solid fa-chevron-right qt-arrow"></i>
+        </a>
+
+        <a class="quick-tile" routerLink="/WishlistComponent">
+          <div class="qt-icon red"><i class="fa-solid fa-heart"></i></div>
+          <div class="qt-info">
+            <div class="qt-label">Saved Items</div>
+            <div class="qt-sub">Your favorite seeds</div>
+          </div>
+          <i class="fa-solid fa-chevron-right qt-arrow"></i>
+        </a>
       </div>
 
-      <div class="form-floating-dark">
-        <label>Phone Number</label>
-        <input type="tel" [(ngModel)]="editForm.phone" name="phone" placeholder="+91 98765 43210">
+      <!-- Info Cards -->
+      <div class="info-cards-grid">
+        
+        <!-- Communication -->
+        <div class="profile-card info-card">
+          <div class="info-card-header">
+            <i class="fa-solid fa-address-book"></i> Contact Information
+          </div>
+          <div class="info-row">
+            <div class="icon-box green"><i class="fa-solid fa-envelope"></i></div>
+            <div class="info-content">
+              <span class="info-label">Email Directory</span>
+              <span class="info-value">{{ currentUser?.email }}</span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="icon-box green"><i class="fa-solid fa-phone"></i></div>
+            <div class="info-content">
+              <span class="info-label">Mobile Network</span>
+              <span class="info-value">{{ currentUser?.phone || '+91 Not Linked' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logistics -->
+        <div class="profile-card info-card">
+          <div class="info-card-header">
+            <i class="fa-solid fa-truck-fast"></i> Farm Logistics
+          </div>
+          <div class="info-row">
+            <div class="icon-box amber"><i class="fa-solid fa-location-dot"></i></div>
+            <div class="info-content">
+              <span class="info-label">Registered Farm Address</span>
+              <span class="info-value">{{ currentUser?.address || 'Location Pending Update' }}</span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="icon-box blue"><i class="fa-solid fa-calendar-check"></i></div>
+            <div class="info-content">
+              <span class="info-label">Birth Date / Member Since</span>
+              <span class="info-value">{{ currentUser?.birthDate || 'Record Not Found' }}</span>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      <div class="form-floating-dark">
-        <label>Delivery Address</label>
-        <textarea [(ngModel)]="editForm.address" name="address" placeholder="Village, District, State, PIN" rows="2"></textarea>
-      </div>
-
-      <div class="form-floating-dark">
-        <label>Date of Birth / Year Joined</label>
-        <input type="text" [(ngModel)]="editForm.dob" name="dob" placeholder="e.g. 2026 or 15 Jan 2000">
-      </div>
-
-      <!-- Error -->
-      <div class="edit-error" *ngIf="saveError">
-        <i class="fa-solid fa-circle-exclamation me-2"></i>{{ saveError }}
-      </div>
-
-      <!-- Success -->
-      <div class="edit-success" *ngIf="saveSuccess">
-        <i class="fa-solid fa-circle-check me-2"></i>Profile updated successfully!
-      </div>
-
-      <!-- Actions -->
-      <div class="edit-modal-actions">
-        <button type="button" class="btn-glass edit-cancel-btn" (click)="closeModal()">
-          Cancel
-        </button>
-        <button type="button" class="btn-glow edit-save-btn" (click)="saveProfile()" [disabled]="isSaving">
-          <i [class]="isSaving ? 'fa-solid fa-spinner fa-spin me-2' : 'fa-solid fa-floppy-disk me-2'"></i>
-          {{ isSaving ? 'Saving...' : 'Save Changes' }}
-        </button>
-      </div>
     </div>
   </div>
 </div>

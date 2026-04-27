@@ -1,90 +1,104 @@
-<section class="cold-storage-hero py-5 mb-4 shadow-sm" style="background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);">
-    <div class="container text-center py-4">
-        <h1 class="display-4 fw-bold text-white mb-3 animate__animated animate__fadeInDown">
-            <i class="fa-solid fa-snowflake me-3"></i>Cold Storage Distribution
-        </h1>
-        <p class="lead text-white-50 mx-auto animate__animated animate__fadeInUp" style="max-width: 700px;">
-            Critical infrastructure for preserving perishable agricultural produce, reducing post-harvest losses, and ensuring global food security.
-        </p>
-    </div>
-</section>
+<!-- Cold Storage Data Page — Premium Redesign -->
+<div class="cs-page">
 
-<div class="container-fluid px-lg-5">
-    <div *ngIf="isLoading" class="text-center my-5 animate__animated animate__fadeIn">
-        <div class="spinner-grow text-success" role="status" style="width: 3rem; height: 3rem;">
-            <span class="visually-hidden">Loading...</span>
+  <!-- Hero Section -->
+  <div class="cs-hero">
+    <div class="cs-hero-bg"></div>
+    <div class="container position-relative z-2">
+      <span class="cs-badge">❄️ Infrastructure Data</span>
+      <h1 class="cs-title">Cold Storage <span>Distribution</span></h1>
+      <p class="cs-desc">Explore critical infrastructure data across India. Cold storage is the backbone of agricultural preservation, reducing post-harvest losses, and ensuring food security.</p>
+    </div>
+  </div>
+
+  <div class="container cs-container">
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="cs-loading-state">
+      <div class="cs-spinner"></div>
+      <h4>Syncing Infrastructure Data</h4>
+      <p>Fetching real-time data from the national registry...</p>
+      <button class="cs-retry-btn mt-3" (click)="loadData()">
+        <i class="fa-solid fa-rotate"></i> Refresh Connection
+      </button>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="errorMessage" class="cs-error-alert">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <div>
+        <strong>Connection Error:</strong><br>
+        {{ errorMessage }}
+      </div>
+    </div>
+
+    <!-- Data Cards Grid -->
+    <div *ngIf="apiData.length > 0" class="cs-grid">
+      
+      <div *ngFor="let record of apiData; let i = index" class="cs-card">
+        
+        <!-- Header: State -->
+        <div class="cs-card-header">
+          <div class="csc-state-info">
+            <span class="csc-label">State / UT</span>
+            <h3 class="csc-state-name">{{ record.states___uts }}</h3>
+          </div>
+          <div class="csc-total-units">
+            <span class="num">{{ record.total_number }}</span>
+            <span class="lbl-u">Units</span>
+          </div>
         </div>
-        <h4 class="mt-3 text-secondary fw-bold">Syncing Infrastructure Data...</h4>
-        <button class="btn btn-outline-success rounded-pill px-4 mt-2" routerLink='/DataComponent'>
-            <i class="fa-solid fa-rotate me-2"></i>Retry Connection
-        </button>
-    </div>
 
-    <div *ngIf="errorMessage" class="alert alert-custom-danger shadow-sm border-0 d-flex align-items-center animate__animated animate__shakeX" role="alert">
-        <i class="fa-solid fa-circle-exclamation fs-3 me-3"></i>
-        <div>{{ errorMessage }}</div>
-    </div>
-
-    <div *ngIf="apiData.length > 0" class="row g-4">
-        <div *ngFor="let record of apiData" class="col-xl-4 col-md-6 animate__animated animate__fadeInUp">
-            <div class="card h-100 storage-card border-0 shadow-sm rounded-4 overflow-hidden">
-                <div class="card-header border-0 bg-white pt-4 px-4">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <span class="text-uppercase text-muted fw-bold small ls-1">State / UT</span>
-                            <h4 class="mb-0 fw-bold text-dark">{{ record.states___uts }}</h4>
-                        </div>
-                        <div class="bg-success bg-opacity-10 p-3 rounded-4 text-center">
-                            <h3 class="mb-0 fw-bold text-success">{{ record.total_number }}</h3>
-                            <small class="text-success text-uppercase fw-bold" style="font-size: 0.6rem;">Units</small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-body px-4">
-                    <div class="sector-grid">
-                        <div class="sector-item mb-3 p-2 rounded-3 bg-light">
-                            <div class="d-flex justify-content-between mb-1">
-                                <span class="small fw-bold text-secondary"><i class="fa-solid fa-building me-2"></i>Private Sector</span>
-                                <span class="badge bg-dark rounded-pill">{{ record.private_sector__no__ }}</span>
-                            </div>
-                            <div class="progress" style="height: 6px;">
-                                <div class="progress-bar bg-success" [style.width.%]="(record.private_sector__no__ / record.total_number) * 100"></div>
-                            </div>
-                            <small class="text-muted">{{ record.private_sector_capacity__tonnes_ | number }} tonnes</small>
-                        </div>
-
-                        <div class="sector-item mb-3 p-2 rounded-3 bg-light">
-                            <div class="d-flex justify-content-between mb-1">
-                                <span class="small fw-bold text-secondary"><i class="fa-solid fa-people-group me-2"></i>Cooperative</span>
-                                <span class="badge bg-dark rounded-pill">{{ record.cooperative_sector__no__ }}</span>
-                            </div>
-                            <div class="progress" style="height: 6px;">
-                                <div class="progress-bar bg-warning" [style.width.%]="(record.cooperative_sector__no__ / record.total_number) * 100"></div>
-                            </div>
-                            <small class="text-muted">{{ record.cooperative_sector_capacity__tonnes_ | number }} tonnes</small>
-                        </div>
-
-                        <div class="sector-item p-2 rounded-3 bg-light">
-                            <div class="d-flex justify-content-between mb-1">
-                                <span class="small fw-bold text-secondary"><i class="fa-solid fa-landmark me-2"></i>Public Sector</span>
-                                <span class="badge bg-dark rounded-pill">{{ record.public_sector__no__ }}</span>
-                            </div>
-                            <div class="progress" style="height: 6px;">
-                                <div class="progress-bar bg-info" [style.width.%]="(record.public_sector__no__ / record.total_number) * 100"></div>
-                            </div>
-                            <small class="text-muted">{{ record.public_sector_capacity__tonnes_ | number }} tonnes</small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer border-0 bg-success bg-opacity-10 p-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="text-uppercase fw-bold text-success small">Aggregate Capacity</div>
-                        <div class="h5 mb-0 fw-bold text-success">{{ record.total_capacity__tonnes_ | number }} MT</div>
-                    </div>
-                </div>
+        <!-- Body: Sectors -->
+        <div class="cs-card-body">
+          
+          <!-- Private -->
+          <div class="cs-sector-item">
+            <div class="csi-top">
+              <span class="csi-name"><i class="fa-solid fa-building"></i> Private Sector</span>
+              <span class="csi-badge csi-badge-pv">{{ record.private_sector__no__ }} unit{{ record.private_sector__no__ !== 1 ? 's' : '' }}</span>
             </div>
+            <div class="csi-progress-bar">
+              <div class="csi-progress-val bg-pv" [style.width.%]="(record.private_sector__no__ / record.total_number) * 100"></div>
+            </div>
+            <div class="csi-cap">{{ record.private_sector_capacity__tonnes_ | number }} Tonnes Capacity</div>
+          </div>
+
+          <!-- Cooperative -->
+          <div class="cs-sector-item">
+            <div class="csi-top">
+              <span class="csi-name"><i class="fa-solid fa-people-group"></i> Cooperative</span>
+              <span class="csi-badge csi-badge-co">{{ record.cooperative_sector__no__ }} unit{{ record.cooperative_sector__no__ !== 1 ? 's' : '' }}</span>
+            </div>
+            <div class="csi-progress-bar">
+              <div class="csi-progress-val bg-co" [style.width.%]="(record.cooperative_sector__no__ / record.total_number) * 100"></div>
+            </div>
+            <div class="csi-cap">{{ record.cooperative_sector_capacity__tonnes_ | number }} Tonnes Capacity</div>
+          </div>
+
+          <!-- Public -->
+          <div class="cs-sector-item">
+            <div class="csi-top">
+              <span class="csi-name"><i class="fa-solid fa-landmark"></i> Public Sector</span>
+              <span class="csi-badge csi-badge-pb">{{ record.public_sector__no__ }} unit{{ record.public_sector__no__ !== 1 ? 's' : '' }}</span>
+            </div>
+            <div class="csi-progress-bar">
+              <div class="csi-progress-val bg-pb" [style.width.%]="(record.public_sector__no__ / record.total_number) * 100"></div>
+            </div>
+            <div class="csi-cap">{{ record.public_sector_capacity__tonnes_ | number }} Tonnes Capacity</div>
+          </div>
+
         </div>
+
+        <!-- Footer: Total Capacity -->
+        <div class="cs-card-footer">
+          <div class="csc-footer-label">Aggregate Capacity</div>
+          <div class="csc-footer-val">{{ record.total_capacity__tonnes_ | number }} MT</div>
+        </div>
+
+      </div>
+
     </div>
+
+  </div>
 </div>

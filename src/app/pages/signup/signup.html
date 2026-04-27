@@ -1,118 +1,205 @@
 <div class="auth-page">
-  <div class="auth-visual">
-    <div class="auth-visual-bg">
-      <div class="particles">
-        <div class="particle" *ngFor="let p of [1,2,3,4,5,6]"></div>
-      </div>
-      <div class="orbit-ring"></div>
-      <div class="orbit-ring orbit-ring-2"></div>
-    </div>
-
-    <div class="auth-visual-content">
-      <div class="floating-cards">
-        <div class="feat-card anim-slide-left delay-1">
-          <div class="feat-icon"><i class="fa-solid fa-seedling"></i></div>
-          <div>
-            <div class="feat-title">Farmer Network</div>
-            <div class="feat-sub">2,400+ verified farmers</div>
-          </div>
-        </div>
-        <div class="feat-card anim-slide-left delay-3">
-          <div class="feat-icon amber"><i class="fa-solid fa-shield-halved"></i></div>
-          <div>
-            <div class="feat-title">Secure & Private</div>
-            <div class="feat-sub">End-to-end encrypted</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="auth-visual-text anim-fade-up delay-4">
-        <div class="section-label">Join the Harvest</div>
-        <h2 class="section-title" style="font-size:2.2rem;color:#f0fdf4;">
-          Start Your Smart<br><span>Farming Journey</span>
-        </h2>
-        <div class="auth-stats anim-fade-up delay-6">
-          <div class="auth-stat"><div class="auth-stat-n">Free</div><div class="auth-stat-l">Forever</div></div>
-          <div class="auth-stat-divider"></div>
-          <div class="auth-stat"><div class="auth-stat-n">24/7</div><div class="auth-stat-l">Support</div></div>
-        </div>
-      </div>
-    </div>
+  <div class="auth-bg">
+    <div class="auth-orb auth-orb-1"></div>
+    <div class="auth-orb auth-orb-2"></div>
+    <div class="auth-orb auth-orb-3"></div>
   </div>
 
-  <div class="auth-form-panel signup-panel">
-    <div class="auth-form-card anim-slide-right">
-      <div class="auth-form-header anim-fade-down delay-1">
-        <div class="brand-icon"><i class="fa-solid fa-leaf"></i></div>
-        <div class="auth-form-badge">New Member</div>
+  <div class="auth-container signup-container">
+
+    <!-- Left Panel -->
+    <div class="auth-left">
+      <div class="auth-brand">
+        <div class="auth-brand-icon">
+          <i class="fa-solid fa-seedling"></i>
+        </div>
+        <span class="auth-brand-name">farm<span>Ease</span></span>
       </div>
 
-      <h1 class="auth-title anim-fade-up delay-2">Create Account</h1>
-      <p class="auth-sub anim-fade-up delay-3">Select your role and fill in your details.</p>
+      <h1 class="auth-left-title">
+        Start Your <br>
+        <span>Farm Journey</span>
+      </h1>
 
-      <div class="role-tabs anim-fade-up delay-3">
-        <div class="role-tab" [class.active]="selectedRole === 'customer'" (click)="setRole('customer')">
-          <i class="fa-solid fa-user"></i> Customer
+      <p class="auth-left-desc">
+        Create your free account and join thousands of farmers, customers,
+        and service providers already on FarmEase.
+      </p>
+
+      <div class="signup-roles">
+        <div class="signup-role-card"
+             [class.active]="selectedRole === 'farmer'"
+             (click)="setRole('farmer')">
+          <div class="src-emoji">👨‍🌾</div>
+          <div class="src-title">Farmer</div>
+          <div class="src-desc">Sell produce & access tools</div>
         </div>
-        <div class="role-tab" [class.active]="selectedRole === 'farmer'" (click)="setRole('farmer')">
-          <i class="fa-solid fa-wheat-awn"></i> Farmer
+
+        <div class="signup-role-card"
+             [class.active]="selectedRole === 'customer'"
+             (click)="setRole('customer')">
+          <div class="src-emoji">🛒</div>
+          <div class="src-title">Customer</div>
+          <div class="src-desc">Buy fresh from farms</div>
         </div>
-        <div class="role-tab" [class.active]="selectedRole === 'admin'" (click)="setRole('admin')">
-          <i class="fa-solid fa-user-shield"></i> Admin
+
+        <div class="signup-role-card"
+             [class.active]="selectedRole === 'admin'"
+             (click)="setRole('admin')">
+          <div class="src-emoji">⚙️</div>
+          <div class="src-title">Provider</div>
+          <div class="src-desc">Offer agri services</div>
         </div>
       </div>
 
-      <form class="signup-form">
-        <div class="form-row-2">
-          <div class="form-floating-dark anim-fade-up delay-4">
-            <label>Full Name *</label>
-            <input #nameInput type="text" placeholder="John Doe">
+      <div class="auth-social-proof">
+        <div class="asp-avatars">
+          <img src="https://ui-avatars.com/api/?name=R+K&background=0a3d20&color=fff&bold=true&size=36" alt="user">
+          <img src="https://ui-avatars.com/api/?name=A+P&background=166534&color=fff&bold=true&size=36" alt="user">
+          <img src="https://ui-avatars.com/api/?name=M+S&background=15803d&color=fff&bold=true&size=36" alt="user">
+        </div>
+        <span><strong>10,000+</strong> members and growing</span>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="auth-right">
+      <div class="auth-card signup-card">
+
+        <div class="auth-card-header">
+          <h2 class="auth-title">Create Account 🌱</h2>
+          <p class="auth-subtitle">Fill in your details to join FarmEase</p>
+        </div>
+
+        <form class="auth-form"
+              #signupForm="ngForm"
+              (ngSubmit)="onRegister(nameInput.value, emailInput.value, phoneInput.value, dobInput.value, addressInput.value, bioInput.value, passInput.value)">
+
+          <div class="signup-grid-2">
+            <div class="auth-field">
+              <label class="auth-label">Full Name *</label>
+              <div class="auth-input-wrap">
+                <i class="fa-solid fa-user auth-input-icon"></i>
+                <input
+                  #nameInput
+                  type="text"
+                  class="auth-input"
+                  placeholder="Your full name"
+                  required>
+              </div>
+            </div>
+
+            <div class="auth-field">
+              <label class="auth-label">Email Address *</label>
+              <div class="auth-input-wrap">
+                <i class="fa-solid fa-envelope auth-input-icon"></i>
+                <input
+                  #emailInput
+                  type="email"
+                  class="auth-input"
+                  placeholder="you@example.com"
+                  required>
+              </div>
+            </div>
           </div>
-          <div class="form-floating-dark anim-fade-up delay-4">
-            <label>Email Address *</label>
-            <input #emailInput type="email" placeholder="you@example.com">
+
+          <div class="signup-grid-2">
+            <div class="auth-field">
+              <label class="auth-label">Phone Number</label>
+              <div class="auth-input-wrap">
+                <i class="fa-solid fa-phone auth-input-icon"></i>
+                <input
+                  #phoneInput
+                  type="tel"
+                  class="auth-input"
+                  placeholder="+91 XXXXX XXXXX">
+              </div>
+            </div>
+
+            <div class="auth-field">
+              <label class="auth-label">Date of Birth</label>
+              <div class="auth-input-wrap">
+                <i class="fa-solid fa-calendar auth-input-icon"></i>
+                <input
+                  #dobInput
+                  type="date"
+                  class="auth-input"
+                  style="padding-right:12px">
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="form-row-2">
-          <div class="form-floating-dark anim-fade-up delay-5">
-            <label>Phone</label>
-            <input #phoneInput type="tel" placeholder="+91 00000 00000">
+          <div class="auth-field">
+            <label class="auth-label">Address</label>
+            <div class="auth-input-wrap">
+              <i class="fa-solid fa-location-dot auth-input-icon textarea-icon"></i>
+              <textarea
+                #addressInput
+                class="auth-input auth-textarea"
+                rows="2"
+                placeholder="Village, District, State"></textarea>
+            </div>
           </div>
-          <div class="form-floating-dark anim-fade-up delay-5">
-            <label>Date of Birth</label>
-            <input #dobInput type="date">
+
+          <div class="auth-field">
+            <label class="auth-label">
+              Short Bio
+              <span class="optional-text">(optional)</span>
+            </label>
+            <div class="auth-input-wrap">
+              <i class="fa-solid fa-pen auth-input-icon textarea-icon"></i>
+              <textarea
+                #bioInput
+                class="auth-input auth-textarea"
+                rows="2"
+                placeholder="Tell us about yourself..."></textarea>
+            </div>
           </div>
-        </div>
 
-        <div class="form-floating-dark anim-fade-up delay-6">
-          <label>Address / Farm Location</label>
-          <input #addressInput type="text" placeholder="Village, State, Zip">
-        </div>
+          <div class="auth-field">
+            <label class="auth-label">
+              Password *
+              <span class="optional-text">(min 6 chars)</span>
+            </label>
+            <div class="auth-input-wrap">
+              <i class="fa-solid fa-lock auth-input-icon"></i>
+              <input
+                #passInput
+                type="password"
+                class="auth-input"
+                minlength="6"
+                placeholder="Create a strong password"
+                required>
+            </div>
+          </div>
 
-        <div class="form-floating-dark anim-fade-up delay-7">
-          <label>Bio / Farm Details</label>
-          <textarea #bioInput rows="2" placeholder="Briefly describe your farm..."></textarea>
-        </div>
+          <div class="signup-role-indicator">
+            <i class="fa-solid fa-circle-check"></i>
+            Registering as:
+            <strong>{{ selectedRole | titlecase }}</strong>
+          </div>
 
-        <div class="form-floating-dark anim-fade-up delay-7">
-          <label>Password *</label>
-          <input #passInput type="password" placeholder="••••••••">
-        </div>
+          <button
+            type="submit"
+            class="auth-submit-btn"
+            [class.loading]="isLoading"
+            [disabled]="isLoading || !signupForm.valid">
 
-        <button type="button" 
-                class="btn-glow w-100 auth-submit anim-fade-up delay-8"
-                [disabled]="isLoading"
-                (click)="onRegister(nameInput.value, emailInput.value, phoneInput.value, dobInput.value, addressInput.value, bioInput.value, passInput.value)">
-          <i *ngIf="!isLoading" class="fa-solid fa-seedling me-2"></i>
-          <i *ngIf="isLoading" class="fa-solid fa-circle-notch fa-spin me-2"></i>
-          {{ isLoading ? 'Creating Account...' : 'Complete Registration' }}
-        </button>
+            <i class="fa-solid fa-rocket" *ngIf="!isLoading"></i>
+            <span *ngIf="isLoading" class="btn-spinner"></span>
 
-        <p class="auth-switch anim-fade-up delay-8">
-          Already a member? <a routerLink="/Login">Sign In <i class="fa-solid fa-arrow-right ms-1"></i></a>
-        </p>
-      </form>
+            {{ isLoading ? 'Creating Account...' : 'Create Free Account' }}
+          </button>
+
+          <div class="auth-footer-text">
+            Already have an account?
+            <a routerLink="/Login" class="auth-link">
+              Sign In →
+            </a>
+          </div>
+
+        </form>
+      </div>
     </div>
   </div>
 </div>

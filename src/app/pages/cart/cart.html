@@ -1,64 +1,68 @@
-<div class="cart-page mesh-bg">
+<!-- Cart Page — Premium Redesign -->
+<div class="cart-page">
 
-  <!-- ── Toast Notification ── -->
-  <div class="toast-notification" [class.show]="showToast">{{ toastMessage }}</div>
+  <!-- Toast -->
+  <div class="cart-toast" [class.show]="showToast">
+    <i class="fa-solid fa-bell"></i> {{ toastMessage }}
+  </div>
 
   <!-- Hero -->
-  <div class="cart-hero">
-    <div class="cart-hero-content anim-fade-up">
-      <div class="section-label">Shopping</div>
-      <h1 class="section-title">My <span>Cart</span>
-        <span *ngIf="cartItems().length > 0" class="cart-count-badge">{{ cartItems().length }}</span>
-      </h1>
-      <p class="hero-sub" *ngIf="cartItems().length > 0">
-        {{ cartItems().length }} item{{ cartItems().length > 1 ? 's' : '' }} · Subtotal ₹{{ subtotal() | number }}
-      </p>
-      <p class="hero-sub" *ngIf="cartItems().length === 0">
-        Add quality seeds, fertilizers, and equipment to get started.
-      </p>
+  <div class="cart-hero pt-5">
+    <div class="cart-hero-bg"></div>
+    <div class="container position-relative z-2">
+      <div class="cart-hero-content">
+        <span class="cart-badge">🛒 Your Cart</span>
+        <h1 class="cart-title">My <span>Shopping Cart</span></h1>
+        <p class="cart-subtitle" *ngIf="cartItems().length > 0">
+          {{ cartItems().length }} item{{ cartItems().length > 1 ? 's' : '' }} ready for checkout · Save 5% today
+        </p>
+        <p class="cart-subtitle" *ngIf="cartItems().length === 0">
+          Add fresh produce and farm supplies to your cart.
+        </p>
+      </div>
     </div>
   </div>
 
-  <div class="cart-container">
+  <div class="container cart-container">
 
-    <!-- Empty Cart -->
-    <div *ngIf="cartItems().length === 0" class="cart-empty anim-fade-in">
-      <div class="empty-icon-wrap">
-        <i class="fa-solid fa-cart-shopping"></i>
-        <div class="empty-ring"></div>
-      </div>
-      <h2>Your cart is empty</h2>
-      <p>Add quality seeds, fertilizers, and equipment to get started.</p>
-      <a routerLink="/Products" class="btn-glow" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:50px;">
+    <!-- Empty State -->
+    <div *ngIf="cartItems().length === 0" class="cart-empty">
+      <div class="cart-empty-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+      <h2>Your Cart is Empty</h2>
+      <p>Explore our marketplace and add quality seeds, fertilizers, and farm tools.</p>
+      <a routerLink="/Products" class="cart-browse-btn">
         <i class="fa-solid fa-seedling"></i> Browse Products
       </a>
     </div>
 
-    <!-- Cart Content -->
-    <div *ngIf="cartItems().length > 0" class="cart-layout anim-fade-up">
+    <!-- Cart Layout -->
+    <div *ngIf="cartItems().length > 0" class="cart-layout">
 
-      <!-- Item List -->
+      <!-- Items Panel -->
       <div class="cart-items-panel">
         <div class="panel-header">
-          <span>{{ cartItems().length }} item{{ cartItems().length > 1 ? 's' : '' }} in your cart</span>
-          <button class="btn-text-danger" (click)="clearCart()">
-            <i class="fa-solid fa-trash-can me-1"></i>Clear All
+          <div class="panel-title">
+            <i class="fa-solid fa-bag-shopping"></i>
+            Cart Items <span class="item-count">{{ cartItems().length }}</span>
+          </div>
+          <button class="clear-btn" (click)="clearCart()" id="cart-clear-btn">
+            <i class="fa-solid fa-trash-can"></i> Clear All
           </button>
         </div>
 
-        <div class="cart-item" *ngFor="let item of cartItems()">
-          <div class="cart-item-img">
+        <div class="cart-item" *ngFor="let item of cartItems(); let i = index" [id]="'cart-item-' + item.id">
+          <div class="ci-image">
             <img [src]="item.imageUrl || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=200'"
-                 [alt]="item.productName">
+                 [alt]="item.productName" loading="lazy">
           </div>
-          <div class="cart-item-info">
-            <div class="cart-item-cat">{{ item.category }}</div>
-            <div class="cart-item-name">{{ item.productName }}</div>
-            <div class="cart-item-price">₹{{ item.price | number }} each</div>
+          <div class="ci-info">
+            <div class="ci-cat">{{ item.category }}</div>
+            <div class="ci-name">{{ item.productName }}</div>
+            <div class="ci-unit">₹{{ item.price | number }} per unit</div>
           </div>
-          <div class="cart-item-controls">
-            <div class="qty-control">
-              <button class="qty-btn" (click)="updateQty(item.id, -1)">
+          <div class="ci-controls">
+            <div class="qty-stepper">
+              <button class="qty-btn" (click)="updateQty(item.id, -1)" [disabled]="item.quantity <= 1">
                 <i class="fa-solid fa-minus"></i>
               </button>
               <span class="qty-val">{{ item.quantity }}</span>
@@ -66,57 +70,66 @@
                 <i class="fa-solid fa-plus"></i>
               </button>
             </div>
-            <div class="cart-item-total">₹{{ (item.price * item.quantity) | number }}</div>
-            <button class="remove-btn" (click)="removeItem(item.id)" title="Remove">
+            <div class="ci-total">₹{{ (item.price * item.quantity) | number }}</div>
+            <button class="remove-btn" (click)="removeItem(item.id)" title="Remove item" [id]="'remove-' + item.id">
               <i class="fa-solid fa-xmark"></i>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Order Summary -->
+      <!-- Summary Panel -->
       <div class="cart-summary-panel">
-        <div class="summary-title">Order Summary</div>
+        <div class="summary-card">
+          <h3 class="summary-title">Order Summary</h3>
 
-        <div class="summary-row">
-          <span>Subtotal</span>
-          <span>₹{{ subtotal() | number }}</span>
-        </div>
-        <div class="summary-row">
-          <span>Shipping</span>
-          <span class="text-muted-sm">₹{{ shipping }}</span>
-        </div>
-        <div class="summary-row discount-row">
-          <span><i class="fa-solid fa-tag me-1"></i>Discount (5%)</span>
-          <span class="discount-val">−₹{{ discount | number }}</span>
-        </div>
+          <div class="summary-rows">
+            <div class="summary-row">
+              <span>Subtotal ({{ cartItems().length }} items)</span>
+              <span>₹{{ subtotal() | number }}</span>
+            </div>
+            <div class="summary-row">
+              <span>Shipping</span>
+              <span [class.free-shipping]="shipping === 0">{{ shipping === 0 ? 'FREE' : '₹' + shipping }}</span>
+            </div>
+            <div class="summary-row discount">
+              <span><i class="fa-solid fa-tag"></i> Discount (5%)</span>
+              <span class="discount-val">−₹{{ discount | number }}</span>
+            </div>
+          </div>
 
-        <div class="summary-divider"></div>
+          <div class="summary-divider"></div>
 
-        <div class="summary-total-row">
-          <span>Total</span>
-          <span class="summary-total-val">₹{{ finalTotal | number }}</span>
-        </div>
+          <div class="summary-total">
+            <span>Total Payable</span>
+            <span class="total-amount">₹{{ finalTotal | number }}</span>
+          </div>
 
-        <div class="promo-input-wrap">
-          <input type="text" class="promo-input" placeholder="Promo code">
-          <button class="promo-apply">Apply</button>
-        </div>
+          <!-- Promo Code -->
+          <div class="promo-row">
+            <div class="promo-input-wrap">
+              <i class="fa-solid fa-ticket promo-icon"></i>
+              <input type="text" class="promo-input" placeholder="Enter promo code" id="promo-input">
+            </div>
+            <button class="promo-apply-btn" id="promo-apply-btn">Apply</button>
+          </div>
 
-        <button class="btn-glow checkout-btn" (click)="placeOrder()">
-          <i class="fa-solid fa-bag-shopping me-2"></i>Place Order
-        </button>
+          <button class="checkout-btn" (click)="placeOrder()" id="checkout-btn">
+            <i class="fa-solid fa-bag-shopping"></i> Place Order
+          </button>
 
-        <div class="summary-info">
-          <i class="fa-solid fa-shield-halved me-2" style="color:#22c55e;"></i>
-          Secure checkout · Free returns · 100% genuine products
-        </div>
+          <div class="checkout-trust">
+            <div class="trust-item"><i class="fa-solid fa-shield-halved"></i> Secure Checkout</div>
+            <div class="trust-item"><i class="fa-solid fa-rotate-left"></i> Free Returns</div>
+            <div class="trust-item"><i class="fa-solid fa-certificate"></i> 100% Genuine</div>
+          </div>
 
-        <div class="payment-logos">
-          <div class="pay-logo">UPI</div>
-          <div class="pay-logo">Card</div>
-          <div class="pay-logo">COD</div>
-          <div class="pay-logo">NetBanking</div>
+          <div class="payment-methods">
+            <span class="pay-method">UPI</span>
+            <span class="pay-method">Cards</span>
+            <span class="pay-method">COD</span>
+            <span class="pay-method">NetBanking</span>
+          </div>
         </div>
       </div>
     </div>

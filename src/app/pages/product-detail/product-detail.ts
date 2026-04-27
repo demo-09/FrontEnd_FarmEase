@@ -1,0 +1,156 @@
+import { Component, inject, computed, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { forkJoin, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { CartService } from '../../services/cart.service';
+import { WishlistService, WishlistItem } from '../wishlist/wishlist';
+
+@Component({
+  selector: 'app-product-detail',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './product-detail.html',
+  styleUrl: './product-detail.css'
+})
+export class ProductDetail {
+  qty = 1;
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private http = inject(HttpClient);
+  public cartService = inject(CartService);
+  public wishlistService = inject(WishlistService);
+
+  private routeParams = toSignal(this.route.paramMap, { initialValue: null });
+
+  private allData = toSignal(
+    forkJoin({
+      machinery: this.http.get<any[]>('https://backend-farmease-1.onrender.com/api/machinery').pipe(catchError(() => of([]))),
+      agriitems: this.http.get<any[]>('https://backend-farmease-1.onrender.com/api/agriitems').pipe(catchError(() => of([])))
+    }).pipe(
+      map(res => {
+        const m = res.machinery.map(x => ({ ...x, type: 'machinery' }));
+        const a = res.agriitems.map(x => ({ ...x, type: 'agriitem' }));
+        return [...m, ...a].map(item => ({
+          id: item.id.toString(),
+          type: item.type,
+          title: item.name || 'Untitled Product',
+          subtitle: item.category || 'Product Category',
+          description: item.description || `High-quality ${item.name} available now.`,
+          imageUrl: item.image || '',
+          label: item.quantity > 0 ? 'In Stock' : 'Out of Stock',
+          inStock: item.quantity > 0,
+          metaText: `₹${item.price}`,
+          price: item.price,
+          quantity: item.quantity
+        }));
+      })
+    ),
+    { initialValue: undefined }
+  );
+
+  product = computed(() => {
+    const params = this.routeParams();
+    const data = this.allData();
+    if (!params || !data) return undefined;
+
+    const id = params.get('id');
+    const type = params.get('type');
+    
+    return data.find(p => p.id === id && p.type === type) || null;
+  });
+
+  suggestions = computed(() => {
+    const data = this.allData();
+    const currProduct = this.product();
+    if (!data || !currProduct) return [];
+
+    return data
+      .filter(p => p.type === currProduct.type && p.id !== currProduct.id)
+      .slice(0, 4);
+  });
+
+  goBack() {
+    this.router.navigate(['/Products']);
+  }
+
+  viewProduct(p: any) {
+    this.router.navigate(['/product-detail', p.type, p.id]);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+
+  private tempInCartIds = signal<Set<string>>(new Set<string>());
+
+  addToCart(product: any, qty = 1, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+
+    // Add to cart
+    this.cartService.addItem({
+      id: product.id,
+      name: product.title,
+      price: product.price,
+      image: product.imageUrl,
+      category: product.subtitle,
+    });
+    // Temporary "In Cart" feedback for 1 second only
+    this.showTemporaryInCart(product.id);
+  }
+
+  private showTemporaryInCart(id: string) {
+    this.tempInCartIds.update(prev => {
+      const updated = new Set(prev);
+      updated.add(id);
+      return updated;
+    });
+
+    setTimeout(() => {
+      this.tempInCartIds.update(prev => {
+        const updated = new Set(prev);
+        updated.delete(id);
+        return updated;
+      });
+    }, 1000);
+  }
+
+  // ONLY temporary state — ignores real cart (as per your requirement)
+  isInCart(id: string): boolean {
+    return this.tempInCartIds().has(id);
+  }
+  orderNow(product: any) {
+    // Navigate straight to checkout with product specifics
+    this.router.navigate(['/order-detail'], {
+      queryParams: {
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.imageUrl,
+        qty: this.qty
+      }
+    });
+  }
+  
+  toggleWishlist(product: any, event?: Event) {
+    if (event) { event.stopPropagation(); event.preventDefault(); }
+    const numId = parseInt(product.id);
+    if (this.wishlistService.isInWishlist(numId)) {
+      this.wishlistService.removeByProductId(numId);
+    } else {
+      this.wishlistService.addItem({
+        id: numId,
+        name: product.title,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        inStock: product.inStock,
+        category: product.subtitle
+      } as WishlistItem);
+    }
+  }
+
+  isInWishlist(id: string) { return this.wishlistService.isInWishlist(parseInt(id)); }
+}

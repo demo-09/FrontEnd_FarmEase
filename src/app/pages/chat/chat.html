@@ -1,115 +1,92 @@
-<div class="chat-page mesh-bg">
-  <div class="chat-container">
+<!-- Chat Page — Premium Redesign -->
+<div class="container py-4" style="padding-top:100px!important">
+  <div class="chat-wrapper">
 
-    <!-- Sidebar (Contacts) -->
+    <!-- Sidebar -->
     <div class="chat-sidebar">
       <div class="sidebar-header">
-        <h2>Messages</h2>
-        <div class="sidebar-actions">
-          <button class="icon-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-          <button class="icon-btn"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-        </div>
-      </div>
-
-      <div class="search-bar">
-        <i class="fa-solid fa-search"></i>
-        <input type="text" placeholder="Search or start new chat">
+        <h3><i class="fa-solid fa-users me-2"></i>Contacts</h3>
       </div>
 
       <div class="contact-list">
-        <div *ngFor="let contact of contacts" 
-             class="contact-item" 
-             [class.active]="activeContact.id === contact.id"
+        <div class="contact-item"
+             *ngFor="let contact of chatService.contacts()"
+             [class.active]="chatService.selectedContact()?.email === contact.email"
              (click)="selectContact(contact)">
-          
-          <div class="avatar-wrapper">
-            <img [src]="contact.avatar" alt="">
-            <div class="status-indicator" [class.online]="contact.online"></div>
+          <div class="avatar">
+            <img [src]="contact.fullName
+              ? 'https://ui-avatars.com/api/?name=' + contact.fullName + '&background=0a3d20&color=fff&bold=true&size=80'
+              : 'https://ui-avatars.com/api/?name=Guest&background=0a3d20&color=fff&bold=true&size=80'"
+                 class="drawer-avatar" alt="Profile">
           </div>
-
-          <div class="contact-info">
-            <div class="contact-top">
-              <span class="contact-name">{{ contact.name }}</span>
-              <span class="time-meta" *ngIf="contact.messages.length > 0">
-                {{ contact.messages[contact.messages.length - 1].time }}
-              </span>
-            </div>
-            <div class="contact-preview" *ngIf="contact.messages.length > 0">
-              <span *ngIf="contact.messages[contact.messages.length - 1].sender === 'me'"><i class="fa-solid fa-check-double text-primary me-1"></i></span>
-              {{ contact.messages[contact.messages.length - 1].text }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Chat Area -->
-    <div class="chat-main" *ngIf="activeContact">
-      
-      <!-- Chat Header -->
-      <div class="chat-header">
-        <div class="header-contact-info">
-          <img [src]="activeContact.avatar" class="header-avatar" alt="">
           <div>
-            <h3 class="header-name">{{ activeContact.name }}</h3>
-            <span class="header-status">{{ activeContact.online ? 'Online' : 'Offline' }}</span>
+            <div class="contact-name">{{ contact.fullName }}</div>
+            <div class="contact-role">{{ contact.role }}</div>
           </div>
-        </div>
-        <div class="header-actions">
-          <button class="icon-btn"><i class="fa-solid fa-video"></i></button>
-          <button class="icon-btn"><i class="fa-solid fa-phone"></i></button>
-          <div class="divider"></div>
-          <button class="icon-btn"><i class="fa-solid fa-search"></i></button>
         </div>
       </div>
+    </div>
 
-      <!-- Chat Messages Workspace -->
-      <div class="chat-messages-area" #chatScroll>
-        <!-- WhatsApp style background overlay -->
-        <div class="chat-bg-pattern"></div>
+    <!-- Chat Area -->
+    <div class="chat-main" *ngIf="chatService.selectedContact(); else noContact">
 
-        <div class="message-wrapper anim-fade-up" 
-             *ngFor="let msg of activeContact.messages"
-             [ngClass]="msg.sender === 'me' ? 'msg-sent' : 'msg-received'">
-          
-          <div class="message-bubble">
-            <p>{{ msg.text }}</p>
-            <span class="message-time">
-              {{ msg.time }}
-              <i *ngIf="msg.sender === 'me'" class="fa-solid fa-check-double ms-1"></i>
-            </span>
-          </div>
+      <!-- Header -->
+      <header class="chat-header">
+        <div class="header-name">
+          <img [src]="chatService.selectedContact()?.fullName
+            ? 'https://ui-avatars.com/api/?name=' + chatService.selectedContact()?.fullName + '&background=0a3d20&color=fff&bold=true&size=80'
+            : 'https://ui-avatars.com/api/?name=Guest&background=0a3d20&color=fff&bold=true&size=80'"
+               class="drawer-avatar" alt="Profile">
+          {{ chatService.selectedContact()?.fullName }}
         </div>
+        <div style="font-size:0.78rem;color:#16a34a;font-weight:700;display:flex;align-items:center;gap:6px">
+          <span style="width:7px;height:7px;background:#4ade80;border-radius:50%;display:inline-block"></span>
+          {{ chatService.selectedContact()?.role | titlecase }}
+        </div>
+      </header>
 
-        <!-- Typing Indicator -->
-        <div class="message-wrapper msg-received anim-fade-up" *ngIf="activeContact.isTyping">
-          <div class="message-bubble typing-bubble">
-            <div class="typing-indicator">
-              <span></span><span></span><span></span>
+      <!-- Messages -->
+      <div class="chat-messages-area" #chatScroll>
+        <ng-container *ngIf="chatService.messages().length > 0; else emp">
+          <div class="messages-wrapper">
+            <div class="message-wrapper"
+                 *ngFor="let msg of chatService.messages()"
+                 [ngClass]="msg.senderEmail === currentUserEmail ? 'msg-sent' : 'msg-received'">
+              <div class="message-bubble">
+                <p>{{ msg.content }}</p>
+              </div>
             </div>
           </div>
+        </ng-container>
+
+        <ng-template #emp>
+          <div class="empty-chat">
+            <div class="emoji-bounce">💬</div>
+            <h1 class="genz-title">Start a Conversation</h1>
+            <p class="genz-sub">Say hello and grow your farming network 🌾</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Input -->
+      <div class="chat-input-wrapper">
+        <div class="input-container">
+          <input type="text" class="ai-input" placeholder="Type a message..."
+                 [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" id="chat-msg-input">
+          <button (click)="sendMessage()" [class.active]="newMessage.trim().length > 0" id="chat-send-btn">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
         </div>
-
       </div>
-
-      <!-- Message Input -->
-      <div class="chat-input-area">
-        <button class="icon-btn action-btn"><i class="fa-regular fa-face-smile"></i></button>
-        <button class="icon-btn action-btn"><i class="fa-solid fa-paperclip"></i></button>
-        
-        <input type="text" 
-               class="message-input" 
-               placeholder="Type a message..." 
-               [(ngModel)]="newMessage" 
-               (keyup.enter)="sendMessage()">
-        
-        <button class="icon-btn text-primary" *ngIf="!newMessage"><i class="fa-solid fa-microphone"></i></button>
-        <button class="send-btn" *ngIf="newMessage" (click)="sendMessage()">
-          <i class="fa-solid fa-paper-plane"></i>
-        </button>
-      </div>
-
     </div>
+
+    <!-- No Contact Selected -->
+    <ng-template #noContact>
+      <div class="no-contact-selected">
+        <i class="fa-regular fa-comments"></i>
+        <h2>Select a contact to start chatting</h2>
+      </div>
+    </ng-template>
 
   </div>
 </div>

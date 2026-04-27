@@ -1,17 +1,16 @@
 <div class="orders-page mesh-bg">
 
-  <!-- ── Toast Notification ── -->
-  <div class="toast-notification" [class.show]="showToast">{{ toastMessage }}</div>
+
 
   <!-- Hero -->
   <div class="orders-hero">
     <div class="orders-hero-content anim-fade-up">
       <div class="section-label">History</div>
       <h1 class="section-title">Purchase <span>History</span></h1>
-      <p class="hero-sub" *ngIf="orders.length > 0">
-        {{ orders.length }} order{{ orders.length > 1 ? 's' : '' }} placed
+      <p class="hero-sub" *ngIf="orders().length > 0">
+        {{ orders().length }} order{{ orders().length > 1 ? 's' : '' }} placed
       </p>
-      <p class="hero-sub" *ngIf="orders.length === 0">
+      <p class="hero-sub" *ngIf="orders().length === 0">
         Your purchase history will appear here once you place your first order.
       </p>
     </div>
@@ -20,7 +19,7 @@
   <div class="orders-container">
 
     <!-- Empty -->
-    <div *ngIf="orders.length === 0" class="cart-empty anim-fade-in">
+    <div *ngIf="orders().length === 0" class="cart-empty anim-fade-in">
       <div class="empty-icon-wrap">
         <i class="fa-solid fa-receipt"></i>
         <div class="empty-ring"></div>
@@ -33,28 +32,12 @@
       </a>
     </div>
 
-    <!-- Filter Tabs -->
-    <div *ngIf="orders.length > 0" class="orders-tabs anim-fade-up">
-      <button class="orders-tab" [class.active]="activeFilter === 'All'" (click)="setFilter('All')">
-        All Orders <span class="tab-count">{{ orders.length }}</span>
-      </button>
-      <button class="orders-tab" [class.active]="activeFilter === 'Delivered'" (click)="setFilter('Delivered')">
-        Delivered
-      </button>
-      <button class="orders-tab" [class.active]="activeFilter === 'Processing'" (click)="setFilter('Processing')">
-        Processing
-      </button>
-      <button class="orders-tab" [class.active]="activeFilter === 'Shipped'" (click)="setFilter('Shipped')">
-        Shipped
-      </button>
-    </div>
-
     <!-- Order List -->
-    <div *ngIf="filteredOrders.length > 0" class="orders-list anim-fade-up">
-      <div class="order-card" *ngFor="let order of filteredOrders">
+    <div *ngIf="filteredOrders.length > 0" class="row d-flex justify-content-center">
+      <div class="order-card col-sm-5  m-2" *ngFor="let order of filteredOrders">
 
         <!-- Order Header -->
-        <div class="order-header">
+        <div class="order-header ">
           <div class="order-id-row">
             <div class="order-icon"><i class="fa-solid fa-receipt"></i></div>
             <div>
@@ -103,7 +86,7 @@
     </div>
 
     <!-- No results for filter -->
-    <div *ngIf="filteredOrders.length === 0 && orders.length > 0" class="cart-empty anim-fade-in">
+    <div *ngIf="filteredOrders.length === 0 && orders().length > 0" class="cart-empty anim-fade-in">
       <div class="empty-icon-wrap">
         <i class="fa-solid fa-filter"></i>
         <div class="empty-ring"></div>

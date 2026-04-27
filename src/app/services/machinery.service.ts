@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Machinery } from '../models/machinery.model';
 
-const API_BASE = 'http://localhost:5009/api/machinery';
+const API_BASE = 'https://backend-farmease-1.onrender.com/api/machinery';
 
 @Injectable({ providedIn: 'root' })
 export class MachineryService {

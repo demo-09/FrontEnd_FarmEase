@@ -1,0 +1,8 @@
+[build]
+  command = "npm run build"
+  publish = "dist/my-angular-app"
+
+# 🚫 Force disable Angular runtime plugin
+[[plugins]]
+  package = "@netlify/angular-runtime"
+  enabled = false

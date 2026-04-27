@@ -19,7 +19,7 @@ export interface WishlistItem {
 @Injectable({ providedIn: 'root' })
 export class WishlistService {
   private http = inject(HttpClient);
-  private backendUrl = 'http://localhost:5009/api/wishlist';
+  private backendUrl = 'https://backend-farmease-1.onrender.com/api/wishlist';
 
   private _items = signal<WishlistItem[]>([]);
   readonly items = this._items.asReadonly();
@@ -69,6 +69,13 @@ export class WishlistService {
       next: () => this._items.update(items => items.filter(i => i.id !== id)),
       error: (err) => console.error('Failed to remove from wishlist', err)
     });
+  }
+
+  removeByProductId(productId: number) {
+    const item = this._items().find(i => i.productId === productId || (i as any).id === productId);
+    if (item) {
+      this.remove(item.id);
+    }
   }
 
   isInWishlist(productId: number): boolean {

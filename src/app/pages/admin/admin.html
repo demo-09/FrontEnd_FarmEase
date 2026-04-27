@@ -1,36 +1,51 @@
-<div class="admin-page">
+<!-- Admin Dashboard — Default Premium Glassmorphism (Green/White) -->
+<div class="admin-page mesh-bg">
 
   <!-- Sidebar -->
   <aside class="admin-sidebar">
     <div class="sidebar-user">
-      <img [src]="'https://ui-avatars.com/api/?name=' + (currentAdminName || 'Admin') + '&background=16a34a&color=fff&bold=true&size=60'"
-           class="sidebar-avatar" [alt]="currentAdminName">
+      <img [src]="'https://ui-avatars.com/api/?name=' + (currentAdminName() || 'Admin') + '&background=16a34a&color=fff&bold=true&size=60'"
+           class="sidebar-avatar" [alt]="currentAdminName()">
       <div>
-        <div class="sidebar-uname">{{ currentAdminName || 'Admin' }}</div>
+        <div class="sidebar-uname">{{ currentAdminName() || 'Admin' }}</div>
         <div class="sidebar-urole"><span class="glow-dot"></span> Administrator</div>
       </div>
     </div>
-
+    
     <nav class="sidebar-nav">
-      <div class="sidebar-nav-label">Navigation</div>
-      <button class="sidebar-btn" [class.active]="activePage === 'dashboard'" (click)="setPage('dashboard')">
+      <div class="sidebar-nav-label text-secondary">Navigation</div>
+      
+      <button class="sidebar-btn" [class.active]="activePage() === 'dashboard'" (click)="setPage('dashboard')">
         <div class="sbtn-icon"><i class="fa-solid fa-chart-line"></i></div>
-        Dashboard
+        Dashboard Overview
       </button>
-      <button class="sidebar-btn" [class.active]="activePage === 'farmers'" (click)="setPage('farmers')">
+
+      <button class="sidebar-btn" [class.active]="activePage() === 'inbox'" (click)="setPage('inbox')">
+        <div class="sbtn-icon"><i class="fa-solid fa-inbox"></i></div>
+        Global Inbox
+        <span class="sidebar-count" *ngIf="inbox.pendingCount > 0">{{ inbox.pendingCount }}</span>
+      </button>
+
+      <button class="sidebar-btn" [class.active]="activePage() === 'farmers'" (click)="setPage('farmers')">
         <div class="sbtn-icon"><i class="fa-solid fa-wheat-awn"></i></div>
-        Farmers
-        <span class="sidebar-count">{{ farmers.length }}</span>
+        Registered Farmers <span class="sidebar-count">{{ farmers().length }}</span>
       </button>
-      <button class="sidebar-btn" [class.active]="activePage === 'customers'" (click)="setPage('customers')">
+
+      <button class="sidebar-btn" [class.active]="activePage() === 'customers'" (click)="setPage('customers')">
         <div class="sbtn-icon"><i class="fa-solid fa-users"></i></div>
-        Customers
-        <span class="sidebar-count">{{ customers.length }}</span>
+        Customer Directory <span class="sidebar-count">{{ customers().length }}</span>
       </button>
-      <button class="sidebar-btn" [class.active]="activePage === 'machinery'" (click)="setPage('machinery')">
-        <div class="sbtn-icon"><i class="fa-solid fa-tractor"></i></div>
-        Machinery
+
+      <button class="sidebar-btn" [class.active]="activePage() === 'machinery'" (click)="setPage('machinery')">
+        <div class="sbtn-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+        Global Inventory
       </button>
+
+      <button class="sidebar-btn" [class.active]="activePage() === 'AddProduct'" (click)="setPage('AddProduct')">
+        <div class="sbtn-icon"><i class="fa-solid fa-square-plus"></i></div>
+        Add New Product
+      </button>
+
       <a routerLink="/Chat" class="sidebar-btn" style="text-decoration: none;">
         <div class="sbtn-icon"><i class="fa-brands fa-whatsapp"></i></div>
         Support Inbox
@@ -39,258 +54,427 @@
 
     <div class="sidebar-footer">
       <a routerLink="/HomePage" class="sidebar-back-btn">
-        <i class="fa-solid fa-arrow-left me-2"></i>Back to App
+        <i class="fa-solid fa-arrow-left me-2"></i> Exit Admin Mode
       </a>
     </div>
   </aside>
 
-  <!-- Main Content -->
+  <!-- Main Content Space -->
   <main class="admin-main">
 
-    <!-- ── Dashboard ── -->
-    <section *ngIf="activePage === 'dashboard'" class="anim-fade-up">
+    <!-- ==================== DASHBOARD / REAL STATS ==================== -->
+    <section *ngIf="activePage() === 'dashboard'" class="anim-fade-up">
+      
+      <!-- Top Row: Welcome -->
       <div class="admin-header">
         <div>
-          <div class="section-label">Overview</div>
+          <div class="section-label">FarmEase Systems</div>
           <h1 class="admin-title">Operational Dashboard</h1>
         </div>
-        <div class="header-date">{{ currentDate }}</div>
+        <div class="header-date">
+          <i class="fa-regular fa-calendar-check me-1"></i> {{ currentDate() }}
+        </div>
       </div>
 
+      <!-- KPI Glass Cards (Real Data) -->
       <div class="kpi-grid">
-        <div class="kpi-card kpi-green" (click)="setPage('farmers')" style="cursor:pointer">
-          <div class="kpi-icon"><i class="fa-solid fa-wheat-awn"></i></div>
-          <div class="kpi-num">{{ farmers.length }}</div>
-          <div class="kpi-label">Total Farmers</div>
-          <div class="kpi-trend"><i class="fa-solid fa-arrow-trend-up"></i> Active users</div>
-        </div>
-        <div class="kpi-card kpi-blue" (click)="setPage('customers')" style="cursor:pointer">
-          <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
-          <div class="kpi-num">{{ customers.length }}</div>
-          <div class="kpi-label">Total Customers</div>
-          <div class="kpi-trend"><i class="fa-solid fa-arrow-trend-up"></i> Active buyers</div>
-        </div>
-        <div class="kpi-card kpi-amber">
-          <div class="kpi-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
-          <div class="kpi-num">₹{{ getTotalValue() | number: '1.0-0' }}</div>
-          <div class="kpi-label">Fleet Value</div>
-          <div class="kpi-trend"><i class="fa-solid fa-boxes-stacked"></i> {{ machineries.length }} items</div>
-        </div>
-        <div class="kpi-card kpi-purple">
+        <div class="kpi-card green-card" (click)="setPage('farmers')">
           <div class="kpi-icon"><i class="fa-solid fa-tractor"></i></div>
-          <div class="kpi-num">{{ machineries.length }}</div>
-          <div class="kpi-label">Machinery Items</div>
-          <div class="kpi-trend"><i class="fa-solid fa-warehouse"></i> In catalog</div>
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="admin-section-title">Quick Actions</div>
-      <div class="quick-actions">
-        <button class="quick-btn" (click)="setPage('machinery')">
-          <i class="fa-solid fa-plus"></i> Add Machinery
-        </button>
-        <button class="quick-btn" (click)="setPage('farmers')">
-          <i class="fa-solid fa-wheat-awn"></i> View Farmers
-        </button>
-        <button class="quick-btn" routerLink="/Chat">
-          <i class="fa-brands fa-whatsapp"></i> Support Inbox
-        </button>
-      </div>
-    </section>
-
-    <!-- ── Users (Farmers / Customers) ── -->
-    <section *ngIf="activePage === 'farmers' || activePage === 'customers'" class="anim-fade-up">
-      <div class="admin-header">
-        <div>
-          <div class="section-label">Directory</div>
-          <h1 class="admin-title">{{ activePage | titlecase }} Directory</h1>
-        </div>
-        <span class="user-count-badge">{{ (activePage === 'farmers' ? farmers : customers).length }} total</span>
-      </div>
-
-      <div class="user-grid">
-        <div class="user-card" *ngFor="let user of (activePage === 'farmers' ? farmers : customers)">
-          <button class="user-delete-btn" (click)="handleUserDelete(user.email)" title="Remove">
-            <i class="fa-solid fa-trash-can"></i>
-          </button>
-          <img [src]="user.avatar || 'https://ui-avatars.com/api/?name=' + user.fullName + '&background=1f2937&color=4b5563&bold=true'"
-               class="user-avatar" [alt]="user.fullName">
-          <div class="user-name">{{ user.fullName }}</div>
-          <div class="user-email">{{ user.email }}</div>
-          <div class="user-phone">{{ user.phone || 'No phone' }}</div>
-          <div class="badge-role" [class.badge-green]="user.role === 'farmer'">{{ user.role }}</div>
-        </div>
-      </div>
-
-      <div *ngIf="(activePage === 'farmers' ? farmers : customers).length === 0" class="empty-state">
-        <i class="fa-solid fa-users"></i>
-        <p>No {{ activePage }} found</p>
-      </div>
-
-      <!-- Floating Action Button to Add User -->
-      <button class="fab-add-user" (click)="openAddUserModal()" title="Add User">
-        <i class="fa-solid fa-plus"></i>
-      </button>
-
-      <!-- Add User Modal -->
-      <div class="user-modal-backdrop" *ngIf="isAddingUser" (click)="closeAddUserModal()">
-        <div class="user-modal-content anim-slide-right" (click)="$event.stopPropagation()">
-          <div class="form-panel-header">
-            <i class="fa-solid fa-user-plus"></i> Add New {{ newUser.role | titlecase }}
-          </div>
-          
-          <div class="form-floating-dark">
-            <label>Full Name *</label>
-            <input type="text" [(ngModel)]="newUser.fullName" placeholder="e.g. Ramesh Patel">
-          </div>
-          
-          <div class="form-floating-dark">
-            <label>Email Address *</label>
-            <input type="email" [(ngModel)]="newUser.email" placeholder="example@farmease.com">
-          </div>
-          
-          <div class="form-row-2-admin">
-            <div class="form-floating-dark">
-              <label>Temporary Password *</label>
-              <input type="password" [(ngModel)]="newUser.password" placeholder="Min 6 characters">
-            </div>
-            <div class="form-floating-dark">
-              <label>Role</label>
-              <select [(ngModel)]="newUser.role">
-                <option value="farmer">Farmer</option>
-                <option value="customer">Customer</option>
-              </select>
-            </div>
-          </div>
-          
-          <div class="form-floating-dark">
-            <label>Phone Number</label>
-            <input type="text" [(ngModel)]="newUser.phone" placeholder="+91...">
-          </div>
-
-          <div class="form-actions mt-4">
-            <button class="btn-glow flex-1" (click)="submitNewUser()">
-              <i class="fa-solid fa-plus"></i> Create Account
-            </button>
-            <button class="btn-glass" (click)="closeAddUserModal()">Cancel</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── Machinery ── -->
-    <section *ngIf="activePage === 'machinery'" class="anim-fade-up">
-      <div class="admin-header">
-        <div>
-          <div class="section-label">Inventory Control</div>
-          <h1 class="admin-title">Machinery Catalog</h1>
-        </div>
-      </div>
-
-      <div class="machinery-layout">
-
-        <!-- Add/Edit Form -->
-        <div class="machinery-form-panel">
-          <div class="form-panel-header">
-            <i class="fa-solid" [ngClass]="isEditing ? 'fa-pen-to-square' : 'fa-plus-circle'"></i>
-            {{ isEditing ? 'Edit Equipment' : 'Add Equipment' }}
-          </div>
-
-          <div class="form-floating-dark">
-            <label>Item Name</label>
-            <input type="text" [(ngModel)]="newMachinery.name" placeholder="e.g. Mini Tractor">
-          </div>
-          <div class="form-row-2-admin">
-            <div class="form-floating-dark">
-              <label>Price (₹)</label>
-              <input type="number" [(ngModel)]="newMachinery.price" placeholder="Price">
-            </div>
-            <div class="form-floating-dark">
-              <label>Quantity</label>
-              <input type="number" [(ngModel)]="newMachinery.quantity" placeholder="Qty">
-            </div>
-          </div>
-          <div class="form-floating-dark">
-            <label>Category</label>
-            <select [(ngModel)]="newMachinery.category">
-              <option value="">Select category...</option>
-              <option value="Tractor">Tractor</option>
-              <option value="Tools">Tools</option>
-              <option value="Irrigation">Irrigation</option>
-              <option value="Seeds">Seeds</option>
-              <option value="Fertilizer">Fertilizer</option>
-            </select>
-          </div>
-          <div class="form-floating-dark">
-            <label>Image URL</label>
-            <input type="text" [(ngModel)]="newMachinery.image" placeholder="https://...">
-          </div>
-
-          <div class="form-actions">
-            <button class="btn-glow flex-1" (click)="handleItemAddOrUpdate()">
-              <i class="fa-solid" [ngClass]="isEditing ? 'fa-floppy-disk' : 'fa-plus'"></i>
-              {{ isEditing ? 'Update Item' : 'Add to Catalog' }}
-            </button>
-            <button *ngIf="isEditing" class="btn-glass" (click)="resetForm()">Cancel</button>
+          <div class="kpi-meta">
+            <div class="kpi-num">{{ farmers().length }}</div>
+            <div class="kpi-label">Total Farmers</div>
+            <div class="kpi-trend text-success"><i class="fa-solid fa-arrow-up"></i> Active Access</div>
           </div>
         </div>
 
-        <!-- Table -->
-        <div class="machinery-table-panel">
-          <div class="mini-kpis">
-            <div class="mini-kpi">
-              <div class="mini-kpi-n">₹{{ getTotalValue() | number: '1.0-0' }}</div>
-              <div class="mini-kpi-l">Warehouse Value</div>
-            </div>
-            <div class="mini-kpi">
-              <div class="mini-kpi-n">{{ machineries.length }}</div>
-              <div class="mini-kpi-l">Items Tracked</div>
+        <div class="kpi-card blue-card" (click)="setPage('customers')">
+          <div class="kpi-icon"><i class="fa-solid fa-users-line"></i></div>
+          <div class="kpi-meta">
+            <div class="kpi-num">{{ customers().length }}</div>
+            <div class="kpi-label">Total Customers</div>
+            <div class="kpi-trend text-primary"><i class="fa-solid fa-check-circle"></i> Onboarded</div>
+          </div>
+        </div>
+
+        <div class="kpi-card amber-card" (click)="setPage('machinery')">
+          <div class="kpi-icon"><i class="fa-solid fa-warehouse"></i></div>
+          <div class="kpi-meta">
+            <div class="kpi-num">{{ inventoryItems().length }}</div>
+            <div class="kpi-label">Active Products</div>
+            <div class="kpi-trend text-warning"><i class="fa-solid fa-boxes-packing"></i> In Catalog</div>
+          </div>
+        </div>
+
+        <div class="kpi-card red-card " (click)="setPage('machinery')">
+          <div class="kpi-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+          <div class="kpi-meta">
+            <div class="kpi-num">₹{{ totalValue() | number:'1.0-0' }}</div>
+            <div class="kpi-label">Inventory Valuation</div>
+            <div class="kpi-trend text-danger"><i class="fa-solid fa-chart-line"></i> Total Capital</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced Analytics & Smart Panels -->
+      <div class="smart-dashboard-grid mt-4">
+        
+        <!-- Heatmap Analytics Mock -->
+        <div class="dash-panel glass-panel">
+          <div class="panel-header">
+            <h4><i class="fa-solid fa-map-location-dot text-primary"></i> Live Engagement Heatmap</h4>
+            <span class="badge bg-light text-dark border">Real-Time</span>
+          </div>
+          <div class="heatmap-mock">
+            <div class="heat-point hp-1"></div>
+            <div class="heat-point hp-2"></div>
+            <div class="heat-point hp-3"></div>
+            <div class="heat-point hp-4"></div>
+            <p class="heatmap-footer">High interaction density clustered around 'Market Predictor' and 'Equipment Rental'.</p>
+          </div>
+        </div>
+
+        <!-- AI Insights Panel -->
+        <div class="dash-panel glass-panel">
+          <div class="panel-header">
+            <h4><i class="fa-solid fa-brain text-accent"></i> FarmEase AI Insights</h4>
+          </div>
+          <div class="insights-list">
+            <div class="insight-item" *ngFor="let insight of aiInsights">
+              <div class="insight-icon"><i class="fa-solid {{ insight.icon }} {{ insight.color }}"></i></div>
+              <div class="insight-body">
+                <h6>{{ insight.title }}</h6>
+                <p>{{ insight.desc }}</p>
+              </div>
             </div>
           </div>
+        </div>
 
-          <div class="table-panel">
-            <table class="table-dark-custom" *ngIf="machineries.length > 0">
+        <!-- Fraud Detection / Security Alerts -->
+        <div class="dash-panel glass-panel fraud-panel span-full">
+          <div class="panel-header">
+            <h4><i class="fa-solid fa-shield-halved text-danger"></i> Automated Security Guard (OTP & Auth)</h4>
+            <button class="btn btn-sm btn-outline-danger shadow-none">View All Logs</button>
+          </div>
+          <div class="table-responsive mt-3">
+            <table class="table table-borderless table-hover align-middle smart-table">
               <thead>
                 <tr>
-                  <th>Item</th>
-                  <th>Category</th>
-                  <th class="text-center">Stock</th>
-                  <th>Value</th>
-                  <th class="text-end">Actions</th>
+                  <th>Alert ID</th>
+                  <th>User / Entity</th>
+                  <th>Flagged Issue</th>
+                  <th>Severity</th>
+                  <th>Time</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of machineries">
+                <tr *ngIf="fraudAlerts.length === 0">
+                  <td colspan="6" class="text-center text-muted py-4">No security threats detected. Everything is secure.</td>
+                </tr>
+                <tr *ngFor="let alert of fraudAlerts">
+                  <td><strong>{{ alert.id }}</strong></td>
+                  <td>{{ alert.user }}</td>
+                  <td><span class="text-secondary"><i class="fa-solid fa-triangle-exclamation text-warning me-1"></i> {{ alert.issue }}</span></td>
                   <td>
-                    <div class="item-cell">
-                      <img [src]="item.image || 'https://via.placeholder.com/40'" class="item-thumb" alt="">
-                      <strong>{{ item.name }}</strong>
-                    </div>
+                    <span class="badge" [ngClass]="{'bg-danger text-white': alert.severity === 'high', 'bg-warning text-dark': alert.severity === 'medium'}">
+                      {{ alert.severity | uppercase }}
+                    </span>
                   </td>
-                  <td><span class="badge-green">{{ item.category }}</span></td>
-                  <td class="text-center fw-bold">{{ item.quantity }}</td>
+                  <td><small class="text-muted">{{ alert.time }}</small></td>
                   <td>
-                    <div class="fw-bold" style="color: #f0fdf4;">₹{{ (item.quantity * item.price) | number }}</div>
-                    <div class="text-muted" style="font-size: 0.78rem;">₹{{ item.price | number }}/unit</div>
+                    <button class="btn btn-sm btn-danger me-2">Block</button>
+                    <button class="btn btn-sm btn-light border">Dismiss</button>
                   </td>
-                  <td class="text-end">
-                    <div class="table-actions">
-                      <button class="tbl-btn edit" (click)="editItem(item)"><i class="fa-solid fa-pen"></i></button>
-                      <button class="tbl-btn del" (click)="handleItemRemove(item.id)"><i class="fa-solid fa-trash-can"></i></button>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-section-title mt-5">Quick Management Links</div>
+      <div class="quick-actions-bar">
+        <button class="btn-glass green-glass" (click)="setPage('AddProduct')">
+          <i class="fa-solid fa-plus"></i> Add Product
+        </button>
+        <button class="btn-glass outline" (click)="setPage('farmers')">
+          <i class="fa-solid fa-wheat-awn"></i> View Farmers
+        </button>
+        <button class="btn-glass outline" routerLink="/Chat">
+          <i class="fa-brands fa-whatsapp"></i> Check Support Messages
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ==================== FARMERS / CUSTOMERS LIST ==================== -->
+    <section *ngIf="activePage() === 'farmers' || activePage() === 'customers'" class="anim-fade-up">
+      <div class="admin-header">
+        <div>
+          <div class="section-label">User Management</div>
+          <h1 class="admin-title">{{ activePage() | titlecase }} Directory</h1>
+          <span class="user-count-badge">{{ (activePage() === 'farmers' ? farmers() : customers()).length }} Total</span>
+        </div>
+        <button class="btn-glass green-glass" (click)="openAddUserModal()">
+          <i class="fa-solid fa-user-plus"></i> Add New {{ activePage() === 'farmers' ? 'Farmer' : 'Customer' }}
+        </button>
+      </div>
+
+      <div class="user-grid">
+        <div class="user-card" *ngFor="let user of (activePage() === 'farmers' ? farmers() : customers())">
+          <button class="user-delete-btn" (click)="handleUserDelete(user.email)" title="Remove Record">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+          
+          <img [src]="user.avatar" class="user-avatar" [alt]="user.fullName">
+          <div class="user-name">{{ user.fullName }}</div>
+          <div class="user-email">{{ user.email }}</div>
+          <div class="user-phone"><i class="fa-solid fa-phone me-1"></i> {{ user.phone || 'Not provided' }}</div>
+          <div class="badge-role" [class.green]="user.role === 'farmer'">{{ user.role | uppercase }}</div>
+        </div>
+      </div>
+
+      <div *ngIf="(activePage() === 'farmers' ? farmers() : customers()).length === 0" class="empty-state-glass">
+        <i class="fa-solid fa-address-book"></i>
+        <p>No {{ activePage() }} records found.</p>
+      </div>
+    </section>
+
+    <!-- ==================== INVENTORY / CATALOG ==================== -->
+    <section *ngIf="activePage() === 'machinery'" class="anim-fade-up">
+      <div class="admin-header">
+        <div>
+          <div class="section-label">Product Database</div>
+          <h1 class="admin-title">Global Inventory</h1>
+        </div>
+      </div>
+
+      <div class="mini-kpi-bar mb-4">
+        <div class="mini-kpi">
+          <div class="num text-success">₹{{ totalValue() | number:'1.0-0' }}</div>
+          <div class="lbl">Asset Value</div>
+        </div>
+        <div class="mini-kpi">
+          <div class="num text-primary">{{ inventoryItems().length }}</div>
+          <div class="lbl">Products Uploaded</div>
+        </div>
+      </div>
+
+      <div class="inventory-list">
+        <div class="inventory-card-glass" *ngFor="let item of inventoryItems()">
+          <div class="inv-img-wrap">
+            <img [src]="item.image || 'https://via.placeholder.com/150/f0fdf4/16a34a?text=No+Image'" alt="{{ item.name }}">
+          </div>
+          <div class="inv-content">
+            <div class="inv-header-row">
+              <h3 class="inv-title">{{ item.name }}</h3>
+              <div class="inv-actions">
+                <button class="icon-btn edit" (click)="editItem(item); setPage('AddProduct')"><i class="fa-solid fa-pen"></i></button>
+                <button class="icon-btn del" (click)="handleItemRemove(item)"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+            </div>
+            
+            <div class="inv-category">{{ item.category }}</div>
+            <p class="inv-desc">{{ item.description || 'No description available for this item.' }}</p>
+
+            <div class="inv-stats-grid">
+              <div class="stat-box">
+                <span class="lbl">List Price</span>
+                <span class="val text-success">₹{{ item.price | number }}</span>
+              </div>
+              <div class="stat-box">
+                <span class="lbl">In Stock</span>
+                <span class="val">{{ item.quantity }}</span>
+              </div>
+              <div class="stat-box">
+                <span class="lbl">Condition</span>
+                <span class="val">{{ item.condition || 'N/A' }}</span>
+              </div>
+              <div class="stat-box">
+                <span class="lbl">Total Value</span>
+                <span class="val">₹{{ (item.price * item.quantity) | number }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="inventoryItems().length === 0" class="empty-state-glass">
+        <i class="fa-solid fa-box-open"></i>
+        <p>Your inventory catalog is completely empty.</p>
+      </div>
+    </section>
+
+    <!-- ==================== ADD PRODUCT FORM ==================== -->
+    <section *ngIf="activePage() === 'AddProduct'" class="anim-fade-up">
+      <div class="form-panel-glass">
+        <h2 class="form-title mb-4">
+          <i class="fa-solid text-success" [ngClass]="isEditing() ? 'fa-pen-to-square' : 'fa-plus-circle'"></i> 
+          {{ isEditing() ? 'Modify Existing Product' : 'Add New Product to Inventory' }}
+        </h2>
+
+        <div class="form-grid">
+          <div class="form-group col-span-2">
+            <label>Product Name <span class="text-danger">*</span></label>
+            <input type="text" [(ngModel)]="newItem.name" placeholder="E.g. Premium Wheat Seeds 50kg">
+          </div>
+
+          <div class="form-group">
+            <label>Price (₹) <span class="text-danger">*</span></label>
+            <input type="number" [(ngModel)]="newItem.price" placeholder="4500">
+          </div>
+
+          <div class="form-group">
+            <label>Initial Quantity <span class="text-danger">*</span></label>
+            <input type="number" [(ngModel)]="newItem.quantity" placeholder="10">
+          </div>
+
+          <div class="form-group col-span-2">
+            <label>Category <span class="text-danger">*</span></label>
+            <select [(ngModel)]="newItem.category">
+              <option value="">Select Category</option>
+              <option value="Tractor">Tractor</option>
+              <option value="Harvester">Harvester</option>
+              <option value="Tools">Tools & Equipment</option>
+              <option value="Irrigation">Irrigation</option>
+              <option value="Seeds">Seeds</option>
+              <option value="Fertilizer">Fertilizer & Pesticides</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group col-span-2">
+            <label>Image URL</label>
+            <input type="text" [(ngModel)]="newItem.image" placeholder="https://example.com/product-image.jpg">
+          </div>
+
+          <div class="form-group col-span-2">
+            <label>Product Description</label>
+            <textarea rows="4" [(ngModel)]="newItem.description" placeholder="Write a detailed description detailing specifications..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-footer mt-4">
+          <button class="btn-glass green-glass flex-1" (click)="handleItemAddOrUpdate(); setPage('machinery')">
+            <i class="fa-solid" [ngClass]="isEditing() ? 'fa-floppy-disk' : 'fa-upload'"></i> 
+            {{ isEditing() ? 'Save Changes' : 'Upload to Catalog' }}
+          </button>
+          <button *ngIf="isEditing()" class="btn-glass outline" (click)="resetForm()">Cancel Edit</button>
+        </div>
+      </div>
+    </section>
+
+      <!-- ================= INBOX ================= -->
+      <section *ngIf="activePage() === 'inbox'" class="anim-fade-up w-100">
+        <div class="admin-header">
+          <div>
+            <div class="section-label">Centralized Command</div>
+            <h2 class="admin-title">Global Request Inbox</h2>
+            <p class="text-muted mt-2">Manage all incoming farm rentals, bulk orders, and platform alerts.</p>
+          </div>
+        </div>
+
+        <div class="dash-panel glass-panel mt-4">
+          <div class="table-responsive">
+            <table class="table table-borderless table-hover align-middle smart-table w-100">
+              <thead>
+                <tr>
+                  <th>Req. ID</th>
+                  <th>Type</th>
+                  <th>Requester</th>
+                  <th>Details</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="inbox.messages().length === 0">
+                  <td colspan="7" class="text-center text-muted py-5">
+                    <i class="fa-solid fa-envelope-open fa-2x mb-2 d-block"></i>
+                    Inbox is completely clear.
+                  </td>
+                </tr>
+                <tr *ngFor="let msg of inbox.messages()">
+                  <td><strong>{{ msg.id }}</strong></td>
+                  <td>
+                    <span class="badge bg-light text-dark border">
+                      <i *ngIf="msg.type === 'rental'" class="fa-solid fa-tractor text-warning me-1"></i>
+                      <i *ngIf="msg.type === 'bulk_order'" class="fa-solid fa-boxes-stacked text-primary me-1"></i>
+                      <i *ngIf="msg.type === 'user_alert'" class="fa-solid fa-user-shield text-danger me-1"></i>
+                      <i *ngIf="msg.type === 'product_approval'" class="fa-solid fa-box text-success me-1"></i>
+                      {{ msg.type === 'bulk_order' ? 'BULK ORDER' : msg.type === 'user_alert' ? 'SECURITY ALERT' : msg.type === 'product_approval' ? 'PRODUCT APPROVAL' : 'RENTAL' }}
+                    </span>
+                  </td>
+                  <td>{{ msg.requester }}</td>
+                  <td style="max-width:300px;"><small class="text-secondary">{{ msg.details }}</small></td>
+                  <td><small class="text-muted">{{ msg.timestamp | date:'shortTime' }}</small></td>
+                  <td>
+                    <span class="badge" 
+                      [ngClass]="{
+                        'bg-warning text-dark': msg.status === 'pending',
+                        'bg-success text-white': msg.status === 'approved',
+                        'bg-danger text-white': msg.status === 'rejected'
+                      }">
+                      {{ msg.status | uppercase }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="d-flex gap-2" *ngIf="msg.status === 'pending'">
+                      <button class="btn btn-sm btn-success" (click)="approveRequest(msg.id)"><i class="fa-solid fa-check"></i></button>
+                      <button class="btn btn-sm btn-danger" (click)="rejectRequest(msg.id)"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                   </td>
                 </tr>
               </tbody>
             </table>
-            <div *ngIf="machineries.length === 0" class="empty-state">
-              <i class="fa-solid fa-box-open"></i>
-              <p>Catalog is empty — add your first item</p>
-            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
   </main>
+
+  <!-- ==================== USER MODAL (ADD FARMER/CUSTOMER) ==================== -->
+  <div class="modal-backdrop-glass" *ngIf="isAddingUser()" (click)="closeAddUserModal()">
+    <div class="modal-card-glass anim-scale-up" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="form-title"><i class="fa-solid fa-user-plus text-success me-2"></i> Register {{ newUser.role | titlecase }}</h3>
+      </div>
+
+      <form #userForm="ngForm" class="form-grid mt-4">
+        <div class="form-group col-span-2">
+          <label>Full Name <span class="text-danger">*</span></label>
+          <input type="text" name="fullName" [(ngModel)]="newUser.fullName" required placeholder="John Doe">
+        </div>
+        
+        <div class="form-group col-span-2">
+          <label>Email Address <span class="text-danger">*</span></label>
+          <input type="email" name="email" [(ngModel)]="newUser.email" required placeholder="john@example.com">
+        </div>
+
+        <div class="form-group col-span-2">
+          <label>Password <span class="text-danger">*</span></label>
+          <input type="password" name="password" [(ngModel)]="newUser.password" minlength="6" required placeholder="Minimum 6 characters">
+        </div>
+
+        <div class="form-group col-span-1">
+          <label>Phone Number</label>
+          <input type="text" name="phone" [(ngModel)]="newUser.phone" placeholder="+91 9876543210">
+        </div>
+
+        <div class="form-group col-span-1">
+          <label>Address / Geolocation</label>
+          <input type="text" name="address" [(ngModel)]="newUser.address" placeholder="Village, City">
+        </div>
+
+        <div class="form-footer col-span-2 mt-4">
+          <button class="btn-glass green-glass flex-1" [disabled]="!userForm.valid" (click)="submitNewUser()">
+            Register Account
+          </button>
+          <button type="button" class="btn-glass outline" (click)="closeAddUserModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </div>

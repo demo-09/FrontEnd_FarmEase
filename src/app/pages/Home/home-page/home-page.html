@@ -1,5 +1,496 @@
+<!-- ════════════════════════════════════════════
+   FARMEASE HOMEPAGE — 12 PREMIUM SECTIONS
+════════════════════════════════════════════ -->
+
+<!-- ①  HERO SECTION (animated, with particles + trust bar) -->
 <app-hero-section></app-hero-section>
+<hr />
+<!-- ②  USER ROLES — WHO ARE YOU? -->
+<section class="roles-section" id="roles">
+  <div class="container">
+
+    <div class="section-header text-center reveal">
+      <span class="section-label">🎯 Start Your Journey</span>
+      <h2 class="section-title">Who Are <span>You?</span></h2>
+      <p class="section-desc mx-auto" style="max-width:580px">
+        FarmEase is built for every role in the agricultural ecosystem. Pick your path and unlock a tailored experience.
+      </p>
+    </div>
+
+    <div class="roles-grid">
+
+      <!-- Farmer -->
+      <div class="role-card reveal" id="role-farmer">
+        <div class="role-card-inner">
+          <div class="role-front">
+            <div class="role-emoji">👨‍🌾</div>
+            <h3 class="role-title">Farmer</h3>
+            <p class="role-desc">Empower your harvest with direct market access and AI tools.</p>
+            <div class="role-cta-hint">Hover to explore →</div>
+          </div>
+          <div class="role-back">
+            <div class="role-back-title">Farmer Tools</div>
+            <ul class="role-features">
+              <li><i class="fa-solid fa-check-circle"></i> Add &amp; Manage Products</li>
+              <li><i class="fa-solid fa-check-circle"></i> Track Orders &amp; Inventory</li>
+              <li><i class="fa-solid fa-check-circle"></i> View Earnings Dashboard</li>
+              <li><i class="fa-solid fa-check-circle"></i> AI Crop Suggestions</li>
+              <li><i class="fa-solid fa-check-circle"></i> Weather Insights</li>
+            </ul>
+            <a routerLink="/Signup" class="role-btn text-black">Get Started →</a>
+          </div>
+        </div>
+        <div class="role-glow role-glow-green"></div>
+      </div>
+
+      <!-- Customer -->
+      <div class="role-card role-card-center reveal delay-2" id="role-customer">
+        <div class="role-card-inner">
+          <div class="role-front">
+            <div class="role-emoji">🛒</div>
+            <h3 class="role-title">Customer</h3>
+            <p class="role-desc">Shop farm-fresh produce directly from verified farmers.</p>
+            <div class="role-cta-hint">Hover to explore →</div>
+          </div>
+          <div class="role-back">
+            <div class="role-back-title">Customer Benefits</div>
+            <ul class="role-features">
+              <li><i class="fa-solid fa-check-circle"></i> Browse Fresh Products</li>
+              <li><i class="fa-solid fa-check-circle"></i> Wishlist &amp; Cart</li>
+              <li><i class="fa-solid fa-check-circle"></i> Live Order Tracking</li>
+              <li><i class="fa-solid fa-check-circle"></i> Reviews &amp; Ratings</li>
+              <li><i class="fa-solid fa-check-circle"></i> Personalized Picks</li>
+            </ul>
+            <a routerLink="/Signup" class="role-btn text-black">Shop Now →</a>
+          </div>
+        </div>
+        <div class="role-glow role-glow-center"></div>
+      </div>
+
+      <!-- Service Provider -->
+      <div class="role-card reveal delay-4" id="role-service">
+        <div class="role-card-inner">
+          <div class="role-front">
+            <div class="role-emoji">⚙️</div>
+            <h3 class="role-title">Service Provider</h3>
+            <p class="role-desc">Offer machinery, logistics, and consultancy to 10,000+ farmers.</p>
+            <div class="role-cta-hint">Hover to explore →</div>
+          </div>
+          <div class="role-back">
+            <div class="role-back-title">Provider Tools</div>
+            <ul class="role-features">
+              <li><i class="fa-solid fa-check-circle"></i> List Equipment &amp; Services</li>
+              <li><i class="fa-solid fa-check-circle"></i> Manage Bookings</li>
+              <li><i class="fa-solid fa-check-circle"></i> Service Analytics</li>
+              <li><i class="fa-solid fa-check-circle"></i> Customer Network</li>
+              <li><i class="fa-solid fa-check-circle"></i> Revenue Tracking</li>
+            </ul>
+            <a routerLink="/Signup" class="role-btn text-black">Partner Now →</a>
+          </div>
+        </div>
+        <div class="role-glow role-glow-green"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<hr />
+<!-- ③  ABOUT PLATFORM + FARMING HISTORY -->
 <app-about-us></app-about-us>
+<hr />
+<!-- ④  FEATURES / SERVICES BENTO GRID -->
 <app-services></app-services>
-<app-testimonials></app-testimonials>
+<hr />
+<!-- ⑤  FARMING IMPORTANCE — WHY AGRICULTURE MATTERS -->
+<section class="agri-importance-section" id="agri-importance">
+  <div class="agri-bg-overlay"></div>
+  <div class="container position-relative z-2">
+
+    <div class="section-header text-center reveal">
+      <span class="section-label text-black" >🌍 Why Agriculture Matters</span>
+      <h2 class="section-title-light mb-3 text-black">
+        Agriculture: The <span style="color:#4ade80">Backbone</span><br>of Human Civilization
+      </h2>
+      <p class="section-desc-light mx-auto text-black" style="max-width:580px">
+        Farming is not just a profession — it is the foundation of life, economy, and culture.
+      </p>
+    </div>
+
+    <div class="importance-grid">
+
+      <div class="importance-card reveal delay-0">
+        <div class="imp-icon">🌾</div>
+        <div class="imp-number">800M+</div>
+        <h4 class="imp-title">People Fed Daily</h4>
+        <p class="imp-desc">Farmers worldwide produce enough food to sustain over 8 billion people — a miracle of human effort and nature combined.</p>
+      </div>
+
+      <div class="importance-card reveal delay-1">
+        <div class="imp-icon">💵</div>
+        <div class="imp-number">$3.5T</div>
+        <h4 class="imp-title">Global GDP Contribution</h4>
+        <p class="imp-desc">Agriculture contributes over $3.5 trillion to the global economy and employs more than 27% of the world's workforce.</p>
+      </div>
+
+      <div class="importance-card reveal delay-2">
+        <div class="imp-icon">🇮🇳</div>
+        <div class="imp-number">58%</div>
+        <h4 class="imp-title">India's Rural Livelihood</h4>
+        <p class="imp-desc">Over 58% of India's rural population depends on agriculture. It is the soul of 700+ million Indians living in villages.</p>
+      </div>
+
+      <div class="importance-card reveal delay-3">
+        <div class="imp-icon">🌱</div>
+        <div class="imp-number">12,000</div>
+        <h4 class="imp-title">Years of Farming History</h4>
+        <p class="imp-desc">Humanity began farming 12,000 years ago in the Fertile Crescent — a revolution that gave birth to cities, laws, and civilization itself.</p>
+      </div>
+
+      <div class="importance-card reveal delay-4">
+        <div class="imp-icon">🔬</div>
+        <div class="imp-number">9,000+</div>
+        <h4 class="imp-title">Crop Species Cultivated</h4>
+        <p class="imp-desc">Humans cultivate over 9,000 plant species for food, medicine, and materials — each one a gift from generations of farmers.</p>
+      </div>
+
+      <div class="importance-card reveal delay-5">
+        <div class="imp-icon">♻️</div>
+        <div class="imp-number">30%</div>
+        <h4 class="imp-title">Food Goes to Waste</h4>
+        <p class="imp-desc">About 30% of food is lost post-harvest. FarmEase fights this by directly connecting farmers to buyers with smart logistics.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+<hr />
+<!-- ⑥  FARMING HISTORY TIMELINE -->
+<section class="history-section" id="history">
+  <div class="container">
+
+    <div class="section-header text-center reveal">
+      <span class="section-label">📜 A Rich Legacy</span>
+      <h2 class="section-title">History of <span>Indian Farming</span></h2>
+      <p class="section-desc mx-auto" style="max-width:600px">
+        India has been an agricultural civilization for over 8,000 years. Here is how farming evolved to reach the digital era.
+      </p>
+    </div>
+
+    <div class="timeline">
+
+      <div class="timeline-item tl-left reveal">
+        <div class="tl-dot"><i class="fa-solid fa-seedling"></i></div>
+        <div class="tl-card">
+          <div class="tl-year">~6000 BCE</div>
+          <h4 class="tl-title">Indus Valley Agriculture</h4>
+          <p class="tl-desc">The Indus Valley Civilization pioneered organized farming — growing wheat, barley, peas, and cotton. They built the world's earliest irrigation canals along the Indus river.</p>
+          <div class="tl-tag">🏺 Ancient Era</div>
+        </div>
+      </div>
+
+      <div class="timeline-item tl-right reveal delay-1">
+        <div class="tl-dot tl-dot-amber"><i class="fa-solid fa-scroll"></i></div>
+        <div class="tl-card">
+          <div class="tl-year">~1500–500 BCE</div>
+          <h4 class="tl-title">Vedic Agricultural Science</h4>
+          <p class="tl-desc">Ancient texts like Rigveda and Arthashastra detailed crop rotation, soil preparation, and advanced storage methods. Farmers were considered the backbone of the Vedic economy.</p>
+          <div class="tl-tag">📜 Vedic Period</div>
+        </div>
+      </div>
+
+      <div class="timeline-item tl-left reveal delay-2">
+        <div class="tl-dot"><i class="fa-solid fa-landmark"></i></div>
+        <div class="tl-card">
+          <div class="tl-year">300–1700 CE</div>
+          <h4 class="tl-title">Mughal &amp; Medieval Agriculture</h4>
+          <p class="tl-desc">Mughal emperors introduced Persian wheel irrigation, zamindar land systems, and cash crops like sugarcane and cotton. Agriculture became highly organized and taxed.</p>
+          <div class="tl-tag">🕌 Medieval Era</div>
+        </div>
+      </div>
+
+      <div class="timeline-item tl-right reveal delay-3">
+        <div class="tl-dot tl-dot-amber"><i class="fa-solid fa-industry"></i></div>
+        <div class="tl-card">
+          <div class="tl-year">1960s</div>
+          <h4 class="tl-title">Green Revolution</h4>
+          <p class="tl-desc">India's historic Green Revolution led by Dr. M.S. Swaminathan transformed agriculture. High-yielding crop varieties, chemical fertilizers, and modern irrigation made India self-sufficient in food production.</p>
+          <div class="tl-tag">🟢 Green Revolution</div>
+        </div>
+      </div>
+
+      <div class="timeline-item tl-left reveal delay-4">
+        <div class="tl-dot"><i class="fa-solid fa-satellite-dish"></i></div>
+        <div class="tl-card">
+          <div class="tl-year">2000–2020</div>
+          <h4 class="tl-title">Digital &amp; Tech-Driven Farming</h4>
+          <p class="tl-desc">Internet connectivity, mobile phones, and e-NAM (National Agriculture Market) began transforming how farmers sell their produce. Farmers gained access to market prices via SMS &amp; internet.</p>
+          <div class="tl-tag">📱 Digital Era</div>
+        </div>
+      </div>
+
+      <div class="timeline-item tl-right reveal delay-5">
+        <div class="tl-dot tl-dot-green-glow"><i class="fa-solid fa-robot"></i></div>
+        <div class="tl-card tl-card-highlight">
+          <div class="tl-year">2024 → Future</div>
+          <h4 class="tl-title">AI + FarmEase Era</h4>
+          <p class="tl-desc">FarmEase brings AI-powered recommendations, direct farm-to-buyer marketplaces, smart weather analytics, and real-time inventory management — empowering every Indian farmer.</p>
+          <div class="tl-tag tl-tag-green">🚀 FarmEase Era</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<hr />
+<!-- ⑧  HOW IT WORKS — STEP BY STEP -->
+<section class="hiw-section" id="how-it-works">
+  <div class="hiw-bg"></div>
+  <div class="container position-relative z-2">
+
+    <div class="section-header text-center reveal">
+      <span class="section-label">⚡ Simple Process</span>
+      <h2 class="section-title-light mb-3 text-black">How <span style="color:#4ade80">FarmEase</span> Works</h2>
+      <p class="section-desc-light mx-auto text-black" style="max-width:540px">
+        Get started in 3 simple steps and unlock the full power of digital agriculture.
+      </p>
+    </div>
+
+    <div class="hiw-steps">
+
+      <div class="hiw-step reveal delay-0">
+        <div class="hiw-step-num">01</div>
+        <div class="hiw-icon-ring">
+          <i class="fa-solid fa-user-plus"></i>
+        </div>
+        <h3 class="hiw-title">Create Account</h3>
+        <p class="hiw-desc">Sign up as a Farmer, Customer, or Service Provider. Complete your profile in under 2 minutes.</p>
+        <div class="hiw-arrow">→</div>
+      </div>
+
+      <div class="hiw-step reveal delay-3">
+        <div class="hiw-step-num">02</div>
+        <div class="hiw-icon-ring">
+          <i class="fa-solid fa-store"></i>
+        </div>
+        <h3 class="hiw-title">List or Shop</h3>
+        <p class="hiw-desc">Farmers add products &amp; services. Customers browse and buy fresh produce with easy filters and search.</p>
+        <div class="hiw-arrow">→</div>
+      </div>
+
+      <div class="hiw-step reveal delay-6">
+        <div class="hiw-step-num">03</div>
+        <div class="hiw-icon-ring">
+          <i class="fa-solid fa-truck-fast"></i>
+        </div>
+        <h3 class="hiw-title">Deliver &amp; Earn</h3>
+        <p class="hiw-desc">Products are shipped with live tracking. Farmers receive payments instantly. Everyone wins!</p>
+        <div class="hiw-arrow hiw-arrow-hidden">→</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<hr />
+<!-- ⑨  AGRICULTURE FACTS & SMART TIPS -->
+<section class="agri-facts-section" id="agri-facts">
+  <div class="container">
+
+    <div class="section-header text-center reveal">
+      <span class="section-label">🔬 Did You Know?</span>
+      <h2 class="section-title">Fascinating <span>Agriculture Facts</span></h2>
+      <p class="section-desc mx-auto" style="max-width:580px">
+        Discover surprising facts about farming, food, and why agriculture is critical to our survival.
+      </p>
+    </div>
+
+    <div class="facts-bento">
+
+      <div class="fact-card fact-card-wide reveal delay-0">
+        <div class="fact-icon-big">🌍</div>
+        <div class="fact-content">
+          <h3 class="fact-heading">50% of Earth's Habitable Land is Used for Agriculture</h3>
+          <p class="fact-body">Of Earth's 149 million km² of land, about 51 million km² is used for farming — an area bigger than North and South America combined. Yet over 800 million people still go to sleep hungry every night.</p>
+          <div class="fact-tags">
+            <span class="fact-tag">Land Use</span>
+            <span class="fact-tag">Food Security</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="fact-card reveal delay-1">
+        <div class="fact-icon-big">🍅</div>
+        <h4 class="fact-heading-sm">India is #1 in Milk</h4>
+        <p class="fact-body-sm">India is the world's largest producer of milk, producing over 230 million tonnes annually — ahead of the USA and EU combined.</p>
+      </div>
+
+      <div class="fact-card reveal delay-2">
+        <div class="fact-icon-big">🐝</div>
+        <h4 class="fact-heading-sm">Bees Pollinate 75% of Crops</h4>
+        <p class="fact-body-sm">Without bees, we would lose 75% of our food crops. Bees pollinate over $577 billion worth of food annually worldwide.</p>
+      </div>
+
+      <div class="fact-card reveal delay-3">
+        <div class="fact-icon-big">🌊</div>
+        <h4 class="fact-heading-sm">Agriculture Uses 70% of Freshwater</h4>
+        <p class="fact-body-sm">Farming consumes nearly 70% of all freshwater withdrawn by humans. Smart irrigation could save 40% of this water.</p>
+      </div>
+
+      <div class="fact-card reveal delay-4">
+        <div class="fact-icon-big">🤖</div>
+        <h4 class="fact-heading-sm">AI Can Boost Yields by 20%</h4>
+        <p class="fact-body-sm">Studies show AI-driven precision farming can increase crop yields by up to 20% while reducing pesticide use by 30% — exactly what FarmEase delivers.</p>
+      </div>
+
+      <div class="fact-card fact-card-dark reveal delay-5">
+        <div class="fact-icon-big">🌾</div>
+        <h3 class="fact-heading" style="color:#fff">Rice &amp; Wheat Feed More Than 4 Billion People</h3>
+        <p class="fact-body" style="color:rgba(255,255,255,0.75)">Together, rice and wheat contribute to more than 50% of the world's calorie intake. India alone produces 130+ million tonnes of these two crops annually.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+<hr />
+<!-- ⑩  TESTIMONIALS — SLIDING -->
+<section class="testimonials-section" id="testimonials">
+  <div class="container">
+
+    <div class="section-header text-center reveal">
+      <span class="section-label">💬 Real Voices</span>
+      <h2 class="section-title">Trusted by <span>10,000+ Farmers</span></h2>
+      <p class="section-desc mx-auto" style="max-width:540px">
+        Real stories from real people who transformed their agricultural journey with FarmEase.
+      </p>
+    </div>
+
+    <div class="testimonials-slider">
+      <div class="testimonials-track">
+
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote">"FarmEase helped me sell my wheat harvest directly to retailers in Delhi. I earned 23% more profit compared to the local mandi. Best platform for farmers!"</p>
+          <div class="testi-user">
+            <img src="https://ui-avatars.com/api/?name=Rajesh+Kumar&background=0a3d20&color=fff&bold=true" alt="Rajesh Kumar" class="testi-avatar">
+            <div>
+              <div class="testi-name">Rajesh Kumar</div>
+              <div class="testi-role">Wheat Farmer · Punjab</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testi-card testi-card-alt">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote">"Finding verified organic produce was impossible before FarmEase. Now I source directly from farmers and my store quality has completely transformed."</p>
+          <div class="testi-user">
+            <img src="https://ui-avatars.com/api/?name=Anjali+Patil&background=166534&color=fff&bold=true" alt="Anjali Patil" class="testi-avatar">
+            <div>
+              <div class="testi-name">Anjali Patil</div>
+              <div class="testi-role">Organic Store Owner · Mumbai</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote">"I listed my tractor and irrigation equipment on FarmEase. My machine utilization went from 40% to 90%. Incredible platform with amazing reach."</p>
+          <div class="testi-user">
+            <img src="https://ui-avatars.com/api/?name=Mahesh+Patel&background=0a3d20&color=fff&bold=true" alt="Mahesh Patel" class="testi-avatar">
+            <div>
+              <div class="testi-name">Mahesh Patel</div>
+              <div class="testi-role">Equipment Provider · Gujarat</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testi-card testi-card-alt">
+          <div class="testi-stars">★★★★☆</div>
+          <p class="testi-quote">"The AI crop suggestion feature told me to switch to turmeric this season. I followed the advice and my income increased by 40%. FarmEase is a game changer!"</p>
+          <div class="testi-user">
+            <img src="https://ui-avatars.com/api/?name=Kavita+Sharma&background=166534&color=fff&bold=true" alt="Kavita Sharma" class="testi-avatar">
+            <div>
+              <div class="testi-name">Kavita Sharma</div>
+              <div class="testi-role">Spice Farmer · Rajasthan</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote">"Order tracking, instant payments, and a dedicated support team — FarmEase feels like a premium service built specifically for Indian farmers. Highly recommended!"</p>
+          <div class="testi-user">
+            <img src="https://ui-avatars.com/api/?name=Suresh+Nair&background=0a3d20&color=fff&bold=true" alt="Suresh Nair" class="testi-avatar">
+            <div>
+              <div class="testi-name">Suresh Nair</div>
+              <div class="testi-role">Rice Farmer · Kerala</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Duplicate for infinite scroll effect -->
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote">"FarmEase helped me sell my wheat harvest directly to retailers in Delhi. I earned 23% more profit compared to the local mandi. Best platform for farmers!"</p>
+          <div class="testi-user">
+            <img src="https://ui-avatars.com/api/?name=Rajesh+Kumar&background=0a3d20&color=fff&bold=true" alt="Rajesh Kumar" class="testi-avatar">
+            <div>
+              <div class="testi-name">Rajesh Kumar</div>
+              <div class="testi-role">Wheat Farmer · Punjab</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testi-card testi-card-alt">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote">"Finding verified organic produce was impossible before FarmEase. Now I source directly from farmers and my store quality has completely transformed."</p>
+          <div class="testi-user">
+            <img src="https://ui-avatars.com/api/?name=Anjali+Patil&background=166534&color=fff&bold=true" alt="Anjali Patil" class="testi-avatar">
+            <div>
+              <div class="testi-name">Anjali Patil</div>
+              <div class="testi-role">Organic Store Owner · Mumbai</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+<hr />
+<!-- ⑪  FAQ SECTION -->
 <app-faq-section></app-faq-section>
+<hr />
+<!-- ⑫  CALL TO ACTION BANNER -->
+<section class="cta-section" id="cta-join">
+  <div class="cta-bg"></div>
+  <div class="cta-orb cta-orb-1"></div>
+  <div class="cta-orb cta-orb-2"></div>
+
+  <div class="container position-relative z-2 text-center">
+    <div class="cta-badge reveal">🌱 Join 10,000+ Farmers Today</div>
+    <h2 class="cta-title reveal delay-1">
+      Start Your <span class="cta-gradient">Agricultural</span><br>
+      Journey Today
+    </h2>
+    <p class="cta-desc reveal delay-2">
+      Whether you're a farmer, customer, or service provider — FarmEase has everything you need to succeed in modern agriculture.
+    </p>
+    <div class="cta-btns reveal delay-3">
+      <a routerLink="/Signup" class="cta-btn-primary" id="cta-signup-btn">
+        <i class="fa-solid fa-rocket"></i> Create Free Account
+      </a>
+      <a routerLink="/Products" class="cta-btn-secondary" id="cta-products-btn">
+        <i class="fa-solid fa-store"></i> Explore Products
+      </a>
+    </div>
+
+    <div class="cta-stats reveal delay-4">
+      <div class="cta-stat"><span class="cta-stat-n">Free</span><span class="cta-stat-l">Forever Plan</span></div>
+      <div class="cta-stat-sep">·</div>
+      <div class="cta-stat"><span class="cta-stat-n">2 min</span><span class="cta-stat-l">Setup Time</span></div>
+      <div class="cta-stat-sep">·</div>
+      <div class="cta-stat"><span class="cta-stat-n">24/7</span><span class="cta-stat-l">Support</span></div>
+      <div class="cta-stat-sep">·</div>
+      <div class="cta-stat"><span class="cta-stat-n">No</span><span class="cta-stat-l">Hidden Fees</span></div>
+    </div>
+  </div>
+</section>

@@ -14,6 +14,7 @@ import { WishlistService } from '../wishlist/wishlist';
   styleUrls: ['./login.css']
 })
 export class Login {
+  showPass = false;
 
   auth = inject(AuthService);
   router = inject(Router);
@@ -38,7 +39,7 @@ export class Login {
       return;
     }
 
-    const backendUrl = 'http://localhost:5009/api/auth';
+    const backendUrl = 'https://backend-farmease-1.onrender.com/api/auth';
 
     this.http.post(`${backendUrl}/login`, { email, password }).subscribe({
       next: (foundUser: any) => {

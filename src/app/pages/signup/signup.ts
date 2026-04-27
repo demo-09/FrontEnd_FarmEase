@@ -3,11 +3,12 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AuthService, UserRole } from '../../core/services/auth.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink,FormsModule],
   templateUrl: './signup.html',
   styleUrl: './signup.css',
 })
@@ -16,7 +17,7 @@ export class Signup implements OnInit {
   private http = inject(HttpClient);
   private auth = inject(AuthService);
 
-  private backendUrl = 'http://localhost:5009/api/auth';
+  private backendUrl = 'https://backend-farmease-1.onrender.com/api/auth';
   
   // State Management
   selectedRole: UserRole = 'customer';

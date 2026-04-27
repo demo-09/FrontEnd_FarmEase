@@ -88,7 +88,7 @@ export class Profile implements OnInit {
     localStorage.setItem('CurrentUser', JSON.stringify(updatedUser));
     
     // Background Sync
-    const backendUrl = 'http://localhost:5009/api/users';
+    const backendUrl = 'https://backend-farmease-1.onrender.com/api/users';
     this.http.put(`${backendUrl}/${this.currentUser.id}`, updatedUser).subscribe({
       next: (res: any) => {
         this.currentUser = { ...updatedUser, ...res };

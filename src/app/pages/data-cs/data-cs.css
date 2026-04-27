@@ -1,35 +1,70 @@
-.ls-1 { letter-spacing: 1px; }
+/* ══════════════════════════════════════════════
+   DATA COLD STORAGE — Premium Redesign
+══════════════════════════════════════════════ */
+.cs-page { min-height: 100vh; background: #f9fafb; padding-top: 72px; }
 
-.storage-card {
-    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-    background: #ffffff;
-}
+/* Hero */
+.cs-hero { background: linear-gradient(145deg, #0a3d20, #052e10); padding: 80px 0 50px; position: relative; overflow: hidden; }
+.cs-hero-bg { position:absolute;inset:0;background:radial-gradient(ellipse 70% 70% at 50% 50%,rgba(34,197,94,0.1),transparent); }
+.z-2 { position: relative; z-index: 2; }
+.cs-badge { display:inline-block;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:999px;padding:6px 18px;font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.9);margin-bottom:16px;text-transform:uppercase;letter-spacing:0.1em; }
+.cs-title { font-family:'Poppins',sans-serif;font-size:clamp(2rem,4.5vw,3.2rem);font-weight:900;color:#fff;margin-bottom:12px; }
+.cs-title span { background:linear-gradient(135deg,#4ade80,#86efac);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+.cs-desc { font-size:1rem;color:rgba(255,255,255,0.7);max-width:800px;line-height:1.75; }
 
-.storage-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
-}
+.cs-container { padding: 50px 0; }
 
-.alert-custom-danger {
-    background-color: #fff5f5;
-    color: #c53030;
-    border-left: 5px solid #c53030;
-}
+/* Loading & Error */
+.cs-loading-state { text-align:center;padding:80px 20px; }
+.cs-spinner { width:52px;height:52px;border:3px solid rgba(34,197,94,0.2);border-top-color:#16a34a;border-radius:50%;margin:0 auto 20px;animation:csspin 0.8s linear infinite; }
+@keyframes csspin { to{transform:rotate(360deg)} }
+.cs-loading-state h4 { font-family:'Poppins',sans-serif;font-weight:800;color:#0a3d20;margin-bottom:8px; }
+.cs-loading-state p  { color:#6b7280;font-size:0.9rem; }
+.cs-retry-btn { display:inline-flex;align-items:center;gap:8px;background:rgba(34,197,94,0.08);color:#16a34a;border:1.5px solid rgba(34,197,94,0.2);border-radius:999px;padding:10px 24px;font-family:'Poppins',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;transition:all 0.3s ease; }
+.cs-retry-btn:hover { background:rgba(34,197,94,0.15); }
 
-.sector-item {
-    transition: background 0.2s ease;
-}
+.cs-error-alert { display:flex;align-items:center;gap:18px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:18px;padding:24px;color:#ef4444;max-width:600px;margin:0 auto;box-shadow:0 4px 12px rgba(239,68,68,0.05); }
+.cs-error-alert i { font-size:2rem; }
+.cs-error-alert strong { font-weight:800;color:#991b1b; }
 
-.sector-item:hover {
-    background-color: #e9ecef !important;
-}
+/* Grid */
+.cs-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:24px; }
 
-/* Animations for entries */
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+/* Card */
+.cs-card { background:#fff;border:1px solid rgba(34,197,94,0.1);border-radius:24px;overflow:hidden;box-shadow:0 4px 20px rgba(10,61,32,0.06);transition:all 0.35s ease;display:flex;flex-direction:column; }
+.cs-card:hover { transform:translateY(-6px);box-shadow:0 14px 34px rgba(10,61,32,0.12); border-color:rgba(34,197,94,0.2); }
 
-.animate__fadeInUp {
-    animation: fadeInUp 0.6s ease-out forwards;
-}
+/* Card Header */
+.cs-card-header { display:flex;justify-content:space-between;align-items:flex-start;padding:24px;border-bottom:1px dashed rgba(34,197,94,0.15);background:linear-gradient(180deg,#f0fdf4,#fff); }
+.csc-state-info { flex:1;padding-right:12px; }
+.csc-label { font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#9ca3af;margin-bottom:6px;display:block; }
+.csc-state-name { font-family:'Poppins',sans-serif;font-weight:900;color:#0a3d20;font-size:1.2rem;margin:0;line-height:1.2; }
+.csc-total-units { text-align:center;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:68px; }
+.csc-total-units .num { font-family:'Poppins',sans-serif;font-weight:800;font-size:1.4rem;color:#16a34a;line-height:1; }
+.csc-total-units .lbl-u { font-size:0.65rem;font-weight:700;text-transform:uppercase;color:#16a34a; }
+
+/* Card Body */
+.cs-card-body { padding:24px;display:flex;flex-direction:column;gap:18px;flex:1; }
+.cs-sector-item { display:flex;flex-direction:column;gap:8px; }
+.csi-top { display:flex;justify-content:space-between;align-items:center; }
+.csi-name { font-family:'Poppins',sans-serif;font-size:0.82rem;font-weight:700;color:#374151;display:flex;align-items:center;gap:6px; }
+.csi-name i { color:#9ca3af;font-size:0.8rem; }
+.csi-badge { font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:999px; }
+.csi-badge-pv { background:rgba(16,185,129,0.1);color:#10b981; }
+.csi-badge-co { background:rgba(245,158,11,0.1);color:#f59e0b; }
+.csi-badge-pb { background:rgba(59,130,246,0.1);color:#3b82f6; }
+
+.csi-progress-bar { width:100%;height:6px;background:#f3f4f6;border-radius:999px;overflow:hidden; }
+.csi-progress-val { height:100%;border-radius:999px;transition:width 1s cubic-bezier(0.22,1,0.36,1); }
+.bg-pv { background:#10b981; }
+.bg-co { background:#f59e0b; }
+.bg-pb { background:#3b82f6; }
+.csi-cap { font-size:0.75rem;color:#6b7280;text-align:right; }
+
+/* Card Footer */
+.cs-card-footer { padding:20px 24px;background:#f9fafb;border-top:1px solid rgba(34,197,94,0.08);display:flex;align-items:center;justify-content:space-between; }
+.csc-footer-label { font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6b7280; }
+.csc-footer-val { font-family:'Poppins',sans-serif;font-weight:800;font-size:1.1rem;color:#0a3d20; }
+
+@media(max-width:1199px) { .cs-grid{grid-template-columns:repeat(2,1fr)} }
+@media(max-width:767px)  { .cs-grid{grid-template-columns:1fr} }

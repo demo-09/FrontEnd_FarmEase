@@ -153,7 +153,7 @@
   </section>
 
   <!-- CTA -->
-  <section class="about-cta">
+  <section class="about-cta"  *ngIf="!auth.isLoggedIn()"> 
     <div class="about-cta-bg"></div>
     <div class="container text-center position-relative z-2">
       <div class="ac-badge">🌾 Join the Movement</div>

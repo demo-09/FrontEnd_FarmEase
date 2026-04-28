@@ -1,10 +1,11 @@
-import { Component, OnInit, AfterViewInit, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, PLATFORM_ID, Inject, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AboutUsComponent } from '../about-us';
 import { HeroSectionComponent } from '../hero-section.component';
 import { FaqSectionComponent } from '../faq';
 import { Services } from '../services';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-home-page',
@@ -14,8 +15,7 @@ import { Services } from '../services';
 })
 export class HomePage implements AfterViewInit {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
-
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, public auth: AuthService) { }
   products = [
     {
       name: 'Organic Wheat Seeds',

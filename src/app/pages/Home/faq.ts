@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import {  RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-faq-section',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterModule],
   template: `
 <section class="faq-section">
   <div class="container">
@@ -17,7 +17,7 @@ import { RouterLink } from '@angular/router';
         <span class="faq-label">❓ FAQ</span>
         <h2 class="faq-title">Common <span>Questions</span></h2>
         <p class="faq-desc">Everything you need to know about FarmEase. Can't find your answer? Talk to our support team.</p>
-        <a routerLink="/Contact" class="faq-contact-btn">
+        <a routerLink="/Chat" class="faq-contact-btn">
           <i class="fa-solid fa-headset"></i> Chat With Us
         </a>
         <div class="faq-contact-info">

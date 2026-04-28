@@ -4,14 +4,14 @@
 
 <!-- ①  HERO SECTION (animated, with particles + trust bar) -->
 <app-hero-section></app-hero-section>
-<hr />
+ 
 <!-- ②  USER ROLES — WHO ARE YOU? -->
-<section class="roles-section" id="roles">
+<section class="roles-section"  *ngIf="auth.isLoggedIn()" id="roles">
   <div class="container">
 
     <div class="section-header text-center reveal">
       <span class="section-label">🎯 Start Your Journey</span>
-      <h2 class="section-title">Who Are <span>You?</span></h2>
+      <h2 class="section-title">Who Are <span>WE?</span></h2>
       <p class="section-desc mx-auto" style="max-width:580px">
         FarmEase is built for every role in the agricultural ecosystem. Pick your path and unlock a tailored experience.
       </p>
@@ -37,7 +37,6 @@
               <li><i class="fa-solid fa-check-circle"></i> AI Crop Suggestions</li>
               <li><i class="fa-solid fa-check-circle"></i> Weather Insights</li>
             </ul>
-            <a routerLink="/Signup" class="role-btn text-black">Get Started →</a>
           </div>
         </div>
         <div class="role-glow role-glow-green"></div>
@@ -61,7 +60,6 @@
               <li><i class="fa-solid fa-check-circle"></i> Reviews &amp; Ratings</li>
               <li><i class="fa-solid fa-check-circle"></i> Personalized Picks</li>
             </ul>
-            <a routerLink="/Signup" class="role-btn text-black">Shop Now →</a>
           </div>
         </div>
         <div class="role-glow role-glow-center"></div>
@@ -85,7 +83,6 @@
               <li><i class="fa-solid fa-check-circle"></i> Customer Network</li>
               <li><i class="fa-solid fa-check-circle"></i> Revenue Tracking</li>
             </ul>
-            <a routerLink="/Signup" class="role-btn text-black">Partner Now →</a>
           </div>
         </div>
         <div class="role-glow role-glow-green"></div>
@@ -94,15 +91,15 @@
     </div>
   </div>
 </section>
-<hr />
+ 
 <!-- ③  ABOUT PLATFORM + FARMING HISTORY -->
 <app-about-us></app-about-us>
-<hr />
+ 
 <!-- ④  FEATURES / SERVICES BENTO GRID -->
 <app-services></app-services>
-<hr />
+ 
 <!-- ⑤  FARMING IMPORTANCE — WHY AGRICULTURE MATTERS -->
-<section class="agri-importance-section" id="agri-importance">
+<section  *ngIf="auth.isLoggedIn()" class="agri-importance-section" id="agri-importance">
   <div class="agri-bg-overlay"></div>
   <div class="container position-relative z-2">
 
@@ -163,9 +160,9 @@
     </div>
   </div>
 </section>
-<hr />
+ 
 <!-- ⑥  FARMING HISTORY TIMELINE -->
-<section class="history-section" id="history">
+<section class="history-section"  *ngIf="auth.isLoggedIn()" id="history">
   <div class="container">
 
     <div class="section-header text-center reveal">
@@ -241,9 +238,9 @@
     </div>
   </div>
 </section>
-<hr />
+ 
 <!-- ⑧  HOW IT WORKS — STEP BY STEP -->
-<section class="hiw-section" id="how-it-works">
+<section class="hiw-section"  *ngIf="auth.isLoggedIn()" id="how-it-works">
   <div class="hiw-bg"></div>
   <div class="container position-relative z-2">
 
@@ -290,9 +287,9 @@
     </div>
   </div>
 </section>
-<hr />
+ 
 <!-- ⑨  AGRICULTURE FACTS & SMART TIPS -->
-<section class="agri-facts-section" id="agri-facts">
+<section class="agri-facts-section"  *ngIf="auth.isLoggedIn()" id="agri-facts">
   <div class="container">
 
     <div class="section-header text-center reveal">
@@ -340,19 +337,12 @@
         <h4 class="fact-heading-sm">AI Can Boost Yields by 20%</h4>
         <p class="fact-body-sm">Studies show AI-driven precision farming can increase crop yields by up to 20% while reducing pesticide use by 30% — exactly what FarmEase delivers.</p>
       </div>
-
-      <div class="fact-card fact-card-dark reveal delay-5">
-        <div class="fact-icon-big">🌾</div>
-        <h3 class="fact-heading" style="color:#fff">Rice &amp; Wheat Feed More Than 4 Billion People</h3>
-        <p class="fact-body" style="color:rgba(255,255,255,0.75)">Together, rice and wheat contribute to more than 50% of the world's calorie intake. India alone produces 130+ million tonnes of these two crops annually.</p>
-      </div>
-
     </div>
   </div>
 </section>
-<hr />
+ 
 <!-- ⑩  TESTIMONIALS — SLIDING -->
-<section class="testimonials-section" id="testimonials">
+<section class="testimonials-section" *ngIf="auth.isLoggedIn()" id="testimonials">
   <div class="container">
 
     <div class="section-header text-center reveal">
@@ -455,12 +445,12 @@
     </div>
   </div>
 </section>
-<hr />
+ 
 <!-- ⑪  FAQ SECTION -->
-<app-faq-section></app-faq-section>
-<hr />
+<app-faq-section  *ngIf="auth.isLoggedIn()"></app-faq-section>
+ 
 <!-- ⑫  CALL TO ACTION BANNER -->
-<section class="cta-section" id="cta-join">
+<section class="cta-section" *ngIf="!auth.isLoggedIn()" id="cta-join">
   <div class="cta-bg"></div>
   <div class="cta-orb cta-orb-1"></div>
   <div class="cta-orb cta-orb-2"></div>

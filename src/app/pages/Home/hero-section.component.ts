@@ -62,10 +62,6 @@ import { CommonModule } from '@angular/common';
               <i class="fa-solid fa-store"></i>
               Explore Marketplace
             </button>
-            <button routerLink="/Signup" class="btn-hero-outline" id="hero-join-btn">
-              <i class="fa-solid fa-seedling"></i>
-              Join as Farmer
-            </button>
           </div>
 
           <!-- Live Stats -->

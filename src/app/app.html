@@ -1,25 +1,42 @@
-<div *ngIf="showIntro" id="stage" class="bootloader">
-  <div #mainWrapper class="brand-wrapper" id="main-wrapper">
-    <svg class="logo-svg" viewBox="0 0 140 140">
-      <g transform="rotate(-45 60 60)">
-        <path class="g-path" d="M 96 24 H 24 V 96 H 96 V 60 H 60" />
-        <path class="g-path inner"
-              transform="rotate(180 60 60) translate(-18, -16)"
-              d="M 96 24 H 24 V 96 H 96 V 60 H 60" />
-      </g>
-    </svg>
+<div *ngIf="showIntro" class="bootloader" [class.is-active]="isActive">
 
-    <div class="text-container">
-      <h1 class="typing-text">
-        <span class="display-4 text-success text-shadow">farm</span><span class="display-3 text-warning text-shadow">Ease</span>
-      </h1>
+  <div class="scene">
+
+    <div class="plant">
+
+      <!-- STEM -->
+      <div class="stem"></div>
+
+      <!-- LEAVES -->
+      <div class="leaf leaf-left mt-2"></div>
+      <div class="leaf leaf-right mt-4"></div>
+
+      <!-- SOIL + CRACKS -->
+      <div class="soil">
+        <span class="crack crack-1"></span>
+        <span class="crack crack-2"></span>
+        <span class="crack crack-3"></span>
+
+      <!-- ROOTS -->
+      <div class="root root-main"></div>
+      <div class="root root-left"></div>
+      <div class="root root-right"></div>
+      </div>
+
     </div>
+
+    <!-- Branding -->
+    <h1 class="logo-text">
+      <span class="farm">farm</span><span class="ease">Ease</span>
+    </h1>
+
   </div>
+
 </div>
 
-
-<div *ngIf="!showIntro" class="main-content">
-  <app-nav class=""></app-nav>
+<!-- Main App -->
+<div *ngIf="!showIntro">
+  <app-nav></app-nav>
   <router-outlet></router-outlet>
   <app-footer *ngIf="auth.isLoggedIn()"></app-footer>
 </div>

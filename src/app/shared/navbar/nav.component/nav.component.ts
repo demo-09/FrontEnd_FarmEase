@@ -41,7 +41,19 @@ export class NavComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.routerSub) this.routerSub.unsubscribe();
   }
-
+  // in your component
+  ngAfterViewInit() {
+    const el = document.getElementById('mobileNav');
+    if (el) {
+      el.addEventListener('click', () => {
+        const bsCollapse = (window as any).bootstrap?.Collapse;
+        if (bsCollapse) {
+          const instance = bsCollapse.getInstance(el);
+          if (instance) instance.hide();
+        }
+      });
+    }
+  }
   updateUser() {
     const storedData = localStorage.getItem('CurrentUser');
     try {

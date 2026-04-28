@@ -1,65 +1,108 @@
+<!-- FARMEASE NAVBAR — Premium Glassmorphism -->
 <nav class="fe-navbar" [class.scrolled]="isScrolled">
   <div class="nav-container">
-<div class="d-flex flex-direction-column">
-    <!-- Brand (Left 60%) -->
-    <a class="nav-brand" routerLink="/">
-      <div class="brand-icon">
-        <i class="fa-solid fa-seedling"></i>
-      </div>
-      <span class="brand-text">farm<span class="brand-accent">Ease</span></span>
-    </a>
 
-    <!-- Desktop Links (Center) -->
-    <ul class="nav-links px-5">
-      <li><a routerLink="/HomePage" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="nav-link-item">Home</a></li>
-      <li><a routerLink="/About" routerLinkActive="active" class="nav-link-item">About</a></li>
-      <li *ngIf="auth.isLoggedIn()"><a routerLink="/Products" routerLinkActive="active" class="nav-link-item">Products</a></li>
-      <li *ngIf="auth.isLoggedIn() && currentUser?.role?.toLowerCase() === 'admin'">
-        <a routerLink="admin/Admin" routerLinkActive="active" class="nav-link-item">Dashboard</a>
-      </li>
-    </ul>
-  </div>
+    <!-- Main Navbar Content -->
+    <div class="d-flex w-100 justify-content-between align-items-center">
 
-    <!-- Right Actions (Right 40%) -->
-    <div class="nav-actions">
-      <!-- Guest -->
-      <ng-container *ngIf="!auth.isLoggedIn()">
-        <a class="btn-nav-glass" routerLink="/Signup">Register</a>
-        <a class="btn-nav-white" routerLink="/Login">Sign In</a>
-      </ng-container>
-
-      <!-- Logged In -->
-      <ng-container *ngIf="auth.isLoggedIn()">
-        <button *ngIf="currentUser?.role?.toLowerCase() !== 'admin'" class="nav-icon-btn" routerLink="/WishlistComponent" title="Wishlist">
-          <i class="fa-solid fa-heart"></i>
-          <span class="nav-badge" *ngIf="wishCount() > 0">{{ wishCount() }}</span>
-        </button>
-        <button *ngIf="currentUser?.role?.toLowerCase() !== 'admin'" class="nav-icon-btn" routerLink="/Cart" title="Cart">
-          <i class="fa-solid fa-cart-shopping"></i>
-          <span class="nav-badge" *ngIf="cartCount() > 0">{{ cartCount() }}</span>
-        </button>
-
-        <button class="user-avatar-btn" data-bs-toggle="offcanvas" data-bs-target="#sideDrawer">
-          <img [src]="currentUser?.fullName
-            ? 'https://ui-avatars.com/api/?name=' + currentUser.fullName + '&background=ffffff&color=0f5132'
-            : 'https://ui-avatars.com/api/?name=Guest&background=ffffff&color=0f5132'" 
-            class="drawer-avatar" alt="Profile" />
-        </button>
-      </ng-container>
-
-      <!-- Mobile Toggle -->
-      <a class="mobile-toggle" data-bs-toggle="collapse" data-bs-target="#mobileNav">
-        <i class="fa-solid fa-bars"></i>
+      <!-- Brand -->
+      <a class="nav-brand" routerLink="/">
+        <div class="brand-icon">
+          <i class="fa-solid fa-seedling"></i>
+        </div>
+        <span class="brand-text">farm<span class="brand-accent">Ease</span></span>
       </a>
-    </div>
-  </div>
 
-  <!-- Mobile Nav Content omitted for brevity in replace, keeping existing structure but updating classes if needed -->
+      <!-- Desktop Navigation Links -->
+      <ul class="nav-links d-none d-lg-flex">
+        <li>
+          <a routerLink="/HomePage" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="nav-link-item">Home</a>
+        </li>
+        <li>
+          <a routerLink="/About" routerLinkActive="active" class="nav-link-item">About</a>
+        </li>
+        <li *ngIf="auth.isLoggedIn()">
+          <a routerLink="/Products" routerLinkActive="active" class="nav-link-item">Products</a>
+        </li>
+        <li *ngIf="auth.isLoggedIn() && currentUser?.role?.toLowerCase() === 'admin'">
+          <a routerLink="/admin/Admin" routerLinkActive="active" class="nav-link-item">Dashboard</a>
+        </li>
+      </ul>
+
+      <!-- Right Side Actions -->
+      <div class="nav-actions">
+
+        <!-- Guest User -->
+        <ng-container *ngIf="!auth.isLoggedIn()">
+          <a class="btn-nav-glass" routerLink="/Signup">Register</a>
+          <a class="btn-nav-white" routerLink="/Login">Sign In</a>
+        </ng-container>
+
+        <!-- Logged In User -->
+        <ng-container *ngIf="auth.isLoggedIn()">
+
+          <button *ngIf="currentUser?.role?.toLowerCase() !== 'admin'"
+                  class="nav-icon-btn"
+                  routerLink="/WishlistComponent"
+                  title="Wishlist">
+            <i class="fa-solid fa-heart"></i>
+            <span class="nav-badge" *ngIf="wishCount() > 0">{{ wishCount() }}</span>
+          </button>
+
+          <button *ngIf="currentUser?.role?.toLowerCase() !== 'admin'"
+                  class="nav-icon-btn"
+                  routerLink="/Cart"
+                  title="Cart">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="nav-badge" *ngIf="cartCount() > 0">{{ cartCount() }}</span>
+          </button>
+
+          <!-- Avatar -->
+          <button class="user-avatar-btn"
+                  data-bs-toggle="offcanvas"
+                  data-bs-target="#sideDrawer">
+            <img [src]="currentUser?.fullName
+                ? 'https://ui-avatars.com/api/?name=' + currentUser.fullName + '&background=ffffff&color=0f5132'
+                : 'https://ui-avatars.com/api/?name=Guest&background=ffffff&color=0f5132'"
+                 class="drawer-avatar"
+                 alt="Profile" />
+          </button>
+
+        </ng-container>
+
+        <!-- Mobile Toggle -->
+        <button class="mobile-toggle d-lg-none"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#mobileNav"
+                aria-controls="mobileNav"
+                aria-expanded="false">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Panel -->
+    <div class="mobile-wrapper">
+      <div id="mobileNav" class="collapse mobile-nav-panel">
+        <div class="mobile-links">
+          <a routerLink="/HomePage" class="mobile-link" data-bs-toggle="collapse" data-bs-target="#mobileNav">Home</a>
+          <a routerLink="/About" class="mobile-link" data-bs-toggle="collapse" data-bs-target="#mobileNav">About</a>
+          <a routerLink="/Products" class="mobile-link" data-bs-toggle="collapse" data-bs-target="#mobileNav">Products</a>
+
+          <ng-container *ngIf="auth.isLoggedIn() && currentUser?.role?.toLowerCase() === 'admin'">
+            <a routerLink="/admin/Admin" class="mobile-link" data-bs-toggle="collapse" data-bs-target="#mobileNav">Dashboard</a>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </nav>
 
-<!-- ═══ SIDE DRAWER ═══ -->
+<!-- Side Drawer (Offcanvas) - Unchanged but cleaner -->
 <div class="offcanvas offcanvas-end fe-drawer" id="sideDrawer" tabindex="-1">
-
   <!-- Drawer Header -->
   <div class="drawer-header">
     <div class="drawer-brand">
@@ -75,21 +118,22 @@
   </div>
 
   <div class="drawer-body">
-
-    <!-- User Profile Card -->
-    <div class="drawer-profile pb-5 my-btn">
+    <!-- Profile -->
+    <div class="drawer-profile">
       <img [src]="currentUser?.fullName
-        ? 'https://ui-avatars.com/api/?name=' + currentUser.fullName +'&background=white&color=black&bold=true&size=80'
-        : 'https://ui-avatars.com/api/?name=Guest&background=white&color=black&bold=true&size=120'"
-           class="drawer-avatar" alt="Profile" />
-      <div class="drawer-profile-info">
+          ? 'https://ui-avatars.com/api/?name=' + currentUser.fullName + '&background=white&color=000&bold=true&size=80'
+          : 'https://ui-avatars.com/api/?name=Guest&background=white&color=000&bold=true&size=80'"
+           class="drawer-avatar"
+           alt="Profile" />
+
+      <div>
         <div class="drawer-name">{{ (currentUser?.fullName || 'FarmEase User') | titlecase }}</div>
         <div class="drawer-email">{{ currentUser?.email || 'guest@farmease.in' }}</div>
-      <span class="badge-role mt-4">{{ currentUser?.role || 'guest' }}</span>
+        <span class="badge-role mt-3">{{ currentUser?.role || 'guest' }}</span>
       </div>
-
     </div>
-    <!-- Profile Actions -->
+
+    <!-- Actions -->
     <div class="drawer-actions">
       <button class="btn-glass" routerLink="/Profile" data-bs-dismiss="offcanvas">
         <i class="fa-solid fa-user"></i>
@@ -101,34 +145,33 @@
       </button>
     </div>
 
-    <!-- Menu Items -->
+    <!-- Drawer Menu -->
     <div *ngIf="auth.isLoggedIn() && currentUser?.role?.toLowerCase() !== 'admin'" class="drawer-menu">
       <div class="drawer-section-label">Field Management</div>
 
-      <!-- Farmer Only: Add Product -->
       <a *ngIf="currentUser?.role === 'farmer'" routerLink="/AddProduct" class="drawer-item" data-bs-dismiss="offcanvas">
         <div class="drawer-item-icon"><i class="fa-solid fa-plus"></i></div>
         <span>Add Listing / Product</span>
         <i class="fa-solid fa-chevron-right drawer-arrow"></i>
       </a>
+
       <a *ngIf="currentUser?.role === 'farmer'" routerLink="/CustomerSupport" class="drawer-item" data-bs-dismiss="offcanvas">
         <div class="drawer-item-icon"><i class="fa-solid fa-headset"></i></div>
         <span>Customer Support</span>
         <i class="fa-solid fa-chevron-right drawer-arrow"></i>
       </a>
 
-      <!-- FarmEase AI Assistant -->
       <a routerLink="/Chat" class="drawer-item" data-bs-dismiss="offcanvas">
         <div class="drawer-item-icon"><i class="fa-brands fa-whatsapp"></i></div>
         <span>Chat</span>
         <i class="fa-solid fa-chevron-right drawer-arrow"></i>
       </a>
+
       <a routerLink="/Ai" class="drawer-item" data-bs-dismiss="offcanvas">
-        <div class="drawer-item-icon"><i class="fa-solid fa-rogot"></i></div>
-        <span>Ai chat</span>
+        <div class="drawer-item-icon"><i class="fa-solid fa-robot"></i></div>
+        <span>AI Chat</span>
         <i class="fa-solid fa-chevron-right drawer-arrow"></i>
       </a>
-
 
       <a routerLink="/News" class="drawer-item" data-bs-dismiss="offcanvas">
         <div class="drawer-item-icon"><i class="fa-solid fa-newspaper"></i></div>
@@ -136,7 +179,6 @@
         <i class="fa-solid fa-chevron-right drawer-arrow"></i>
       </a>
 
-      <!-- Original Rest -->
       <a routerLink="/DataComponent" class="drawer-item" data-bs-dismiss="offcanvas">
         <div class="drawer-item-icon"><i class="fa-solid fa-database"></i></div>
         <span>Cold Storage Data</span>
@@ -144,15 +186,14 @@
       </a>
     </div>
 
-    <!-- Promo Banner Card -->
+    <!-- Promo Banner -->
     <div class="drawer-promo">
       <div class="promo-icon"><i class="fa-solid fa-cloud-sun-rain"></i></div>
-      <div class="promo-text-wrap">
-        <div class="promo-title">Monsoon Special</div>
-        <div class="promo-desc">Get 20% off all Organic Fertilizers this season! Secure your yield today.</div>
-      </div>
-      <button class="promo-btn" routerLink="/Products" data-bs-dismiss="offcanvas">Shop Now</button>
+      <div class="promo-title">Monsoon Special</div>
+      <div class="promo-desc">Get 20% off all Organic Fertilizers this season! Secure your yield today.</div>
+      <button class="promo-btn" routerLink="/Products" data-bs-dismiss="offcanvas">
+        Shop Now
+      </button>
     </div>
-
   </div>
 </div>

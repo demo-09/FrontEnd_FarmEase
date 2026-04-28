@@ -4,41 +4,33 @@ import {
   NgZone,
   Inject,
   PLATFORM_ID,
-  ViewChild,
-  ElementRef,
   ChangeDetectorRef
 } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-
 import { NavComponent } from './shared/navbar/nav.component/nav.component';
 import { FooterComponent } from './shared/footer/footer.component/footer.component';
 import { AuthService } from './core/services/auth.service';
-import { inject } from '@angular/core';
-
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet,NavComponent, FooterComponent],
+  imports: [CommonModule, RouterOutlet, NavComponent, FooterComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
 export class App implements AfterViewInit {
 
-
   showIntro = true;
-
-  @ViewChild('mainWrapper') mainWrapper!: ElementRef;
+  isActive = false; // 👈 control animation via binding
 
   constructor(
     public auth: AuthService,
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef,
-    private router: Router,        // inject router
+    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    // Scroll to top on route change
     if (isPlatformBrowser(this.platformId)) {
       this.router.events.subscribe(event => {
         if (event instanceof NavigationEnd) {
@@ -47,30 +39,19 @@ export class App implements AfterViewInit {
       });
     }
   }
-
   ngAfterViewInit(): void {
-
     if (!isPlatformBrowser(this.platformId)) return;
 
-    this.ngZone.runOutsideAngular(() => {
+    // Start animation
+    setTimeout(() => {
+      this.isActive = true;
+      this.cdr.detectChanges();
+    }, 100);
 
-      requestAnimationFrame(() => {
-
-        setTimeout(() => {
-          const stage = document.getElementById('stage');
-
-          if (stage) {
-            stage.classList.add('is-active');
-
-            setTimeout(() => {
-              this.ngZone.run(() => {
-                this.showIntro = false;
-                this.cdr.detectChanges();
-              });
-            }, 1800);
-          }
-        }, 50);
-      });
-    });
+    // End intro
+    setTimeout(() => {
+      this.showIntro = false;
+      this.cdr.detectChanges();
+    }, 5000); // 👈 shorter + smoother UX
   }
 }

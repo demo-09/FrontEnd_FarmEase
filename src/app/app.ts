@@ -52,6 +52,6 @@ export class App implements AfterViewInit {
     setTimeout(() => {
       this.showIntro = false;
       this.cdr.detectChanges();
-    }, 1); // 👈 shorter + smoother UX
+    }, 4000); // 👈 shorter + smoother UX
   }
 }

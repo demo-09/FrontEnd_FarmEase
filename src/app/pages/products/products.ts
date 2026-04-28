@@ -7,6 +7,7 @@ import { forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { CartService } from '../../services/cart.service';
 import { WishlistService, WishlistItem } from '../wishlist/wishlist';
+import { AuthService } from '../../Auth/auth.service';
 
 @Component({
   selector: 'app-products',
@@ -47,7 +48,7 @@ export class Products {
     ),
     { initialValue: undefined } // undefined means still loading
   );
-
+  constructor(public auth: AuthService) { };
   isLoading = computed(() => this.productsData() === undefined);
   products = computed(() => this.productsData() || []);
 

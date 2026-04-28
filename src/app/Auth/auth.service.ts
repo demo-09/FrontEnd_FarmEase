@@ -24,4 +24,18 @@ export class AuthService {
   getRole(): UserRole | null {
     return (localStorage.getItem('user_role') as UserRole) || null;
   }
+
+  // ✅ NEW: Check Admin
+  isAdmin(): boolean {
+    return this.getRole() === 'admin';
+  }
+
+  // ✅ (Optional but useful)
+  isFarmer(): boolean {
+    return this.getRole() === 'farmer';
+  }
+
+  isCustomer(): boolean {
+    return this.getRole() === 'customer';
+  }
 }

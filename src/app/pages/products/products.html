@@ -69,16 +69,6 @@
             </div>
           </div>
 
-          <!-- In Stock -->
-          <div class="filter-group">
-            <div class="filter-group-title"><i class="fa-solid fa-circle-check"></i> Availability</div>
-            <label class="filter-toggle-label">
-              <input type="checkbox" class="filter-toggle-input" (change)="toggleInStock($event)">
-              <span class="filter-toggle-track"></span>
-              <span class="filter-toggle-text">In Stock Only</span>
-            </label>
-          </div>
-
           <!-- Sort -->
           <div class="filter-group">
             <div class="filter-group-title"><i class="fa-solid fa-arrow-up-wide-short"></i> Sort By</div>
@@ -121,7 +111,7 @@
                 <i [class]="product.inStock ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'"></i>
                 {{ product.label }}
               </div>
-              <button class="wishlist-fab" (click)="toggleWishlist(product, $event)"
+              <button *ngIf="!auth.isAdmin()" class="wishlist-fab" (click)="toggleWishlist(product, $event)"
                       [class.wishlisted]="isInWishlist(product.id)" [id]="'wish-' + product.id"
                       [title]="isInWishlist(product.id) ? 'Remove from wishlist' : 'Save to wishlist'">
                 <i [class]="isInWishlist(product.id) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
@@ -139,7 +129,7 @@
               <div class="product-footer">
                 <div class="product-price">{{ product.metaText }}</div>
                 <div class="product-actions">
-                  <button class="product-add-btn" (click)="addToCart(product, 1, $event)"
+                  <button class="product-add-btn" *ngIf="!auth.isAdmin()" (click)="addToCart(product, 1, $event)"
                           [disabled]="!product.inStock" [class.in-cart]="isInCart(product.id)"
                           [id]="'add-cart-' + product.id">
                     <i [class]="isInCart(product.id) ? 'fa-solid fa-check' : 'fa-solid fa-cart-plus'"></i>

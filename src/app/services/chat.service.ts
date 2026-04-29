@@ -5,7 +5,7 @@ export interface ChatMessage {
   id?: number;
   senderEmail: string;
   receiverEmail: string;
-  content: string;
+  content: string; 
   sentAt?: string;
 }
 

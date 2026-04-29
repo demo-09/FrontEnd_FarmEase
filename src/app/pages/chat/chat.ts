@@ -2,7 +2,6 @@ import { Component, ElementRef, ViewChild, effect, inject, OnInit, OnDestroy } f
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService, Contact } from '../../services/chat.service';
-import { time } from 'console';
 
 @Component({
   selector: 'app-chat',
@@ -11,8 +10,6 @@ import { time } from 'console';
   templateUrl: './chat.html',
   styleUrls: ['./chat.css']
 })
-// ... imports same as yours ...
-
 export class Chat implements OnInit, OnDestroy {
   public chatService = inject(ChatService);
   @ViewChild('chatScroll') private chatScrollContainer!: ElementRef;
@@ -22,8 +19,9 @@ export class Chat implements OnInit, OnDestroy {
   private pollInterval: any;
 
   constructor() {
+    // Auto-scroll effect: triggers whenever the messages signal updates
     effect(() => {
-      if (this.chatService.messages().length) {
+      if (this.chatService.messages().length > 0) {
         this.scrollToBottom();
       }
     });
@@ -32,11 +30,14 @@ export class Chat implements OnInit, OnDestroy {
   ngOnInit() {
     const userStr = localStorage.getItem('CurrentUser');
     if (userStr) {
-      this.currentUserEmail = JSON.parse(userStr).email;
+      try {
+        this.currentUserEmail = JSON.parse(userStr).email;
+      } catch (e) { console.error("Session error", e); }
     }
+
     this.chatService.loadContacts();
 
-    // Polling logic
+    // Polling: Checks for new messages every 3 seconds
     this.pollInterval = setInterval(() => {
       const selected = this.chatService.selectedContact();
       if (selected) {
@@ -45,12 +46,16 @@ export class Chat implements OnInit, OnDestroy {
     }, 3000);
   }
 
+  ngOnDestroy() {
+    if (this.pollInterval) clearInterval(this.pollInterval);
+  }
+
   selectContact(contact: Contact) {
     this.chatService.selectedContact.set(contact);
     this.chatService.loadHistory(contact.email);
   }
 
-  // Mobile navigation helper
+  // Closes chat on mobile to show contacts/global nav again
   closeChat() {
     this.chatService.selectedContact.set(null);
   }
@@ -62,25 +67,24 @@ export class Chat implements OnInit, OnDestroy {
     const selected = this.chatService.selectedContact();
     if (!selected) return;
 
-    this.newMessage = ''; // Optimistic UI clear
+    this.newMessage = ''; // UI Reset
 
     this.chatService.sendMessage(selected.email, text).subscribe({
       next: (msg) => {
         this.chatService.messages.update(msgs => [...msgs, msg]);
-      }
+      },
+      error: (err) => console.error('Send failed', err)
     });
   }
 
   private scrollToBottom(): void {
     setTimeout(() => {
-      if (this.chatScrollContainer) {
-        this.chatScrollContainer.nativeElement.scrollTop =
-          this.chatScrollContainer.nativeElement.scrollHeight;
-      }
+      try {
+        if (this.chatScrollContainer) {
+          this.chatScrollContainer.nativeElement.scrollTop =
+            this.chatScrollContainer.nativeElement.scrollHeight;
+        }
+      } catch (err) { }
     }, 100);
-  }
-
-  ngOnDestroy() {
-    if (this.pollInterval) clearInterval(this.pollInterval);
   }
 }

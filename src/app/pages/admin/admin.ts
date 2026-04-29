@@ -61,7 +61,11 @@ export class Admin implements OnInit, OnDestroy {
   
   // Track Add User Modal
   isAddingUser = signal(false);
-  newUser = { fullName: '', email: '', password: '', role: 'farmer', phone: '', address: '' };
+  newUser = {
+    fullName: '', email: '', password: '', role: 'farmer', phone: '', address: '',
+  birthDate: '',
+  bio:'' 
+  };
 
   currentAdminName = signal('');
   currentDate = signal(new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
@@ -124,13 +128,15 @@ export class Admin implements OnInit, OnDestroy {
 
   openAddUserModal(): void {
     this.isAddingUser.set(true);
-    this.newUser = { 
-      fullName: '', 
-      email: '', 
-      password: '', 
-      role: this.activePage() === 'customers' ? 'customer' : 'farmer', 
-      phone: '', 
-      address: '' 
+    this.newUser = {
+      fullName: '',
+      email: '',
+      password: '',
+      role: this.activePage() === 'customers' ? 'customer' : 'farmer',
+      phone: '',
+      address: '',
+      birthDate: '',
+      bio:''
     };
   }
 
@@ -143,8 +149,8 @@ export class Admin implements OnInit, OnDestroy {
       alert('Please fill out all required fields.');
       return;
     }
-
-    this.http.post(`${this.backendUrl}/auth/register`, this.newUser).subscribe({
+    console.log(this.newUser);
+    this.http.post(`${this.backendUrl}/Auth/register`, this.newUser).subscribe({
       next: () => {
         this.closeAddUserModal();
         this.refreshUserLists();

@@ -97,20 +97,11 @@ import { CommonModule } from '@angular/common';
           <div class="hero-img-card anim-float">
             <div class="hero-img-inner">
               <img
-                src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&q=80&w=800"
+                src="../../../assets/images/logo.png"
                 alt="Smart Farming"
                 class="hero-main-img"
                 loading="eager"
               />
-              <div class="hero-img-overlay">
-                <div class="hero-tag-card">
-                  <i class="fa-solid fa-robot text-success"></i>
-                  <div>
-                    <div class="tag-title">AI Assistant Active</div>
-                    <div class="tag-sub">Crop Health: <strong class="text-success">Excellent</strong></div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 

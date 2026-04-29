@@ -228,20 +228,16 @@
   max-width: 900px;
   margin: 0 auto;
 }
-.timeline::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 0; bottom: 0;
-  width: 2px;
-  background: linear-gradient(140deg,
-    #f0fdf4 0%,
-    #dcfce7 25%,
-    #f9fafb 50%,
-    #ecfdf5 75%,
-    #f0fdf4 100%);
-  transform: translateX(-50%);
-}
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(140deg, #f0fdf4 0%, #111c14 25%, #1e6429 50%, #3cbc80 75%, #268142 100%);
+    transform: translateX(-50%);
+  }
 .timeline-item {
   display: flex;
   align-items: flex-start;

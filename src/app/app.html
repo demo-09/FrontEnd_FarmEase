@@ -1,4 +1,4 @@
-<div *ngIf="showIntro" class="bootloader" [class.is-active]="isActive">
+<!--<div *ngIf="showIntro" class="bootloader" [class.is-active]="isActive">
 
   <div class="scene">
 
@@ -28,10 +28,10 @@
 
   </div>
 
-</div>
+</div>-->
 
 <!-- Main App -->
-<div *ngIf="!showIntro">
+<div>
   <app-nav></app-nav>
   <router-outlet></router-outlet>
   <app-footer *ngIf="auth.isLoggedIn()"></app-footer>

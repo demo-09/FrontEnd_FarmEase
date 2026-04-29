@@ -1,9 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { AdminInboxService } from '../../services/admin-inbox.service';
 
 export type UserRole = 'admin' | 'farmer' | 'customer';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private inbox = inject(AdminInboxService);
 
   private currentUser: { name: string; role: UserRole } | null = null;
 
@@ -13,6 +15,7 @@ export class AuthService {
   }
 
   logout() {
+    this.inbox.logActivity('Logout', 'User logged out of the session.');
     this.currentUser = null;
     localStorage.removeItem('user_role');
     localStorage.removeItem('CurrentUser');
@@ -24,5 +27,17 @@ export class AuthService {
 
   getRole(): UserRole | null {
     return (localStorage.getItem('user_role') as UserRole) || null;
+  }
+
+  get isAdmin(): boolean {
+    return this.getRole() === 'admin';
+  }
+
+  get isFarmer(): boolean {
+    return this.getRole() === 'farmer';
+  }
+
+  get isCustomer(): boolean {
+    return this.getRole() === 'customer';
   }
 }

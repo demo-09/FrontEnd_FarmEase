@@ -7,7 +7,7 @@ import { forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { CartService } from '../../services/cart.service';
 import { WishlistService, WishlistItem } from '../wishlist/wishlist';
-import { AuthService } from '../../Auth/auth.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-products',

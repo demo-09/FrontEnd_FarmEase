@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, AfterViewInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { CartService } from '../../services/cart.service';
@@ -12,11 +13,15 @@ declare var google: any;
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
 export class Login implements OnInit, AfterViewInit {
+  emailOrPhone = '';
+  password = '';
+  otpCode = '';
+  otpSent = false;
   showPass = false;
 
   auth = inject(AuthService);
@@ -61,13 +66,7 @@ export class Login implements OnInit, AfterViewInit {
         this.cartService.refreshCart();
         this.wishlistService.refreshWishlist();
 
-        this.adminInbox.sendMessage({
-          type: 'login',
-          title: 'Google Login',
-          requester: foundUser.fullName || foundUser.email,
-          details: `User logged in via Google with role: ${foundUser.role}`,
-          status: 'info'
-        });
+        this.adminInbox.logActivity('Google Login', `User logged in via Google.`);
 
         this.redirectByRole(foundUser.role);
       },
@@ -78,46 +77,61 @@ export class Login implements OnInit, AfterViewInit {
     });
   }
 
-  login(email: string, password: string) {
+  login() {
+    this.emailOrPhone = this.emailOrPhone.trim();
+    this.password = this.password.trim();
 
-    email = email.trim();
-    password = password.trim();
-
-    if (!email || !password) {
-      alert('Please enter email and password');
+    if (!this.emailOrPhone || !this.password) {
+      alert('Please enter an Email/Phone and Password');
       return;
     }
 
     const backendUrl = 'https://backend-farmease-1.onrender.com/api/auth';
+    this.http.post(`${backendUrl}/initiate-login`, { emailOrPhone: this.emailOrPhone, password: this.password }).subscribe({
+      next: (res: any) => {
+        this.otpSent = true;
+        alert(`Password Verified! OTP has been sent to your ${this.emailOrPhone.includes('@') ? 'email' : 'phone number'}.`);
+      },
+      error: (err) => {
+        console.error('Failed to initiate login', err);
+        alert('Invalid email/phone or password.');
+      }
+    });
+  }
 
-    this.http.post(`${backendUrl}/login`, { email, password }).subscribe({
+  verifyOtp() {
+    this.otpCode = this.otpCode.trim();
+    if (!this.otpCode) {
+      alert('Please enter the OTP');
+      return;
+    }
+
+    const backendUrl = 'https://backend-farmease-1.onrender.com/api/auth';
+    this.http.post(`${backendUrl}/verify-otp-login`, { emailOrPhone: this.emailOrPhone, otpCode: this.otpCode }).subscribe({
       next: (foundUser: any) => {
-        // Save current logged in user
         localStorage.setItem('CurrentUser', JSON.stringify(foundUser));
-
-        // ✅ Pass role if required
         this.auth.login(foundUser.role);
         
-        // Refresh cart and wishlist upon login
         this.cartService.refreshCart();
         this.wishlistService.refreshWishlist();
 
-        this.adminInbox.sendMessage({
-          type: 'login',
-          title: 'User Login',
-          requester: foundUser.fullName || foundUser.email,
-          details: `User logged in with role: ${foundUser.role}`,
-          status: 'info'
-        });
+        this.adminInbox.logActivity('Login', `User logged in via OTP.`);
 
         // Optional: Redirect by role
         this.redirectByRole(foundUser.role);
       },
       error: (err) => {
-        console.error('Login failed', err);
-        alert('Invalid email or password');
+        console.error('OTP verification failed', err);
+        alert('Invalid OTP. Please try again.');
       }
     });
+  }
+
+  changeLoginDetails() {
+    this.otpSent = false;
+    this.otpCode = '';
+    // Optional: Keep password or clear it
+    this.password = '';
   }
 
   private redirectByRole(role: string) {

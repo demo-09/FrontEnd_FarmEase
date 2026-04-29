@@ -70,15 +70,7 @@ export class CartService {
     this.http.post<CartItem>(this.backendUrl, dto).subscribe({
       next: () => {
         this.refreshCart();
-        const userStr = localStorage.getItem('CurrentUser');
-        const user = userStr ? JSON.parse(userStr) : null;
-        this.adminInbox.sendMessage({
-          type: 'add_to_cart',
-          title: 'Item Added to Cart',
-          requester: user ? (user.fullName || user.email) : 'Guest',
-          details: `Added ${qty}x ${dto.productName} to cart.`,
-          status: 'info'
-        });
+        this.adminInbox.logActivity('Add to Cart', `Added ${qty}x ${dto.productName} to cart.`);
       },
       error: (err) => {
         console.error('Failed to add to cart', err);

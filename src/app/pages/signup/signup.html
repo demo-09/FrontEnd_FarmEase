@@ -65,15 +65,16 @@
 
         <form class="auth-form"
               #signupForm="ngForm"
-              (ngSubmit)="onRegister(nameInput.value, emailInput.value, phoneInput.value, dobInput.value, addressInput.value, bioInput.value, passInput.value)">
+              (ngSubmit)="otpSent ? verifyOtp() : onRegister()">
 
-          <div class="signup-grid-2">
+          <div class="signup-grid-2" *ngIf="!otpSent">
             <div class="auth-field">
               <label class="auth-label">Full Name *</label>
               <div class="auth-input-wrap">
                 <i class="fa-solid fa-user auth-input-icon"></i>
                 <input
-                  #nameInput
+                  name="fullName"
+                  [(ngModel)]="signupData.fullName"
                   type="text"
                   class="auth-input"
                   placeholder="Your full name"
@@ -86,7 +87,8 @@
               <div class="auth-input-wrap">
                 <i class="fa-solid fa-envelope auth-input-icon"></i>
                 <input
-                  #emailInput
+                  name="email"
+                  [(ngModel)]="signupData.email"
                   type="email"
                   class="auth-input"
                   placeholder="you@example.com"
@@ -95,13 +97,14 @@
             </div>
           </div>
 
-          <div class="signup-grid-2">
+          <div class="signup-grid-2" *ngIf="!otpSent">
             <div class="auth-field">
               <label class="auth-label">Phone Number</label>
               <div class="auth-input-wrap">
                 <i class="fa-solid fa-phone auth-input-icon"></i>
                 <input
-                  #phoneInput
+                  name="phone"
+                  [(ngModel)]="signupData.phone"
                   type="tel"
                   class="auth-input"
                   placeholder="+91 XXXXX XXXXX">
@@ -113,7 +116,8 @@
               <div class="auth-input-wrap">
                 <i class="fa-solid fa-calendar auth-input-icon"></i>
                 <input
-                  #dobInput
+                  name="birthDate"
+                  [(ngModel)]="signupData.birthDate"
                   type="date"
                   class="auth-input"
                   style="padding-right:12px">
@@ -121,19 +125,20 @@
             </div>
           </div>
 
-          <div class="auth-field">
+          <div class="auth-field" *ngIf="!otpSent">
             <label class="auth-label">Address</label>
             <div class="auth-input-wrap">
               <i class="fa-solid fa-location-dot auth-input-icon textarea-icon"></i>
               <textarea
-                #addressInput
+                name="address"
+                [(ngModel)]="signupData.address"
                 class="auth-input auth-textarea"
                 rows="2"
                 placeholder="Village, District, State"></textarea>
             </div>
           </div>
 
-          <div class="auth-field">
+          <div class="auth-field" *ngIf="!otpSent">
             <label class="auth-label">
               Short Bio
               <span class="optional-text">(optional)</span>
@@ -141,14 +146,15 @@
             <div class="auth-input-wrap">
               <i class="fa-solid fa-pen auth-input-icon textarea-icon"></i>
               <textarea
-                #bioInput
+                name="bio"
+                [(ngModel)]="signupData.bio"
                 class="auth-input auth-textarea"
                 rows="2"
                 placeholder="Tell us about yourself..."></textarea>
             </div>
           </div>
 
-          <div class="auth-field">
+          <div class="auth-field" *ngIf="!otpSent">
             <label class="auth-label">
               Password *
               <span class="optional-text">(min 6 chars)</span>
@@ -156,7 +162,8 @@
             <div class="auth-input-wrap">
               <i class="fa-solid fa-lock auth-input-icon"></i>
               <input
-                #passInput
+                name="password"
+                [(ngModel)]="signupData.password"
                 type="password"
                 class="auth-input"
                 minlength="6"
@@ -165,13 +172,24 @@
             </div>
           </div>
 
-          <div class="signup-role-indicator">
+          <div class="signup-role-indicator" *ngIf="!otpSent">
             <i class="fa-solid fa-circle-check"></i>
             Registering as:
             <strong>{{ selectedRole | titlecase }}</strong>
           </div>
 
+          <!-- OTP Field -->
+          <div class="auth-field" *ngIf="otpSent">
+            <label class="auth-label" for="signup-otp">Enter Verification OTP</label>
+            <div class="auth-input-wrap">
+              <i class="fa-solid fa-key auth-input-icon"></i>
+              <input type="text" id="signup-otp" name="otpCode" class="auth-input"
+                     placeholder="6-digit code" [(ngModel)]="otpCode" required>
+            </div>
+          </div>
+
           <button
+            *ngIf="!otpSent"
             type="submit"
             class="auth-submit-btn"
             [class.loading]="isLoading"
@@ -180,11 +198,29 @@
             <i class="fa-solid fa-rocket" *ngIf="!isLoading"></i>
             <span *ngIf="isLoading" class="btn-spinner"></span>
 
-            {{ isLoading ? 'Creating Account...' : 'Create Free Account' }}
+            {{ isLoading ? 'Sending OTP...' : 'Create Free Account' }}
           </button>
 
-          <div class="auth-divider" style="text-align: center; margin: 20px 0; color: rgba(255, 255, 255, 0.6);"><span>or</span></div>
-          <div id="google-btn-signup" style="display: flex; justify-content: center; margin-bottom: 20px;"></div>
+          <button
+            *ngIf="otpSent"
+            type="submit"
+            class="auth-submit-btn"
+            [class.loading]="isLoading"
+            [disabled]="isLoading || !otpCode">
+
+            <i class="fa-solid fa-check-circle" *ngIf="!isLoading"></i>
+            <span *ngIf="isLoading" class="btn-spinner"></span>
+
+            {{ isLoading ? 'Verifying...' : 'Verify & Sign Up' }}
+          </button>
+
+          <div style="text-align: center; margin-top: 10px;" *ngIf="otpSent">
+            <a href="javascript:void(0)" class="auth-link" (click)="otpSent = false; otpCode = ''">Change Details?</a>
+          </div>
+
+
+          <div class="auth-divider" style="text-align: center; margin: 20px 0; color: rgba(255, 255, 255, 0.6);" *ngIf="!otpSent"><span>or</span></div>
+          <div id="google-btn-signup" style="display: flex; justify-content: center; margin-bottom: 20px;" *ngIf="!otpSent"></div>
 
           <div class="auth-footer-text">
             Already have an account?

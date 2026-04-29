@@ -125,7 +125,7 @@ export class OrderDetail implements OnInit {
 
     if (this.mode() === 'cart') {
       // POST to backend
-      this.http.post<any>('http://localhost:5009/api/orders', { checkoutFromCart: true }).subscribe({
+      this.http.post<any>('https://backend-farmease-1.onrender.com/api/orders', { checkoutFromCart: true }).subscribe({
         next: (res) => {
           this.cartService.clearLocalCart();
           const id = res?.id || Math.floor(100000 + Math.random() * 900000);

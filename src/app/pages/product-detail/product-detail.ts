@@ -7,7 +7,8 @@ import { forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { CartService } from '../../services/cart.service';
 import { WishlistService, WishlistItem } from '../wishlist/wishlist';
-import { AuthService } from '../../Auth/auth.service';
+import { AuthService } from '../../core/services/auth.service';
+import { AdminInboxService } from '../../services/admin-inbox.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -23,6 +24,7 @@ export class ProductDetail {
   private http = inject(HttpClient);
   public cartService = inject(CartService);
   public wishlistService = inject(WishlistService);
+  public inbox = inject(AdminInboxService);
   constructor(public auth: AuthService) { };
   private routeParams = toSignal(this.route.paramMap, { initialValue: null });
 
@@ -60,7 +62,12 @@ export class ProductDetail {
     const id = params.get('id');
     const type = params.get('type');
     
-    return data.find(p => p.id === id && p.type === type) || null;
+    
+    const found = data.find(p => p.id === id && p.type === type) || null;
+    if (found) {
+      this.inbox.logActivity('Product Viewed', `Viewed product: ${found.title} (${found.type})`);
+    }
+    return found;
   });
 
   suggestions = computed(() => {
@@ -141,6 +148,7 @@ export class ProductDetail {
     const numId = parseInt(product.id);
     if (this.wishlistService.isInWishlist(numId)) {
       this.wishlistService.removeByProductId(numId);
+      this.inbox.logActivity('Wishlist', `Removed item from wishlist: ${product.title}`);
     } else {
       this.wishlistService.addItem({
         id: numId,
@@ -150,6 +158,7 @@ export class ProductDetail {
         inStock: product.inStock,
         category: product.subtitle
       } as WishlistItem);
+      this.inbox.logActivity('Wishlist', `Added item to wishlist: ${product.title}`);
     }
   }
 

@@ -26,6 +26,23 @@ export class Signup implements OnInit, AfterViewInit {
   // State Management
   selectedRole: UserRole = 'customer';
   isLoading = false;
+  otpSent = false;
+  otpCode = '';
+
+  // Store email or phone locally during signup
+  currentRegistrationContact = '';
+
+  // Form Model
+  signupData = {
+    fullName: '',
+    email: '',
+    phone: '',
+    birthDate: '',
+    address: '',
+    bio: '',
+    password: '',
+    role: 'customer' as UserRole
+  };
 
   ngOnInit(): void {
     if (this.auth.isLoggedIn()) {
@@ -56,13 +73,7 @@ export class Signup implements OnInit, AfterViewInit {
         localStorage.setItem('CurrentUser', JSON.stringify(foundUser));
         this.auth.login(foundUser.role);
         
-        this.adminInbox.sendMessage({
-          type: 'signup',
-          title: 'Google Signup/Login',
-          requester: foundUser.fullName || foundUser.email,
-          details: `User signed up/logged in via Google with role: ${foundUser.role}`,
-          status: 'info'
-        });
+        this.adminInbox.logActivity('Google Login', `User signed up/logged in via Google.`);
 
         this.router.navigate(['/']);
       },
@@ -75,24 +86,19 @@ export class Signup implements OnInit, AfterViewInit {
 
   setRole(role: string) {
     this.selectedRole = role as UserRole;
+    this.signupData.role = this.selectedRole;
   }
 
-  onRegister(
-    name: string,
-    email: string,
-    phone: string,
-    dob: string,
-    address: string,
-    bio: string,
-    pass: string
-  ) {
+  onRegister() {
+    const { fullName, email, password } = this.signupData;
+
     // Basic Validation
-    if (!name.trim() || !email.trim() || !pass.trim()) {
+    if (!fullName.trim() || !email.trim() || !password.trim()) {
       alert('Full Name, Email, and Password are required.');
       return;
     }
 
-    if (pass.length < 6) {
+    if (password.length < 6) {
       alert('Password must be at least 6 characters.');
       return;
     }
@@ -100,35 +106,54 @@ export class Signup implements OnInit, AfterViewInit {
     this.isLoading = true;
 
     const newUser = {
-      fullName: name.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
-      birthDate: dob,
-      address: address.trim(),
-      bio: bio.trim(),
-      password: pass.trim(),
-      role: this.selectedRole,
+      ...this.signupData,
+      fullName: this.signupData.fullName.trim(),
+      email: this.signupData.email.trim(),
       joinedDate: new Date().toISOString()
     };
 
-    this.http.post(`${this.backendUrl}/register`, newUser).subscribe({
-      next: (res) => {
-        console.log('Registration Successful', res);
+    this.currentRegistrationContact = email.trim();
 
-        this.adminInbox.sendMessage({
-          type: 'signup',
-          title: 'New User Registered',
-          requester: newUser.fullName,
-          details: `Registered as ${newUser.role}. Email: ${newUser.email}`,
-          status: 'info'
-        });
-
-        this.router.navigate(['/Login']);
+    this.http.post(`${this.backendUrl}/initiate-register`, newUser).subscribe({
+      next: (res: any) => {
+        this.isLoading = false;
+        this.otpSent = true;
+        // The mock OTP will fall back to printing in the backend console
+        alert(`Account Initialized!\n\n(MOCK OTP for testing: ${res.mockOtp})`);
       },
       error: (err) => {
         this.isLoading = false;
         console.error('Registration failed', err);
-        alert(err.error?.message || 'Failed to create account. Please try again.');
+        alert(err.error?.message || 'Failed to initiate registration. Please try again.');
+      }
+    });
+  }
+
+  verifyOtp() {
+    this.otpCode = this.otpCode.trim();
+    if (!this.otpCode) {
+      alert('Please enter the OTP');
+      return;
+    }
+
+    this.isLoading = true;
+
+    this.http.post(`${this.backendUrl}/verify-otp-register`, { emailOrPhone: this.currentRegistrationContact, otpCode: this.otpCode }).subscribe({
+      next: (foundUser: any) => {
+        this.isLoading = false;
+        console.log('Registration Successful', foundUser);
+
+        localStorage.setItem('CurrentUser', JSON.stringify(foundUser.user || foundUser));
+        this.auth.login(foundUser.user?.role || foundUser.role);
+
+        this.adminInbox.logActivity('Signup', `New user registered: ${foundUser.user?.fullName || foundUser.fullName} (${foundUser.user?.role || foundUser.role})`);
+
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('OTP verification failed', err);
+        alert('Invalid OTP or session expired. Please try again.');
       }
     });
   }

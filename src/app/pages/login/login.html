@@ -61,32 +61,49 @@
           <p class="auth-subtitle">Sign in to your FarmEase account</p>
         </div>
 
-        <form #loginForm="ngForm" (ngSubmit)="login(emailInput.value, passInput.value)" class="auth-form" id="login-form">
+        <form #loginForm="ngForm" class="auth-form" id="login-form" (ngSubmit)="otpSent ? verifyOtp() : login()">
 
-          <div class="auth-field">
-            <label class="auth-label" for="login-email">Email Address</label>
+          <div class="auth-field" *ngIf="!otpSent">
+            <label class="auth-label" for="login-email">Email or Phone Number</label>
             <div class="auth-input-wrap">
-              <i class="fa-solid fa-envelope auth-input-icon"></i>
-              <input type="email" id="login-email" name="email" class="auth-input" placeholder="you@example.com"
-                     #emailInput required autocomplete="email">
+              <i class="fa-solid fa-user auth-input-icon"></i>
+              <input type="text" id="login-email" name="emailOrPhone" class="auth-input" placeholder="you@example.com or +91XXXXX"
+                     [(ngModel)]="emailOrPhone" required autocomplete="username">
             </div>
           </div>
 
-          <div class="auth-field">
+          <div class="auth-field" *ngIf="!otpSent">
             <label class="auth-label" for="login-password">Password</label>
             <div class="auth-input-wrap">
               <i class="fa-solid fa-lock auth-input-icon"></i>
               <input [type]="showPass ? 'text' : 'password'" id="login-password" name="password" class="auth-input"
-                     placeholder="Enter your password" #passInput required autocomplete="current-password">
+                     placeholder="Enter your password" [(ngModel)]="password" required autocomplete="current-password">
               <button type="button" class="auth-pass-toggle" (click)="showPass = !showPass">
                 <i [class]="showPass ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
               </button>
             </div>
           </div>
 
-          <button type="submit" class="auth-submit-btn" id="login-submit-btn">
+          <div class="auth-field" *ngIf="otpSent">
+            <label class="auth-label" for="login-otp">Enter OTP</label>
+            <div class="auth-input-wrap">
+              <i class="fa-solid fa-key auth-input-icon"></i>
+              <input type="text" id="login-otp" name="otp" class="auth-input"
+                     placeholder="6-digit code" [(ngModel)]="otpCode" required>
+            </div>
+          </div>
+
+          <button type="submit" class="auth-submit-btn" id="login-submit-btn" *ngIf="!otpSent">
             <i class="fa-solid fa-right-to-bracket"></i> Sign In to FarmEase
           </button>
+
+          <button type="submit" class="auth-submit-btn" id="verify-submit-btn" *ngIf="otpSent">
+            <i class="fa-solid fa-right-to-bracket"></i> Verify & Sign In
+          </button>
+
+          <div style="text-align: center; margin-top: 10px;" *ngIf="otpSent">
+            <a href="javascript:void(0)" class="auth-link" (click)="changeLoginDetails()">Change Login Details?</a>
+          </div>
 
           <div class="auth-divider"><span>or</span></div>
 

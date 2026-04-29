@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 export interface InboxMessage {
   id: string;
@@ -17,6 +18,9 @@ export interface InboxMessage {
 export class AdminInboxService {
   // Global reactive state holds all incoming admin approvals
   messages = signal<InboxMessage[]>([]);
+
+  private http = inject(HttpClient);
+  private backendUrl = 'https://backend-farmease-1.onrender.com/api/activity';
 
   constructor() {
     this.loadFromStorage();
@@ -71,6 +75,25 @@ export class AdminInboxService {
     // Prepend to array
     this.messages.update(msgs => [newMsg, ...msgs]);
     this.saveToStorage();
+  }
+
+  logActivity(actionType: string, details: string) {
+    // 1. Send to backend for persistence
+    this.http.post(`${this.backendUrl}/log`, { actionType, details }).subscribe({
+      error: (err) => console.error('Failed to log activity to backend', err)
+    });
+
+    // 2. Also send to local inbox for immediate UI feedback
+    const userStr = localStorage.getItem('CurrentUser');
+    const user = userStr ? JSON.parse(userStr) : null;
+
+    this.sendMessage({
+      type: 'user_alert',
+      title: actionType,
+      requester: user ? (user.fullName || user.email) : 'System',
+      details: details,
+      status: 'info'
+    });
   }
 
   approveRequest(id: string) {

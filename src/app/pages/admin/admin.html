@@ -1,10 +1,13 @@
 <!-- Admin Dashboard — Default Premium Glassmorphism (Green/White) -->
 <div class="admin-page mesh-bg">
 
+  <!-- Sidebar Overlay for Mobile -->
+  <div class="sidebar-overlay d-lg-none" *ngIf="isSidebarOpen()" (click)="toggleSidebar()"></div>
+
   <!-- Sidebar -->
-  <aside class="admin-sidebar">
+  <aside class="admin-sidebar" [class.mobile-open]="isSidebarOpen()">
     <div class="sidebar-user">
-      <img [src]="'https://ui-avatars.com/api/?name=' + (currentAdminName() || 'Admin') + '&background=16a34a&color=fff&bold=true&size=60'"
+      <img [src]="currentAdminAvatar() || ('https://ui-avatars.com/api/?name=' + (currentAdminName() || 'Admin') + '&background=0f5132&color=fff&bold=true&size=60')"
            class="sidebar-avatar" [alt]="currentAdminName()">
       <div>
         <div class="sidebar-uname">{{ currentAdminName() || 'Admin' }}</div>
@@ -46,14 +49,14 @@
         Add New Product
       </button>
 
-      <a routerLink="/Chat" class="sidebar-btn" style="text-decoration: none;">
+      <a routerLink="/Chat" class="sidebar-btn" style="text-decoration: none;" (click)="isSidebarOpen.set(false)">
         <div class="sbtn-icon"><i class="fa-brands fa-whatsapp"></i></div>
         Support Inbox
       </a>
     </nav>
 
     <div class="sidebar-footer">
-      <a routerLink="/HomePage" class="sidebar-back-btn">
+      <a routerLink="/HomePage" class="sidebar-back-btn" (click)="isSidebarOpen.set(false)">
         <i class="fa-solid fa-arrow-left me-2"></i> Exit Admin Mode
       </a>
     </div>
@@ -61,6 +64,18 @@
 
   <!-- Main Content Space -->
   <main class="admin-main">
+    
+    <!-- Mobile Header -->
+    <div class="mobile-admin-header d-lg-none mb-4 d-flex align-items-center justify-content-between p-3 bg-white rounded-3 shadow-sm">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-light" (click)="toggleSidebar()">
+          <i class="fa-solid fa-bars fs-5"></i>
+        </button>
+        <span class="fw-bold fs-5 m-0 text-dark">Admin Dashboard</span>
+      </div>
+      <img [src]="currentAdminAvatar() || ('https://ui-avatars.com/api/?name=' + (currentAdminName() || 'Admin') + '&background=0f5132&color=fff&bold=true')" 
+           class="rounded-circle shadow-sm" style="width:40px; height:40px; object-fit: cover;" [alt]="currentAdminName()">
+    </div>
 
     <!-- ==================== DASHBOARD / REAL STATS ==================== -->
     <section *ngIf="activePage() === 'dashboard'" class="anim-fade-up">
@@ -151,7 +166,7 @@
             <i class="fa-solid fa-trash-can"></i>
           </button>
           
-          <img [src]="user.avatar" class="user-avatar" [alt]="user.fullName">
+          <img [src]="getAvatarUrl(user)" class="user-avatar" [alt]="user.fullName">
           <div class="user-name">{{ user.fullName }}</div>
           <div class="user-email">{{ user.email }}</div>
           <div class="user-phone"><i class="fa-solid fa-phone me-1"></i> {{ user.phone || 'Not provided' }}</div>
@@ -331,7 +346,13 @@
                       {{ msg.type === 'bulk_order' ? 'BULK ORDER' : msg.type === 'user_alert' ? 'SECURITY ALERT' : msg.type === 'product_approval' ? 'PRODUCT APPROVAL' : 'RENTAL' }}
                     </span>
                   </td>
-                  <td>{{ msg.requester }}</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <img [src]="'https://ui-avatars.com/api/?name=' + msg.requester + '&background=0f5132&color=fff&size=32'" 
+                           class="rounded-circle" style="width:24px; height:24px;">
+                      {{ msg.requester }}
+                    </div>
+                  </td>
                   <td style="max-width:300px;"><small class="text-secondary">{{ msg.details }}</small></td>
                   <td><small class="text-muted">{{ msg.timestamp | date:'shortTime' }}</small></td>
                   <td>
@@ -359,6 +380,7 @@
 
   </main>
 
+ 
   <!-- ==================== USER MODAL (ADD FARMER/CUSTOMER) ==================== -->
   <div class="modal-backdrop-glass" *ngIf="isAddingUser()" (click)="closeAddUserModal()">
     <div class="modal-card-glass anim-scale-up" (click)="$event.stopPropagation()">
@@ -390,6 +412,21 @@
         <div class="form-group col-span-1">
           <label>Address / Geolocation</label>
           <input type="text" name="address" [(ngModel)]="newUser.address" placeholder="Village, City">
+        </div>
+
+        <div class="form-group col-span-2">
+          <label>Choose Avatar <span class="text-muted text-sm">(Optional)</span></label>
+          <div class="avatar-selector-grid">
+            <button type="button" class="avatar-option" 
+                    *ngFor="let av of presetAvatars"
+                    [class.selected]="newUser.avatar === av"
+                    (click)="newUser.avatar = av">
+              <img [src]="av" alt="Avatar option">
+            </button>
+          </div>
+          <div class="auth-input-wrap mt-2">
+            <input type="text" name="avatar" [(ngModel)]="newUser.avatar" placeholder="Or paste custom image URL...">
+          </div>
         </div>
 
         <div class="form-footer col-span-2 mt-4">

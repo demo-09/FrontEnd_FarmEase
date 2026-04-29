@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, AfterViewInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { CartService } from '../../services/cart.service';
@@ -90,7 +90,7 @@ export class Login implements OnInit, AfterViewInit {
     this.http.post(`${backendUrl}/initiate-login`, { emailOrPhone: this.emailOrPhone, password: this.password }).subscribe({
       next: (res: any) => {
         this.otpSent = true;
-        alert(`Password Verified! OTP has been sent to your ${this.emailOrPhone.includes('@') ? 'email' : 'phone number'}.`);
+        alert(res.mockOtp);
       },
       error: (err) => {
         console.error('Failed to initiate login', err);

@@ -14,6 +14,12 @@ export class Chat implements OnInit, OnDestroy {
   public chatService = inject(ChatService);
   @ViewChild('chatScroll') private chatScrollContainer!: ElementRef;
 
+  getAvatarUrl(contact: any): string {
+    if (contact?.avatar) return contact.avatar;
+    const name = contact?.fullName || 'User';
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=22c55e&color=fff&bold=true`;
+  }
+
   newMessage = '';
   currentUserEmail = '';
   private pollInterval: any;

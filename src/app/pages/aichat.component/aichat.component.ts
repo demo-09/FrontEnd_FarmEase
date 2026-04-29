@@ -1,5 +1,5 @@
 import { Component, signal, effect, ViewChild, ElementRef, inject, AfterViewInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GeminiService } from '../../services/gemini.service';
 
@@ -17,7 +17,7 @@ export interface ChatMessage {
 @Component({
   selector: 'app-aichat',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe],
+  imports: [CommonModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './aichat.component.html',
   styleUrls: ['./aichat.component.css']

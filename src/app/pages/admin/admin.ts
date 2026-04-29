@@ -59,11 +59,27 @@ export class Admin implements OnInit, OnDestroy {
     { id: 'ALT-1091', user: 'Kisan Traders', issue: 'Suspicious bulk order outside serviceable region.', severity: 'medium', time: '2 hrs ago' }
   ];
   
+  // Mobile Sidebar State
+  isSidebarOpen = signal(false);
+
+  toggleSidebar(): void {
+    this.isSidebarOpen.update(v => !v);
+  }
+
   // Track Add User Modal
   isAddingUser = signal(false);
-  newUser = { fullName: '', email: '', password: '', role: 'farmer', phone: '', address: '' };
+  newUser = { fullName: '', email: '', password: '', role: 'farmer', phone: '', address: '', birthDate: '', avatar: '' };
+
+  presetAvatars = [
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Oliver',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Amaya',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Jocelyn'
+  ];
 
   currentAdminName = signal('');
+  currentAdminAvatar = signal('');
   currentDate = signal(new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
 
   private router = inject(Router);
@@ -71,11 +87,25 @@ export class Admin implements OnInit, OnDestroy {
   public auth = inject(AuthService);
   public inbox = inject(AdminInboxService);
 
+  getAvatarUrl(user: any): string {
+    if (user?.avatar) return user.avatar;
+    const name = user?.fullName || 'User';
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=16a34a&color=fff&bold=true`;
+  }
+
+  setPage(page: string): void {
+    this.activePage.set(page);
+    this.isSidebarOpen.set(false);
+    if (page === 'machinery' || page === 'inventory') {
+      this.resetForm();
+    }
+  }
+
   ngOnInit(): void {
     this.checkAdminAccess();
     this.refreshUserLists();
     this.loadInventory();
-    this.refreshInbox();
+    // Inbox is now managed automatically by AdminInboxService polling
   }
 
   ngOnDestroy(): void {
@@ -90,6 +120,7 @@ export class Admin implements OnInit, OnDestroy {
     }
     const admin = JSON.parse(adminString);
     this.currentAdminName.set(admin.fullName || 'Admin');
+    this.currentAdminAvatar.set(admin.avatar || '');
     if (admin.role !== 'admin') {
       this.router.navigate(['/Login']);
     }
@@ -131,7 +162,9 @@ export class Admin implements OnInit, OnDestroy {
       password: '', 
       role: this.activePage() === 'customers' ? 'customer' : 'farmer', 
       phone: '', 
-      address: '' 
+      address: '' ,
+      birthDate: '',
+      avatar: ''
     };
   }
 
@@ -217,14 +250,6 @@ export class Admin implements OnInit, OnDestroy {
       });
     }
   }
-
-  setPage(page: string): void {
-    this.activePage.set(page);
-    if (page === 'machinery' || page === 'inventory') {
-      this.resetForm();
-    }
-  }
-
   // Inbox Actions
   approveRequest(id: string) {
     this.inbox.approveRequest(id);
@@ -248,50 +273,6 @@ export class Admin implements OnInit, OnDestroy {
         this.inventoryItems.set([...m, ...a]);
       },
       error: (err) => console.error('Failed to load inventory', err)
-    });
-  }
-  
-  refreshInbox(): void {
-    forkJoin({
-      orders: this.http.get<any[]>(`${this.backendUrl}/orders/all`).pipe(catchError(() => of([]))),
-      activities: this.http.get<any[]>(`${this.backendUrl}/activity/all`).pipe(catchError(() => of([])))
-    }).subscribe({
-      next: (res) => {
-        const orderMsgs = res.orders.map(o => {
-          const isRental = o.items.some((i: any) => 
-            i.productName.toLowerCase().includes('tractor') || 
-            i.productName.toLowerCase().includes('harvester') || 
-            i.productName.toLowerCase().includes('machine')
-          );
-          
-          return {
-            id: `ORD-${o.id}`,
-            type: (isRental ? 'rental' : 'bulk_order') as "rental" | "bulk_order" | "user_alert",
-            title: isRental ? 'Equipment Rental Request' : 'Bulk Product Order',
-            requester: o.requesterName || o.requesterEmail || 'Unknown Requester',
-            details: `Order of ₹${o.totalAmount} for ${o.items.length} item(s).`,
-            timestamp: new Date(o.orderDate),
-            status: (o.status.toLowerCase() === 'completed' ? 'approved' : o.status.toLowerCase()) as "approved" | "pending" | "rejected"
-          };
-        });
-        
-        const actMsgs = res.activities.map(a => {
-          return {
-            id: `ACT-${a.id}`,
-            type: 'user_alert' as "rental" | "bulk_order" | "user_alert" | "product_approval",
-            title: a.actionType === 'user_alert' ? 'System Activity' : a.actionType,
-            requester: a.userFullName || 'System',
-            details: a.details,
-            timestamp: new Date(a.timestamp),
-            status: 'approved' as "approved" | "pending" | "rejected"
-          };
-        });
-
-        const mappedMsgs = [...orderMsgs, ...actMsgs];
-        mappedMsgs.sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime());
-        this.inbox.messages.set(mappedMsgs);
-      },
-      error: (err) => console.error('Failed to load orders for inbox', err)
     });
   }
   

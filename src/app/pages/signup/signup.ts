@@ -4,14 +4,14 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AuthService, UserRole } from '../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
-import { AdminInboxService } from '../../services/admin-inbox.service';
+    import { AdminInboxService } from '../../services/admin-inbox.service';
 
 declare var google: any;
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, RouterLink,FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './signup.html',
   styleUrl: './signup.css',
 })
@@ -41,8 +41,17 @@ export class Signup implements OnInit, AfterViewInit {
     address: '',
     bio: '',
     password: '',
-    role: 'customer' as UserRole
+    role: 'customer' as UserRole,
+    avatar: ''
   };
+
+  presetAvatars = [
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Oliver',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Amaya',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Jocelyn'
+  ];
 
   ngOnInit(): void {
     if (this.auth.isLoggedIn()) {
@@ -118,8 +127,7 @@ export class Signup implements OnInit, AfterViewInit {
       next: (res: any) => {
         this.isLoading = false;
         this.otpSent = true;
-        // The mock OTP will fall back to printing in the backend console
-        alert(`Account Initialized!\n\n(MOCK OTP for testing: ${res.mockOtp})`);
+        alert(res.mockOtp);
       },
       error: (err) => {
         this.isLoading = false;

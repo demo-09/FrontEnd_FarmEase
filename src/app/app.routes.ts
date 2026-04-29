@@ -28,7 +28,9 @@ export const routes: Routes = [
   // Public
   { path: 'home', component: HomePage },
   { path: 'signup', component: Signup },
+  { path: 'Signup', redirectTo: 'signup' },
   { path: 'login', component: Login },
+  { path: 'Login', redirectTo: 'login' },
   { path: 'about', component: About },
   { path: 'ai', component: AichatComponent },
 

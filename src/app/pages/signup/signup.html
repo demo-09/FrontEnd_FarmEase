@@ -155,6 +155,27 @@
           </div>
 
           <div class="auth-field" *ngIf="!otpSent">
+            <label class="auth-label">Choose Avatar</label>
+            <div class="avatar-selector-grid">
+              <button type="button" class="avatar-option" 
+                      *ngFor="let av of presetAvatars"
+                      [class.selected]="signupData.avatar === av"
+                      (click)="signupData.avatar = av">
+                <img [src]="av" alt="Avatar option">
+              </button>
+            </div>
+            <div class="auth-input-wrap mt-2">
+              <i class="fa-solid fa-link auth-input-icon"></i>
+              <input
+                name="avatar"
+                [(ngModel)]="signupData.avatar"
+                type="text"
+                class="auth-input"
+                placeholder="Or paste custom image URL...">
+            </div>
+          </div>
+
+          <div class="auth-field" *ngIf="!otpSent">
             <label class="auth-label">
               Password *
               <span class="optional-text">(min 6 chars)</span>
@@ -224,7 +245,7 @@
 
           <div class="auth-footer-text">
             Already have an account?
-            <a routerLink="/Login" class="auth-link">
+            <a routerLink="/login" class="auth-link">
               Sign In →
             </a>
           </div>

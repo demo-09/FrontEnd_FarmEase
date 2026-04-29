@@ -43,28 +43,16 @@ export class Cart implements OnInit {
 
   placeOrder() {
     if (this.cartService.count() === 0) return;
-    const total = this.finalTotal;
-    
-    this.http.post('https://backend-farmease-1.onrender.com/api/orders', { checkoutFromCart: true }).subscribe({
-      next: () => {
-        this.cartService.clearLocalCart();
 
-        const userStr = localStorage.getItem('CurrentUser');
-        const user = userStr ? JSON.parse(userStr) : null;
-        this.adminInbox.sendMessage({
-          type: 'order',
-          title: 'New Order Placed',
-          requester: user ? (user.fullName || user.email) : 'Guest',
-          details: `Placed an order totaling ₹${total.toLocaleString('en-IN')}`,
-          status: 'info'
-        });
-
-        this.notify(`✅ Order placed! Total ₹${total.toLocaleString('en-IN')} — Thank you!`);
-        setTimeout(() => this.router.navigate(['/Orders']), 2000);
-      },
-      error: (err) => {
-        console.error('Failed to place order:', err);
-        this.notify('❌ Failed to place order. Please try again.');
+    // Navigate to order-detail with cart state
+    this.router.navigate(['/order-detail'], {
+      state: {
+        fromCart: true,
+        cartItems: this.cartItems(),
+        subtotal: this.subtotal(),
+        shipping: this.shipping,
+        discount: this.discount,
+        finalTotal: this.finalTotal
       }
     });
   }

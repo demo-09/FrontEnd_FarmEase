@@ -35,23 +35,31 @@ export class NavComponent implements OnInit, OnDestroy {
     this.updateUser();
     this.routerSub = this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
-    ).subscribe(() => this.updateUser());
+    ).subscribe(() => {
+      this.updateUser();
+      this.closeMenus();
+    });
   }
 
   ngOnDestroy() {
     if (this.routerSub) this.routerSub.unsubscribe();
   }
-  // in your component
-  ngAfterViewInit() {
-    const el = document.getElementById('mobileNav');
-    if (el) {
-      el.addEventListener('click', () => {
-        const bsCollapse = (window as any).bootstrap?.Collapse;
-        if (bsCollapse) {
-          const instance = bsCollapse.getInstance(el);
-          if (instance) instance.hide();
-        }
-      });
+
+  closeMenus() {
+    if (typeof window === 'undefined' || !(window as any).bootstrap) return;
+    
+    // Close Mobile Nav Collapse
+    const mobileNav = document.getElementById('mobileNav');
+    if (mobileNav) {
+      const bsCollapse = (window as any).bootstrap.Collapse.getInstance(mobileNav);
+      if (bsCollapse) bsCollapse.hide();
+    }
+
+    // Close Offcanvas Profile Drawer
+    const drawer = document.getElementById('sideDrawer');
+    if (drawer) {
+      const bsOffcanvas = (window as any).bootstrap.Offcanvas.getInstance(drawer);
+      if (bsOffcanvas) bsOffcanvas.hide();
     }
   }
   updateUser() {
@@ -65,6 +73,12 @@ export class NavComponent implements OnInit, OnDestroy {
 
   hasRole(role: string): boolean {
     return this.currentUser?.role === role;
+  }
+
+  getAvatarUrl(): string {
+    if (this.currentUser?.avatar) return this.currentUser.avatar;
+    const name = this.currentUser?.fullName || 'Guest';
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0f5132&color=fff&bold=true`;
   }
 
   logout(): void {

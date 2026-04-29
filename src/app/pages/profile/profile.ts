@@ -29,8 +29,17 @@ export class Profile implements OnInit {
     fullName: '',
     phone: '',
     address: '',
-    dob: ''
+    dob: '',
+    avatar: ''
   };
+
+  presetAvatars = [
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Oliver',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Amaya',
+    'https://api.dicebear.com/7.x/avataaars/svg?seed=Jocelyn'
+  ];
 
   ngOnInit(): void {
     const storedUser = localStorage.getItem('CurrentUser');
@@ -46,13 +55,20 @@ export class Profile implements OnInit {
     }
   }
 
+  getAvatarUrl(): string {
+    if (this.currentUser?.avatar) return this.currentUser.avatar;
+    const name = this.currentUser?.fullName || 'Guest';
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0f5132&color=fff&bold=true&size=128`;
+  }
+
   editProfile(): void {
     // Populate form with current values
     this.editForm = {
       fullName: this.currentUser?.fullName || this.currentUser?.name || '',
       phone: this.currentUser?.phone || '',
       address: this.currentUser?.address || '',
-      dob: this.currentUser?.birthDate || ''
+      dob: this.currentUser?.birthDate || '',
+      avatar: this.currentUser?.avatar || ''
     };
     this.saveSuccess = false;
     this.saveError = '';
@@ -80,7 +96,8 @@ export class Profile implements OnInit {
       fullName: this.editForm.fullName.trim(),
       phone: this.editForm.phone.trim(),
       address: this.editForm.address.trim(),
-      birthDate: this.editForm.dob
+      birthDate: this.editForm.dob,
+      avatar: this.editForm.avatar.trim()
     };
 
     // INSTANT LOCAL UPDATE (no need to click 3 times!)

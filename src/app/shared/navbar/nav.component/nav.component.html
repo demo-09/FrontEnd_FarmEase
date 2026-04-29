@@ -63,9 +63,7 @@
           <button class="user-avatar-btn"
                   data-bs-toggle="offcanvas"
                   data-bs-target="#sideDrawer">
-            <img [src]="currentUser?.fullName
-                ? 'https://ui-avatars.com/api/?name=' + currentUser.fullName + '&background=ffffff&color=0f5132'
-                : 'https://ui-avatars.com/api/?name=Guest&background=ffffff&color=0f5132'"
+            <img [src]="getAvatarUrl()"
                  class="drawer-avatar"
                  alt="Profile" />
           </button>
@@ -122,9 +120,7 @@
   <div class="drawer-body">
     <!-- Profile -->
     <div class="drawer-profile">
-      <img [src]="currentUser?.fullName
-          ? 'https://ui-avatars.com/api/?name=' + currentUser.fullName + '&color=000&bold=true&size=80'
-          : 'https://ui-avatars.com/api/?name=Guest&background=white&color=000&bold=true&size=80'"
+      <img [src]="getAvatarUrl()"
            class="drawer-avatar"
            alt="Profile" />
 

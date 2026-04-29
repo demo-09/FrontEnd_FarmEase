@@ -62,6 +62,12 @@ export class Products {
   inStockOnly = signal(false);
   sortOption = signal('default');
 
+  // Mobile Filters State
+  isFiltersOpen = signal(false);
+  toggleFilters() {
+    this.isFiltersOpen.update(v => !v);
+  }
+
   // Dynamically calculate available categories
   availableCategories = computed(() => {
     // using subtitle since it maps to item.category

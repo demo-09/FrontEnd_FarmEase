@@ -19,7 +19,7 @@
     <div class="profile-identity-col">
       <div class="profile-card identity-card">
         <div class="avatar-wrapper">
-          <img [src]="'https://ui-avatars.com/api/?name=' + (currentUser?.fullName || currentUser?.name || 'User') + '&background=16a34a&color=fff&size=160&bold=true'"
+          <img [src]="getAvatarUrl()"
                [alt]="currentUser?.fullName || currentUser?.name"
                class="avatar-img">
           <div class="avatar-verified" title="Verified Member">
@@ -33,6 +33,10 @@
         <div class="user-status">
           <i class="fa-solid fa-seedling text-success me-1"></i> Verified FarmEase Member
         </div>
+
+        <button class="edit-profile-btn w-100 mt-4" (click)="editProfile()">
+          <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+        </button>
 
       </div>
     </div>
@@ -117,6 +121,65 @@
 
       </div>
 
+    </div>
+  </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="edit-modal-overlay" *ngIf="showEditModal">
+  <div class="edit-modal-content">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-user-pen"></i> Edit Profile</h3>
+      <button class="modal-close" (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="modal-body">
+      <div class="alert alert-danger" *ngIf="saveError">{{ saveError }}</div>
+      <div class="alert alert-success" *ngIf="saveSuccess">✅ Profile updated successfully!</div>
+
+      <div class="edit-field">
+        <label>Full Name</label>
+        <input type="text" [(ngModel)]="editForm.fullName" placeholder="Enter your full name">
+      </div>
+
+      <div class="edit-field">
+        <label>Choose Avatar <span class="text-muted text-sm">(Optional)</span></label>
+        <div class="avatar-selector-grid">
+          <button type="button" class="avatar-option" 
+                  *ngFor="let av of presetAvatars"
+                  [class.selected]="editForm.avatar === av"
+                  (click)="editForm.avatar = av">
+            <img [src]="av" alt="Avatar option">
+          </button>
+        </div>
+        <div class="auth-input-wrap mt-2">
+          <input type="text" [(ngModel)]="editForm.avatar" placeholder="Or paste custom image URL...">
+        </div>
+      </div>
+
+      <div class="edit-grid">
+        <div class="edit-field">
+          <label>Phone Number</label>
+          <input type="text" [(ngModel)]="editForm.phone" placeholder="+91 XXXXX XXXXX">
+        </div>
+        <div class="edit-field">
+          <label>Date of Birth</label>
+          <input type="date" [(ngModel)]="editForm.dob">
+        </div>
+      </div>
+
+      <div class="edit-field">
+        <label>Registered Farm Address</label>
+        <textarea rows="2" [(ngModel)]="editForm.address" placeholder="Village, District, State"></textarea>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeModal()" [disabled]="isSaving">Cancel</button>
+      <button class="btn-save" (click)="saveProfile()" [disabled]="isSaving">
+        <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2"></span>
+        {{ isSaving ? 'Saving...' : 'Save Changes' }}
+      </button>
     </div>
   </div>
 </div>

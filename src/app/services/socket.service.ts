@@ -12,7 +12,7 @@ export class SocketService {
     if (this.hub?.state === signalR.HubConnectionState.Connected) return;
 
     this.hub = new signalR.HubConnectionBuilder()
-      .withUrl('https://backend-farmease-1.onrender.com/hub/chat', {
+      .withUrl('https://backend-farmease-1.onrender.com/chatHub', {
         accessTokenFactory: () => localStorage.getItem('token') || ''
       })
       .withAutomaticReconnect()

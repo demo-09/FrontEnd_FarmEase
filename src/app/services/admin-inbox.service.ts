@@ -1,9 +1,11 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { forkJoin, of, timer, Subscription } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 export interface InboxMessage {
   id: string;
-  type: string;
+  type: 'rental' | 'bulk_order' | 'user_alert' | 'product_approval';
   title: string;
   requester: string;
   details: string;
@@ -15,15 +17,82 @@ export interface InboxMessage {
 @Injectable({
   providedIn: 'root'
 })
-export class AdminInboxService {
+export class AdminInboxService implements OnDestroy {
   // Global reactive state holds all incoming admin approvals
   messages = signal<InboxMessage[]>([]);
+  private pollingSub?: Subscription;
 
   private http = inject(HttpClient);
-  private backendUrl = 'https://backend-farmease-1.onrender.com/api/activity';
+  private activityUrl = 'https://backend-farmease-1.onrender.com/api/activity';
+  private ordersUrl = 'https://backend-farmease-1.onrender.com/api/orders';
 
   constructor() {
     this.loadFromStorage();
+    this.startPolling();
+  }
+
+  ngOnDestroy() {
+    this.stopPolling();
+  }
+
+  private startPolling() {
+    // Poll every 30 seconds for new activities/orders
+    this.pollingSub = timer(0, 30000).subscribe(() => {
+      this.refreshInbox();
+    });
+  }
+
+  private stopPolling() {
+    this.pollingSub?.unsubscribe();
+  }
+
+  refreshInbox(): void {
+    forkJoin({
+      orders: this.http.get<any[]>(`${this.ordersUrl}/all`).pipe(catchError(() => of([]))),
+      activities: this.http.get<any[]>(`${this.activityUrl}/all`).pipe(catchError(() => of([])))
+    }).subscribe({
+      next: (res) => {
+        const orderMsgs: InboxMessage[] = res.orders.map(o => {
+          const isRental = o.items?.some((i: any) => 
+            i.productName.toLowerCase().includes('tractor') || 
+            i.productName.toLowerCase().includes('harvester') || 
+            i.productName.toLowerCase().includes('machine')
+          );
+          
+          return {
+            id: `ORD-${o.id}`,
+            type: (isRental ? 'rental' : 'bulk_order'),
+            title: isRental ? 'Equipment Rental Request' : 'Bulk Product Order',
+            requester: o.requesterName || o.requesterEmail || 'Unknown Requester',
+            details: `Order of ₹${o.totalAmount} for ${o.items?.length || 0} item(s).`,
+            timestamp: new Date(o.orderDate),
+            status: (o.status?.toLowerCase() === 'completed' ? 'approved' : o.status?.toLowerCase()) as any
+          };
+        });
+        
+        const actMsgs: InboxMessage[] = res.activities.map(a => {
+          return {
+            id: `ACT-${a.id}`,
+            type: 'user_alert',
+            title: a.actionType === 'user_alert' ? 'System Activity' : a.actionType,
+            requester: a.userFullName || 'System',
+            details: a.details,
+            timestamp: new Date(a.timestamp),
+            status: 'approved' as any
+          };
+        });
+
+        const mappedMsgs = [...orderMsgs, ...actMsgs];
+        mappedMsgs.sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime());
+        
+        // Only update if there are changes to avoid unnecessary re-renders
+        if (JSON.stringify(mappedMsgs) !== JSON.stringify(this.messages())) {
+          this.messages.set(mappedMsgs);
+          this.saveToStorage();
+        }
+      },
+      error: (err) => console.error('Failed to load inbox data', err)
+    });
   }
 
   private loadFromStorage() {
@@ -38,30 +107,12 @@ export class AdminInboxService {
         this.messages.set(mapped);
       } catch (e) {
         console.error('Failed to parse admin inbox logs', e);
-        this.initDefault();
       }
-    } else {
-      this.initDefault();
     }
   }
 
   private saveToStorage() {
     localStorage.setItem('admin_inbox_logs', JSON.stringify(this.messages()));
-  }
-
-  private initDefault() {
-    this.messages.set([
-      {
-        id: 'REQ-1001',
-        type: 'user_alert',
-        title: 'New Farmer Registration Pending',
-        requester: 'Ramesh Singh',
-        details: 'Attempting to register account with region Maharashtra. Awaiting background check.',
-        timestamp: new Date(Date.now() - 3600000),
-        status: 'pending'
-      }
-    ]);
-    this.saveToStorage();
   }
 
   sendMessage(msg: Omit<InboxMessage, 'id' | 'timestamp' | 'status'> & { status?: InboxMessage['status'] }) {
@@ -72,18 +123,16 @@ export class AdminInboxService {
       status: msg.status || 'pending'
     };
 
-    // Prepend to array
     this.messages.update(msgs => [newMsg, ...msgs]);
     this.saveToStorage();
   }
 
   logActivity(actionType: string, details: string) {
-    // 1. Send to backend for persistence
-    this.http.post(`${this.backendUrl}/log`, { actionType, details }).subscribe({
+    this.http.post(`${this.activityUrl}/log`, { actionType, details }).subscribe({
+      next: () => this.refreshInbox(), // Refresh after logging
       error: (err) => console.error('Failed to log activity to backend', err)
     });
 
-    // 2. Also send to local inbox for immediate UI feedback
     const userStr = localStorage.getItem('CurrentUser');
     const user = userStr ? JSON.parse(userStr) : null;
 

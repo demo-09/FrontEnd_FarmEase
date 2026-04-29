@@ -157,6 +157,6 @@ export class OrderDetail implements OnInit {
     return this.mode() === 'cart' ? this.cartFinalTotal() : this.singleGrandTotal();
   }
 
-  goHome() { this.router.navigate(['/HomePage']); }
-  goOrders() { this.router.navigate(['/Orders']); }
+  goHome() { this.router.navigate(['/home']); }
+  goOrders() { this.router.navigate(['/orders']); }
 }

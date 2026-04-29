@@ -1,5 +1,6 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { AdminInboxService } from './admin-inbox.service';
 
 export interface CartItem {
   id: number;
@@ -15,6 +16,7 @@ export interface CartItem {
 @Injectable({ providedIn: 'root' })
 export class CartService {
   private http = inject(HttpClient);
+  private adminInbox = inject(AdminInboxService);
   private backendUrl = 'https://backend-farmease-1.onrender.com/api/cart';
 
   private _items = signal<CartItem[]>([]);
@@ -66,7 +68,18 @@ export class CartService {
     };
 
     this.http.post<CartItem>(this.backendUrl, dto).subscribe({
-      next: () => this.refreshCart(),
+      next: () => {
+        this.refreshCart();
+        const userStr = localStorage.getItem('CurrentUser');
+        const user = userStr ? JSON.parse(userStr) : null;
+        this.adminInbox.sendMessage({
+          type: 'add_to_cart',
+          title: 'Item Added to Cart',
+          requester: user ? (user.fullName || user.email) : 'Guest',
+          details: `Added ${qty}x ${dto.productName} to cart.`,
+          status: 'info'
+        });
+      },
       error: (err) => {
         console.error('Failed to add to cart', err);
         if (err.status === 401) alert('Please log in to use the Cart.');

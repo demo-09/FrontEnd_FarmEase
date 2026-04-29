@@ -7,6 +7,7 @@ import { forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { CartService } from '../../services/cart.service';
 import { WishlistService, WishlistItem } from '../wishlist/wishlist';
+import { AuthService } from '../../Auth/auth.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -22,7 +23,7 @@ export class ProductDetail {
   private http = inject(HttpClient);
   public cartService = inject(CartService);
   public wishlistService = inject(WishlistService);
-
+  constructor(public auth: AuthService) { };
   private routeParams = toSignal(this.route.paramMap, { initialValue: null });
 
   private allData = toSignal(

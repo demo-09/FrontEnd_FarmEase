@@ -1,134 +1,301 @@
-<div class="checkout-page" *ngIf="productData() as p">
-  <div class="container">
+<!-- ════════════════════════════════════════════
+     ORDER SUCCESS STATE
+════════════════════════════════════════════ -->
+<div class="checkout-success" *ngIf="orderPlaced()">
+  <div class="success-card anim-scale-up">
+    <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+    <h1 class="success-title">Order Confirmed! 🎉</h1>
+    <p class="success-desc">
+      Thank you for shopping with FarmEase. Your order is being processed and will arrive soon.
+    </p>
 
-    <!-- HEADER -->
-    <div class="ck-header">
-      <button class="back-link" (click)="goHome()">← Turn Back</button>
-      <h1 class="ck-title">Secure Checkout</h1>
+    <div class="success-meta">
+      <div class="meta-row">
+        <span>Order ID</span>
+        <strong>#{{ orderId() }}</strong>
+      </div>
+      <div class="meta-row">
+        <span>Payment</span>
+        <strong>{{ paymentMethod() === 'cod' ? 'Cash on Delivery' : paymentMethod() === 'upi' ? 'UPI' : 'Card' }}</strong>
+      </div>
+      <div class="meta-row">
+        <span>Estimated Delivery</span>
+        <strong>{{ deliveryDate() }}</strong>
+      </div>
+      <div class="meta-row">
+        <span>Amount Paid</span>
+        <strong class="amount-paid">₹{{ grandTotal | number:'1.0-0' }}</strong>
+      </div>
     </div>
 
-    <div class="ck-layout">
-
-      <!-- LEFT -->
-      <div class="ck-left">
-
-        <!-- SHIPPING -->
-        <div class="ck-card">
-          <h2>Delivery Information</h2>
-
-          <form class="mt-3">
-            <input [(ngModel)]="shippingInfo.fullName" name="fn" placeholder="Full Name" class="form-control mb-2">
-            <input [(ngModel)]="shippingInfo.phone" name="ph" placeholder="Phone" class="form-control mb-2">
-            <input [(ngModel)]="shippingInfo.pincode" name="pin" placeholder="Pincode" class="form-control mb-2">
-            <textarea [(ngModel)]="shippingInfo.address" name="addr" placeholder="Address" class="form-control mb-2"></textarea>
-            <input [(ngModel)]="shippingInfo.city" name="ct" placeholder="City" class="form-control mb-2">
-            <input [(ngModel)]="shippingInfo.state" name="st" placeholder="State" class="form-control">
-          </form>
-        </div>
-
-        <!-- PAYMENT -->
-        <div class="ck-card mt-3">
-          <h2>Payment Method</h2>
-
-          <div class="mt-3">
-
-            <label>
-              <input type="radio" name="pay" value="upi"
-                     [ngModel]="paymentMethod()"
-                     (ngModelChange)="paymentMethod.set($event)">
-              UPI
-            </label>
-
-            <label>
-              <input type="radio" name="pay" value="card"
-                     [ngModel]="paymentMethod()"
-                     (ngModelChange)="paymentMethod.set($event)">
-              Card
-            </label>
-
-            <label>
-              <input type="radio" name="pay" value="cod"
-                     [ngModel]="paymentMethod()"
-                     (ngModelChange)="paymentMethod.set($event)">
-              COD
-            </label>
-
-          </div>
-
-          <div *ngIf="paymentMethod() === 'upi'" class="text-center mt-3">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=farmease@upi">
-            <p>Scan to Pay</p>
-          </div>
-
-        </div>
-
-      </div>
-
-      <!-- RIGHT -->
-      <div class="ck-right">
-        <div class="ck-summary-sticky">
-
-          <h2>Order Summary</h2>
-
-          <div class="summary-item">
-            <img [src]="p.image" width="80">
-            <div>{{ p.title }}</div>
-          </div>
-
-          <hr>
-
-          <div>Subtotal: ₹{{ totalCost() }}</div>
-          <div>GST: ₹{{ tax() }}</div>
-          <div>Delivery: {{ shippingFee() === 0 ? 'FREE' : '₹'+shippingFee() }}</div>
-
-          <hr>
-
-          <h3>Total: ₹{{ grandTotal() }}</h3>
-
-          <button class="btn btn-success w-100 mt-3"
-                  [disabled]="isProcessing()"
-                  (click)="placeOrder()">
-
-            <span *ngIf="!isProcessing()">Place Order</span>
-            <span *ngIf="isProcessing()">Processing...</span>
-
-          </button>
-
-        </div>
-      </div>
-
+    <div class="success-actions">
+      <button class="btn verde mt-4" (click)="goOrders()">
+        <i class="fa-solid fa-box"></i> View My Orders
+      </button>
+      <button class="btn outline mt-2" (click)="goHome()">
+        <i class="fa-solid fa-house"></i> Return to Homepage
+      </button>
     </div>
   </div>
 </div>
 
-<!-- ✅ MODAL -->
-<div class="modal fade" id="orderSuccessModal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content text-center p-4">
+<!-- ════════════════════════════════════════════
+     CHECKOUT FLOW
+════════════════════════════════════════════ -->
+<div class="checkout-page" *ngIf="!orderPlaced()">
+  <div class="container">
 
-      <i class="fa-solid fa-circle-check text-success fa-3x mb-3"></i>
+    <div class="ck-header">
+      <button class="back-link" (click)="goHome()"><i class="fa-solid fa-arrow-left"></i> Continue Shopping</button>
+      <h1 class="ck-title">Secure Checkout <span class="lock-icon"><i class="fa-solid fa-lock"></i></span></h1>
+      <p class="ck-subtitle">Your information is encrypted and secure</p>
+    </div>
 
-      <h4>Order Confirmed!</h4>
+    <!-- Progress Steps -->
+    <div class="ck-steps">
+      <div class="ck-step active"><span class="step-num">1</span> Cart</div>
+      <div class="ck-step-line"></div>
+      <div class="ck-step active"><span class="step-num">2</span> Checkout</div>
+      <div class="ck-step-line"></div>
+      <div class="ck-step"><span class="step-num">3</span> Confirmation</div>
+    </div>
 
-      <p>
-        Your order for <strong>{{ productData()?.title }}</strong> is placed.
-      </p>
+    <div class="ck-layout">
 
-      <p>
-        <strong>Order ID:</strong>
-        #FE-{{ (100000 + (productData()?.price % 10000)) }}
-      </p>
+      <!-- ═══ LEFT: FORMS ═══ -->
+      <div class="ck-left">
 
-      <p>
-        <strong>Delivery:</strong>
-        {{ deliveryDate() }}
-      </p>
+        <!-- Shipping Details -->
+        <div class="ck-card anim-fade-up">
+          <h2 class="ck-card-title"><i class="fa-solid fa-truck-fast"></i> Delivery Information</h2>
+          <form class="ck-form-grid mt-4">
+            <div class="f-group cl-span-2">
+              <label>Full Name *</label>
+              <input type="text" [(ngModel)]="shippingInfo.fullName" name="fn" placeholder="e.g. Ramesh Patel" required>
+            </div>
 
-      <button class="btn btn-success w-100"
-              (click)="goHome()"
-              data-bs-dismiss="modal">
-        Go Home
-      </button>
+            <div class="f-group">
+              <label>Phone Number *</label>
+              <input type="tel" [(ngModel)]="shippingInfo.phone" name="ph" placeholder="+91 98765 43210" required>
+            </div>
+            <div class="f-group">
+              <label>Email Address</label>
+              <input type="email" [(ngModel)]="shippingInfo.email" name="em" placeholder="you@example.com">
+            </div>
+
+            <div class="f-group cl-span-2">
+              <label>Street Address *</label>
+              <textarea [(ngModel)]="shippingInfo.address" name="addr" rows="2" placeholder="House/Farm No., Village/Street" required></textarea>
+            </div>
+
+            <div class="f-group">
+              <label>City / District</label>
+              <input type="text" [(ngModel)]="shippingInfo.city" name="ct" placeholder="e.g. Rajkot">
+            </div>
+            <div class="f-group">
+              <label>State</label>
+              <input type="text" [(ngModel)]="shippingInfo.state" name="st" placeholder="e.g. Gujarat">
+            </div>
+            <div class="f-group">
+              <label>Pincode *</label>
+              <input type="text" [(ngModel)]="shippingInfo.pincode" name="pin" placeholder="360005" maxlength="6" required>
+            </div>
+          </form>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="ck-card anim-fade-up" style="animation-delay: 0.1s">
+          <h2 class="ck-card-title"><i class="fa-solid fa-credit-card"></i> Payment Method</h2>
+
+          <div class="pay-methods mt-4">
+
+            <!-- UPI -->
+            <label class="pay-option" [class.active]="paymentMethod() === 'upi'">
+              <input type="radio" name="pay" value="upi" [ngModel]="paymentMethod()" (ngModelChange)="paymentMethod.set($event)">
+              <div class="po-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI" style="height:18px">
+              </div>
+              <div class="po-text">
+                <span class="po-name">UPI</span>
+                <span class="po-desc">GPay, PhonePe, Paytm</span>
+              </div>
+              <div class="check-mark"><i class="fa-solid fa-circle-check"></i></div>
+            </label>
+
+            <!-- UPI Details -->
+            <div class="pay-detail-panel" *ngIf="paymentMethod() === 'upi'">
+              <div class="upi-options">
+                <div class="upi-qr-side">
+                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=farmease@upi&pn=FarmEase&am={{grandTotal}}" class="qr-code" alt="Scan to pay">
+                  <p class="qr-label">Scan & Pay via any UPI app</p>
+                </div>
+                <div class="upi-divider-v"><span>or</span></div>
+                <div class="upi-id-side">
+                  <label class="pay-sub-label">Enter UPI ID</label>
+                  <div class="upi-input-wrap">
+                    <i class="fa-solid fa-at upi-at-icon"></i>
+                    <input type="text" [(ngModel)]="upiId" name="upiId" placeholder="yourname@upi" class="upi-input">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card -->
+            <label class="pay-option" [class.active]="paymentMethod() === 'card'">
+              <input type="radio" name="pay" value="card" [ngModel]="paymentMethod()" (ngModelChange)="paymentMethod.set($event)">
+              <div class="po-icon"><i class="fa-regular fa-credit-card"></i></div>
+              <div class="po-text">
+                <span class="po-name">Credit / Debit Card</span>
+                <span class="po-desc">Visa, Mastercard, RuPay</span>
+              </div>
+              <div class="check-mark"><i class="fa-solid fa-circle-check"></i></div>
+            </label>
+
+            <!-- Card Details -->
+            <div class="pay-detail-panel" *ngIf="paymentMethod() === 'card'">
+              <div class="card-form">
+                <div class="card-preview-row">
+                  <i class="fa-brands fa-cc-visa card-brand"></i>
+                  <i class="fa-brands fa-cc-mastercard card-brand"></i>
+                  <span class="rupay-badge">RuPay</span>
+                </div>
+                <div class="f-group cl-span-2">
+                  <label class="pay-sub-label">Card Number</label>
+                  <input type="text" [(ngModel)]="cardNumber" name="cn" placeholder="1234 5678 9012 3456" maxlength="19" class="card-input">
+                </div>
+                <div class="card-row-2">
+                  <div class="f-group">
+                    <label class="pay-sub-label">Expiry Date</label>
+                    <input type="text" [(ngModel)]="cardExpiry" name="ce" placeholder="MM/YY" maxlength="5" class="card-input">
+                  </div>
+                  <div class="f-group">
+                    <label class="pay-sub-label">CVV</label>
+                    <input type="password" [(ngModel)]="cardCvv" name="cvv" placeholder="•••" maxlength="3" class="card-input">
+                  </div>
+                </div>
+                <div class="f-group">
+                  <label class="pay-sub-label">Name on Card</label>
+                  <input type="text" [(ngModel)]="cardName" name="cname" placeholder="As printed on card" class="card-input">
+                </div>
+                <p class="secure-note"><i class="fa-solid fa-lock"></i> Your card details are encrypted and never stored.</p>
+              </div>
+            </div>
+
+            <!-- COD -->
+            <label class="pay-option" [class.active]="paymentMethod() === 'cod'">
+              <input type="radio" name="pay" value="cod" [ngModel]="paymentMethod()" (ngModelChange)="paymentMethod.set($event)">
+              <div class="po-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+              <div class="po-text">
+                <span class="po-name">Cash on Delivery</span>
+                <span class="po-desc">Pay when you receive your order</span>
+              </div>
+              <div class="check-mark"><i class="fa-solid fa-circle-check"></i></div>
+            </label>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ RIGHT: SUMMARY ═══ -->
+      <div class="ck-right">
+        <div class="ck-summary-sticky anim-fade-up" style="animation-delay: 0.2s">
+          <h2 class="ck-card-title mb-4">
+            <i class="fa-solid fa-receipt"></i>
+            Order Summary
+            <span class="item-count-pill" *ngIf="mode() === 'cart'">{{ cartItems().length }} items</span>
+          </h2>
+
+          <!-- ── CART MODE: Multiple Items ── -->
+          <ng-container *ngIf="mode() === 'cart'">
+            <div class="cart-items-summary">
+              <div class="summary-item" *ngFor="let item of cartItems()">
+                <div class="si-img">
+                  <img [src]="item.imageUrl || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=200'" [alt]="item.productName">
+                  <span class="si-qty-badge">{{ item.quantity }}</span>
+                </div>
+                <div class="si-info">
+                  <div class="si-title">{{ item.productName }}</div>
+                  <div class="si-price">₹{{ item.price | number }} × {{ item.quantity }}</div>
+                </div>
+                <div class="si-line-total">₹{{ (item.price * item.quantity) | number }}</div>
+              </div>
+            </div>
+
+            <hr class="summary-div">
+
+            <div class="bill-row">
+              <span>Subtotal ({{ cartItems().length }} items)</span>
+              <strong>₹{{ cartSubtotal() | number:'1.0-0' }}</strong>
+            </div>
+            <div class="bill-row">
+              <span>Shipping</span>
+              <strong [class.text-success]="cartShipping() === 0">{{ cartShipping() === 0 ? 'FREE' : '₹' + cartShipping() }}</strong>
+            </div>
+            <div class="bill-row discount-row">
+              <span><i class="fa-solid fa-tag"></i> Discount (5%)</span>
+              <strong class="discount-val">−₹{{ cartDiscount() | number:'1.0-0' }}</strong>
+            </div>
+          </ng-container>
+
+          <!-- ── PRODUCT MODE: Single Item ── -->
+          <ng-container *ngIf="mode() === 'product' && productData() as p">
+            <div class="summary-item">
+              <div class="si-img">
+                <img [src]="p.image || 'https://via.placeholder.com/100'" [alt]="p.title">
+                <span class="si-qty-badge">{{ p.qty }}</span>
+              </div>
+              <div class="si-info">
+                <div class="si-title">{{ p.title }}</div>
+                <div class="si-price">₹{{ p.price | number }}</div>
+              </div>
+            </div>
+
+            <hr class="summary-div">
+
+            <div class="bill-row">
+              <span>Subtotal ({{ p.qty }} item{{ p.qty > 1 ? 's' : '' }})</span>
+              <strong>₹{{ singleItemTotal() | number:'1.0-0' }}</strong>
+            </div>
+            <div class="bill-row">
+              <span>Tax (5% GST)</span>
+              <strong>₹{{ singleTax() | number:'1.0-0' }}</strong>
+            </div>
+            <div class="bill-row">
+              <span>Delivery Fee</span>
+              <strong [class.text-success]="singleShipping() === 0">
+                {{ singleShipping() === 0 ? 'FREE' : '₹' + singleShipping() }}
+              </strong>
+            </div>
+          </ng-container>
+
+          <hr class="summary-div">
+
+          <div class="bill-row total">
+            <span>Total to Pay</span>
+            <span>₹{{ grandTotal | number:'1.0-0' }}</span>
+          </div>
+          <p class="gst-note">Inclusive of all taxes & handling fees</p>
+
+          <!-- Place Order Button -->
+          <button class="btn verde pay-btn mt-4" [disabled]="isProcessing()" (click)="placeOrder()">
+            <span *ngIf="!isProcessing()">
+              <i class="fa-solid fa-shield-halved"></i>
+              {{ paymentMethod() === 'cod' ? 'Place Order (COD)' : 'Pay ₹' + (grandTotal | number:'1.0-0') + ' Securely' }}
+            </span>
+            <span *ngIf="isProcessing()">
+              <i class="fa-solid fa-circle-notch fa-spin"></i> Processing Securely...
+            </span>
+          </button>
+
+          <div class="trust-badges mt-3">
+            <div><i class="fa-solid fa-lock"></i> 256-bit SSL</div>
+            <div><i class="fa-solid fa-arrow-rotate-left"></i> 7-Day Returns</div>
+            <div><i class="fa-solid fa-headset"></i> 24/7 Support</div>
+          </div>
+
+        </div>
+      </div>
 
     </div>
   </div>

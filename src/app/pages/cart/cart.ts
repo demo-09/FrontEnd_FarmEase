@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CartService } from '../../services/cart.service';
+import { AdminInboxService } from '../../services/admin-inbox.service';
 
 @Component({
   selector: 'app-cart',
@@ -15,6 +16,7 @@ export class Cart implements OnInit {
   private cartService = inject(CartService);
   private http = inject(HttpClient);
   private router = inject(Router);
+  private adminInbox = inject(AdminInboxService);
 
   cartItems = this.cartService.items;
   subtotal  = this.cartService.subtotal;
@@ -46,6 +48,17 @@ export class Cart implements OnInit {
     this.http.post('https://backend-farmease-1.onrender.com/api/orders', { checkoutFromCart: true }).subscribe({
       next: () => {
         this.cartService.clearLocalCart();
+
+        const userStr = localStorage.getItem('CurrentUser');
+        const user = userStr ? JSON.parse(userStr) : null;
+        this.adminInbox.sendMessage({
+          type: 'order',
+          title: 'New Order Placed',
+          requester: user ? (user.fullName || user.email) : 'Guest',
+          details: `Placed an order totaling ₹${total.toLocaleString('en-IN')}`,
+          status: 'info'
+        });
+
         this.notify(`✅ Order placed! Total ₹${total.toLocaleString('en-IN')} — Thank you!`);
         setTimeout(() => this.router.navigate(['/Orders']), 2000);
       },

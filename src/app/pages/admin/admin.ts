@@ -61,11 +61,7 @@ export class Admin implements OnInit, OnDestroy {
   
   // Track Add User Modal
   isAddingUser = signal(false);
-  newUser = {
-    fullName: '', email: '', password: '', role: 'farmer', phone: '', address: '',
-  birthDate: '',
-  bio:'' 
-  };
+  newUser = { fullName: '', email: '', password: '', role: 'farmer', phone: '', address: '' };
 
   currentAdminName = signal('');
   currentDate = signal(new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
@@ -79,6 +75,7 @@ export class Admin implements OnInit, OnDestroy {
     this.checkAdminAccess();
     this.refreshUserLists();
     this.loadInventory();
+    this.refreshInbox();
   }
 
   ngOnDestroy(): void {
@@ -128,15 +125,13 @@ export class Admin implements OnInit, OnDestroy {
 
   openAddUserModal(): void {
     this.isAddingUser.set(true);
-    this.newUser = {
-      fullName: '',
-      email: '',
-      password: '',
-      role: this.activePage() === 'customers' ? 'customer' : 'farmer',
-      phone: '',
-      address: '',
-      birthDate: '',
-      bio:''
+    this.newUser = { 
+      fullName: '', 
+      email: '', 
+      password: '', 
+      role: this.activePage() === 'customers' ? 'customer' : 'farmer', 
+      phone: '', 
+      address: '' 
     };
   }
 
@@ -149,8 +144,8 @@ export class Admin implements OnInit, OnDestroy {
       alert('Please fill out all required fields.');
       return;
     }
-    console.log(this.newUser);
-    this.http.post(`${this.backendUrl}/Auth/register`, this.newUser).subscribe({
+
+    this.http.post(`${this.backendUrl}/auth/register`, this.newUser).subscribe({
       next: () => {
         this.closeAddUserModal();
         this.refreshUserLists();
@@ -253,6 +248,50 @@ export class Admin implements OnInit, OnDestroy {
         this.inventoryItems.set([...m, ...a]);
       },
       error: (err) => console.error('Failed to load inventory', err)
+    });
+  }
+  
+  refreshInbox(): void {
+    forkJoin({
+      orders: this.http.get<any[]>(`${this.backendUrl}/orders/all`).pipe(catchError(() => of([]))),
+      activities: this.http.get<any[]>(`${this.backendUrl}/activity/all`).pipe(catchError(() => of([])))
+    }).subscribe({
+      next: (res) => {
+        const orderMsgs = res.orders.map(o => {
+          const isRental = o.items.some((i: any) => 
+            i.productName.toLowerCase().includes('tractor') || 
+            i.productName.toLowerCase().includes('harvester') || 
+            i.productName.toLowerCase().includes('machine')
+          );
+          
+          return {
+            id: `ORD-${o.id}`,
+            type: (isRental ? 'rental' : 'bulk_order') as "rental" | "bulk_order" | "user_alert",
+            title: isRental ? 'Equipment Rental Request' : 'Bulk Product Order',
+            requester: o.requesterName || o.requesterEmail || 'Unknown Requester',
+            details: `Order of ₹${o.totalAmount} for ${o.items.length} item(s).`,
+            timestamp: new Date(o.orderDate),
+            status: (o.status.toLowerCase() === 'completed' ? 'approved' : o.status.toLowerCase()) as "approved" | "pending" | "rejected"
+          };
+        });
+        
+        const actMsgs = res.activities.map(a => {
+          return {
+            id: `ACT-${a.id}`,
+            type: 'user_alert' as "rental" | "bulk_order" | "user_alert" | "product_approval",
+            title: a.actionType === 'user_alert' ? 'System Activity' : a.actionType,
+            requester: a.userFullName || 'System',
+            details: a.details,
+            timestamp: new Date(a.timestamp),
+            status: 'approved' as "approved" | "pending" | "rejected"
+          };
+        });
+
+        const mappedMsgs = [...orderMsgs, ...actMsgs];
+        mappedMsgs.sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime());
+        this.inbox.messages.set(mappedMsgs);
+      },
+      error: (err) => console.error('Failed to load orders for inbox', err)
     });
   }
   

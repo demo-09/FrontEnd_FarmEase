@@ -91,21 +91,9 @@
             <p class="pd-desc">{{ p.description }}</p>
           </div>
 
-          <!-- Quantity + Actions -->
-          <div class="pd-qty-row">
-            <div class="pd-qty-label">Quantity:</div>
-            <div class="pd-qty-stepper">
-              <button class="pd-qty-btn" (click)="qty = qty > 1 ? qty-1 : 1">
-                <i class="fa-solid fa-minus"></i>
-              </button>
-              <span class="pd-qty-val">{{ qty || 1 }}</span>
-              <button class="pd-qty-btn" (click)="qty = (qty||1) + 1">
-                <i class="fa-solid fa-plus"></i>
-              </button>
-            </div>
-          </div>
 
-          <div class="pd-action-btns">
+        
+          <div class="pd-action-btns"  *ngIf="auth.isAdmin() == false">
             <button class="pd-add-cart" (click)="addToCart(p, qty || 1, $event)"
                     [disabled]="!p.inStock" [class.in-cart]="isInCart(p.id)"
                     id="detail-add-cart-btn">
@@ -153,7 +141,7 @@
               <img [src]="s.imageUrl || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400'"
                    [alt]="s.title" class="product-img" loading="lazy">
               <div class="product-status-badge" [class.out-stock]="!s.inStock">{{ s.label }}</div>
-              <button class="wishlist-fab" (click)="toggleWishlist(s, $event)"
+              <button class="wishlist-fab" *ngIf="!auth.isAdmin()" (click)="toggleWishlist(s, $event)"
                       [class.wishlisted]="isInWishlist(s.id)">
                 <i [class]="isInWishlist(s.id) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
               </button>
@@ -164,7 +152,7 @@
               <div class="product-footer">
                 <div class="product-price">{{ s.metaText }}</div>
                 <div class="product-actions">
-                  <button class="product-add-btn" (click)="addToCart(s); $event.stopPropagation()"
+                  <button class="product-add-btn"  *ngIf="!auth.isAdmin()" (click)="addToCart(s); $event.stopPropagation()"
                           [class.in-cart]="isInCart(s.id)" [disabled]="!s.inStock">
                     <i [class]="isInCart(s.id) ? 'fa-solid fa-check' : 'fa-solid fa-cart-plus'"></i>
                   </button>
@@ -178,6 +166,5 @@
         </div>
       </div>
     </div>
-
   </div>
 </div>

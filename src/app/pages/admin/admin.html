@@ -115,6 +115,8 @@
         </div>
       </div>
 
+    
+
       <div class="admin-section-title mt-5">Quick Management Links</div>
       <div class="quick-actions-bar">
         <button class="btn-glass green-glass" (click)="setPage('AddProduct')">
@@ -360,65 +362,44 @@
   <!-- ==================== USER MODAL (ADD FARMER/CUSTOMER) ==================== -->
   <div class="modal-backdrop-glass" *ngIf="isAddingUser()" (click)="closeAddUserModal()">
     <div class="modal-card-glass anim-scale-up" (click)="$event.stopPropagation()">
-
       <div class="modal-header">
-        <h3 class="form-title">
-          <i class="fa-solid fa-user-plus text-success me-2"></i>
-          Register {{ newUser.role | titlecase }}
-        </h3>
+        <h3 class="form-title"><i class="fa-solid fa-user-plus text-success me-2"></i> Register {{ newUser.role | titlecase }}</h3>
       </div>
 
       <form #userForm="ngForm" class="form-grid mt-4">
-        <div class="col-span-1">
-
-          <div class="form-group col-span-2">
-            <label>Full Name <span class="text-danger">*</span></label>
-            <input type="text" name="fullName" [(ngModel)]="newUser.fullName" required placeholder="John Doe">
-          </div>
-
-          <div class="form-group col-span-2">
-            <label>Email Address <span class="text-danger">*</span></label>
-            <input type="email" name="email" [(ngModel)]="newUser.email" required email placeholder="john@example.com">
-          </div>
-
-          <div class="form-group col-span-2">
-            <label>Password <span class="text-danger">*</span></label>
-            <input type="password" name="password" [(ngModel)]="newUser.password" minlength="6" required placeholder="Minimum 6 characters">
-          </div>
-
-          <div class="form-group col-span-1">
-            <label>Phone Number</label>
-            <input type="tel" name="phone" [(ngModel)]="newUser.phone" placeholder="+91 9876543210">
-          </div>
-
+        <div class="form-group col-span-2">
+          <label>Full Name <span class="text-danger">*</span></label>
+          <input type="text" name="fullName" [(ngModel)]="newUser.fullName" required placeholder="John Doe">
         </div>
-        <div class="col-span-1">
-
-
-          <div class="form-group col-span-1">
-            <label>Birth Date</label>
-            <input type="date" name="birthDate" [(ngModel)]="newUser.birthDate">
-          </div>
-
-          <div class="form-group col-span-2">
-            <label>Address / Geolocation</label>
-            <input type="text" name="address" [(ngModel)]="newUser.address" placeholder="Village, City, State">
-          </div>
-
-          <div class="form-group col-span-2">
-            <label>Short Bio</label>
-            <textarea name="bio" [(ngModel)]="newUser.bio" rows="3" placeholder="Tell us a little about yourself..."></textarea>
-          </div>
+        
+        <div class="form-group col-span-2">
+          <label>Email Address <span class="text-danger">*</span></label>
+          <input type="email" name="email" [(ngModel)]="newUser.email" required placeholder="john@example.com">
         </div>
 
-          <div class="form-footer col-span-2 mt-4">
-            <button type="submit" class="btn-glass green-glass flex-1" [disabled]="!userForm.valid" (click)="submitNewUser()">
-              Register Account
-            </button>
-            <button type="button" class="btn-glass outline" (click)="closeAddUserModal()">Cancel</button>
-          </div>
+        <div class="form-group col-span-2">
+          <label>Password <span class="text-danger">*</span></label>
+          <input type="password" name="password" [(ngModel)]="newUser.password" minlength="6" required placeholder="Minimum 6 characters">
+        </div>
+
+        <div class="form-group col-span-1">
+          <label>Phone Number</label>
+          <input type="text" name="phone" [(ngModel)]="newUser.phone" placeholder="+91 9876543210">
+        </div>
+
+        <div class="form-group col-span-1">
+          <label>Address / Geolocation</label>
+          <input type="text" name="address" [(ngModel)]="newUser.address" placeholder="Village, City">
+        </div>
+
+        <div class="form-footer col-span-2 mt-4">
+          <button class="btn-glass green-glass flex-1" [disabled]="!userForm.valid" (click)="submitNewUser()">
+            Register Account
+          </button>
+          <button type="button" class="btn-glass outline" (click)="closeAddUserModal()">Cancel</button>
+        </div>
       </form>
-
     </div>
   </div>
+
 </div>

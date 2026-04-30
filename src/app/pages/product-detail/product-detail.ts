@@ -1,4 +1,4 @@
-import { Component, inject, computed, signal } from '@angular/core';
+import { Component, inject, computed, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -25,7 +25,15 @@ export class ProductDetail {
   public cartService = inject(CartService);
   public wishlistService = inject(WishlistService);
   public inbox = inject(AdminInboxService);
-  constructor(public auth: AuthService) { };
+  constructor(public auth: AuthService) {
+    // Log product view when it successfully loads
+    effect(() => {
+      const p = this.product();
+      if (p) {
+        this.inbox.logActivity('Product Viewed', `Viewed product: ${p.title} (${p.type})`);
+      }
+    });
+  }
   private routeParams = toSignal(this.route.paramMap, { initialValue: null });
 
   private allData = toSignal(
@@ -62,12 +70,7 @@ export class ProductDetail {
     const id = params.get('id');
     const type = params.get('type');
     
-    
-    const found = data.find(p => p.id === id && p.type === type) || null;
-    if (found) {
-      this.inbox.logActivity('Product Viewed', `Viewed product: ${found.title} (${found.type})`);
-    }
-    return found;
+    return data.find(p => p.id === id && p.type === type) || null;
   });
 
   suggestions = computed(() => {

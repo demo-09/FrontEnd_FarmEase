@@ -73,7 +73,8 @@ export class Login implements OnInit, AfterViewInit {
       },
       error: (err) => {
         console.error('Google login failed', err);
-        alert('Google login failed. Please try again.');
+        const msg = err.error?.message || err.message || 'Unknown Error';
+        alert(`Google login failed: ${msg}. Check console for details.`);
       }
     });
   }

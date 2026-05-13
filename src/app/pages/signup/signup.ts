@@ -91,7 +91,8 @@ export class Signup implements OnInit, AfterViewInit {
       },
       error: (err) => {
         console.error('Google registration failed', err);
-        alert('Google registration failed. Please try again.');
+        const msg = err.error?.message || err.message || 'Unknown Error';
+        alert(`Google registration failed: ${msg}. Check console for details.`);
       }
     });
   }

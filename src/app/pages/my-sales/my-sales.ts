@@ -156,7 +156,9 @@ export class MySales implements OnInit {
     this.sales.forEach(s => {
       productCounts[s.productName] = (productCounts[s.productName] || 0) + s.quantity;
     });
-    return Object.keys(productCounts).map(name => ({ name, qty: productCounts[name] }));
+    return Object.keys(productCounts)
+      .map(name => ({ name, qty: productCounts[name] }))
+      .sort((a, b) => b.qty - a.qty);
   }
 
   getTotalEarnings() {

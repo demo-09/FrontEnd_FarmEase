@@ -1,150 +1,47 @@
-<!-- Add Product Page — Premium Redesign -->
-<div class="ap-page">
+<div class="add-product-page mesh-bg py-5">
+  <div class="container">
+    
+    <!-- Category Selection (Wizard Style) -->
+    <div class="wizard-container anim-fade-up" *ngIf="!selectedCategory()">
+      <div class="text-center mb-5">
+        <div class="badge bg-success-subtle text-success px-3 py-2 rounded-pill mb-3">Farmer Dashboard</div>
+        <h1 class="display-5 fw-bold text-dark">List your Farm Produce</h1>
+        <p class="text-muted lead">Choose a category to reach thousands of buyers instantly.</p>
+      </div>
 
-  <!-- Hero -->
-  <div class="ap-hero">
-    <div class="ap-hero-bg"></div>
-    <div class="container position-relative" style="z-index:2">
-      <span class="ap-badge">🌾 Farmer Portal</span>
-      <h1 class="ap-title">Sell Your <span>Harvest</span></h1>
-      <p class="ap-desc">List your fresh produce, grains, or machinery directly to thousands of buyers across India — instantly and commission-free.</p>
-    </div>
-  </div>
-
-  <!-- Form Card -->
-  <div class="container ap-container">
-    <div class="ap-card">
-
-      <!-- Progress Steps -->
-      <div class="ap-steps">
-        <div class="ap-step active">
-          <div class="aps-dot"><i class="fa-solid fa-box"></i></div>
-          <span>Product Info</span>
-        </div>
-        <div class="ap-step-line"></div>
-        <div class="ap-step">
-          <div class="aps-dot"><i class="fa-solid fa-image"></i></div>
-          <span>Media</span>
-        </div>
-        <div class="ap-step-line"></div>
-        <div class="ap-step">
-          <div class="aps-dot"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-          <span>Publish</span>
+      <div class="cat-grid-farmer">
+        <div class="cat-card-glass" *ngFor="let cat of categories" (click)="selectCategory(cat.name)">
+          <div class="cat-icon-wrap" [ngClass]="cat.name">
+            <i class="fa-solid" [ngClass]="cat.icon"></i>
+          </div>
+          <div class="cat-body">
+            <h3>{{ cat.name }}</h3>
+            <p>{{ cat.desc }}</p>
+          </div>
+          <div class="cat-footer">
+            <span>Get Started</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </div>
         </div>
       </div>
 
-      <form (ngSubmit)="onSubmit()" #productForm="ngForm" class="ap-form">
-
-        <!-- Section 1: Product Details -->
-        <div class="ap-section">
-          <div class="ap-section-title">
-            <div class="ap-section-icon"><i class="fa-solid fa-box"></i></div>
-            <div>
-              <h3>Product Details</h3>
-              <p>Basic product information visible to all buyers</p>
-            </div>
-          </div>
-
-          <div class="ap-field">
-            <label class="ap-label" for="ap-name">Product Name <span class="req">*</span></label>
-            <div class="ap-input-wrap">
-              <i class="fa-solid fa-seedling ap-input-icon"></i>
-              <input type="text" id="ap-name" class="ap-input" [(ngModel)]="product.name" name="name"
-                     placeholder="e.g. Organic Tomatoes, Wheat Seeds" required>
-            </div>
-          </div>
-
-          <div class="ap-grid-2">
-            <div class="ap-field">
-              <label class="ap-label" for="ap-price">Price (₹) <span class="req">*</span></label>
-              <div class="ap-input-wrap">
-                <i class="fa-solid fa-indian-rupee-sign ap-input-icon"></i>
-                <input type="number" id="ap-price" class="ap-input" [(ngModel)]="product.price" name="price"
-                       placeholder="45.00" min="1" required>
-              </div>
-            </div>
-            <div class="ap-field">
-              <label class="ap-label" for="ap-qty">Quantity (kg / units) <span class="req">*</span></label>
-              <div class="ap-input-wrap">
-                <i class="fa-solid fa-cubes ap-input-icon"></i>
-                <input type="number" id="ap-qty" class="ap-input" [(ngModel)]="product.quantity" name="quantity"
-                       placeholder="100" min="1" required>
-              </div>
-            </div>
-          </div>
-
-          <div class="ap-grid-2">
-            <div class="ap-field">
-              <label class="ap-label" for="ap-cat">Category</label>
-              <div class="ap-input-wrap">
-                <i class="fa-solid fa-tags ap-input-icon"></i>
-                <select id="ap-cat" class="ap-input ap-select" [(ngModel)]="product.category" name="category">
-                  <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
-                </select>
-              </div>
-            </div>
-            <div class="ap-field">
-              <label class="ap-label" for="ap-condition">Quality / Condition</label>
-              <div class="ap-input-wrap">
-                <i class="fa-solid fa-star ap-input-icon"></i>
-                <select id="ap-condition" class="ap-input ap-select" [(ngModel)]="product.condition" name="condition">
-                  <option *ngFor="let cond of conditions" [value]="cond">{{ cond }}</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Section 2: Media & Description -->
-        <div class="ap-section">
-          <div class="ap-section-title">
-            <div class="ap-section-icon" style="background:rgba(139,92,246,0.1);color:#7c3aed"><i class="fa-solid fa-image"></i></div>
-            <div>
-              <h3>Media & Description</h3>
-              <p>Help buyers trust your listing with rich visuals</p>
-            </div>
-          </div>
-
-          <div class="ap-field">
-            <label class="ap-label" for="ap-image">Product Image URL</label>
-            <div class="ap-input-wrap">
-              <i class="fa-solid fa-link ap-input-icon"></i>
-              <input type="text" id="ap-image" class="ap-input" [(ngModel)]="product.image" name="image"
-                     placeholder="https://example.com/image.jpg">
-            </div>
-            <span class="ap-hint"><i class="fa-solid fa-circle-info"></i> Leave blank to use a default image</span>
-          </div>
-
-          <!-- Preview -->
-          <div class="ap-preview" *ngIf="product.image">
-            <img [src]="product.image" alt="Preview" class="ap-preview-img"
-                 onerror="this.src='https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400'">
-            <div class="ap-preview-label">Image Preview</div>
-          </div>
-
-          <div class="ap-field">
-            <label class="ap-label" for="ap-desc">Product Description</label>
-            <div class="ap-input-wrap">
-              <i class="fa-solid fa-pen ap-input-icon" style="top:14px;transform:none"></i>
-              <textarea id="ap-desc" class="ap-input ap-textarea" [(ngModel)]="product.description" name="description"
-                        placeholder="Describe the freshness, origin, farming method, and quality of your product..." rows="4"></textarea>
-            </div>
-          </div>
-        </div>
-
-        <!-- Submit -->
-        <div class="ap-submit-wrap">
-          <div class="ap-trust-note">
-            <i class="fa-solid fa-shield-halved"></i>
-            <span>Your listing will be reviewed and published within minutes. Payments are secured and direct.</span>
-          </div>
-          <button type="submit" class="ap-submit-btn" [disabled]="isLoading" id="ap-submit-btn">
-            <span *ngIf="!isLoading"><i class="fa-solid fa-cloud-arrow-up"></i> Publish Listing</span>
-            <span *ngIf="isLoading" class="ap-loading"><div class="ap-spinner"></div> Publishing...</span>
-          </button>
-        </div>
-
-      </form>
+      <div class="mt-5 text-center">
+        <button class="btn btn-outline-secondary px-4 py-2 rounded-pill" (click)="onCancel()">
+          <i class="fa-solid fa-arrow-left me-2"></i> Back to My Sales
+        </button>
+      </div>
     </div>
+
+    <!-- The Actual Form Component -->
+    <div class="form-container anim-fade-up" *ngIf="selectedCategory()">
+      <div class="glass-form-card">
+        <app-add-product-form 
+          [selectedCategory]="selectedCategory()"
+          (saved)="onSaved()"
+          (cancel)="onCancel()"
+        ></app-add-product-form>
+      </div>
+    </div>
+
   </div>
 </div>

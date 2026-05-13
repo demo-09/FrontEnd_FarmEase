@@ -3,7 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
 
-const API_BASE = 'https://backend-farmease-1.onrender.com/api/users';
+import { API_URL } from '../core/api.config';
+
+const API_BASE = `${API_URL}/users`;
 
 @Injectable({ providedIn: 'root' })
 export class UserService {

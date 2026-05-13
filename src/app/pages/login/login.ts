@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, AfterViewInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { API_URL } from '../../core/api.config';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
@@ -56,7 +57,7 @@ export class Login implements OnInit, AfterViewInit {
   }
 
   handleGoogleCredentialResponse(response: any) {
-    const backendUrl = 'https://backend-farmease-1.onrender.com/api/auth';
+    const backendUrl = `${API_URL}/auth`;
     
     this.http.post(`${backendUrl}/google`, { idToken: response.credential, role: 'customer' }).subscribe({
       next: (foundUser: any) => {
@@ -86,11 +87,11 @@ export class Login implements OnInit, AfterViewInit {
       return;
     }
 
-    const backendUrl = 'https://backend-farmease-1.onrender.com/api/auth';
+    const backendUrl = `${API_URL}/auth`;
     this.http.post(`${backendUrl}/initiate-login`, { emailOrPhone: this.emailOrPhone, password: this.password }).subscribe({
       next: (res: any) => {
         this.otpSent = true;
-        alert(res.mockOtp);
+        // Mock OTP alert removed for real email delivery
       },
       error: (err) => {
         console.error('Failed to initiate login', err);
@@ -106,7 +107,7 @@ export class Login implements OnInit, AfterViewInit {
       return;
     }
 
-    const backendUrl = 'https://backend-farmease-1.onrender.com/api/auth';
+    const backendUrl = `${API_URL}/auth`;
     this.http.post(`${backendUrl}/verify-otp-login`, { emailOrPhone: this.emailOrPhone, otpCode: this.otpCode }).subscribe({
       next: (foundUser: any) => {
         localStorage.setItem('CurrentUser', JSON.stringify(foundUser));

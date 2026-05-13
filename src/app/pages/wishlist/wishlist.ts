@@ -16,10 +16,12 @@ export interface WishlistItem {
   category: string;
 }
 
+import { API_URL } from '../../core/api.config';
+
 @Injectable({ providedIn: 'root' })
 export class WishlistService {
   private http = inject(HttpClient);
-  private backendUrl = 'https://backend-farmease-1.onrender.com/api/wishlist';
+  private backendUrl = `${API_URL}/wishlist`;
 
   private _items = signal<WishlistItem[]>([]);
   readonly items = this._items.asReadonly();

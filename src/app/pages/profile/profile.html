@@ -152,8 +152,19 @@
             <img [src]="av" alt="Avatar option">
           </button>
         </div>
-        <div class="auth-input-wrap mt-2">
-          <input type="text" [(ngModel)]="editForm.avatar" placeholder="Or paste custom image URL...">
+
+        <div class="avatar-custom-upload mt-3">
+          <button type="button" class="btn-avatar-upload" (click)="openAvatarUpload()">
+            <i class="fa-solid fa-camera me-2"></i>
+            {{ editForm.avatar && !presetAvatars.includes(editForm.avatar) ? 'Change Custom Photo' : 'Upload Custom Photo' }}
+          </button>
+          
+          <div class="avatar-preview-mini" *ngIf="editForm.avatar && !presetAvatars.includes(editForm.avatar)">
+            <img [src]="editForm.avatar" alt="Preview">
+            <button type="button" class="btn-remove-avatar" (click)="editForm.avatar = ''">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
         </div>
       </div>
 

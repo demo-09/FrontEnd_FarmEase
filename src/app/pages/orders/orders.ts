@@ -20,6 +20,8 @@ export interface OrderDto {
   items: OrderItemDto[];
 }
 
+import { API_URL } from '../../core/api.config';
+
 @Component({
   selector: 'app-orders',
   standalone: true,
@@ -29,7 +31,7 @@ export interface OrderDto {
 })
 export class OrdersComponent implements OnInit {
   private http = inject(HttpClient);
-  private backendUrl = 'https://backend-farmease-1.onrender.com/api/orders';
+  private backendUrl = `${API_URL}/orders`;
 
   orders=signal<OrderDto[]>([]);
   activeFilter: string = 'All';

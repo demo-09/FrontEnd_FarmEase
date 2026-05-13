@@ -1,69 +1,128 @@
+<!-- WhatsApp Premium Glassmorphism Chat Interface -->
 <div class="chat-page-container">
   <div class="chat-wrapper">
 
-    <div class="chat-sidebar px-2 pt-2" [class.mobile-hide]="chatService.selectedContact()">
-      <div class="sidebar-header" style="padding:20px; color:white;">
-        <h3 style="margin:0;"><i class="fa-solid fa-users me-2"></i>Contacts</h3>
-      </div>
-      <div class="contact-list" style="overflow-y:auto; flex:1;">
-        <div class="contact-item"
-             *ngFor="let contact of chatService.contacts()"
-             (click)="selectContact(contact)"
-             [class.active]="chatService.selectedContact()?.email === contact.email"
-             style="display:flex; align-items:center; gap:12px; padding:15px; cursor:pointer;">
-          <img [src]="getAvatarUrl(contact)"
-               style="width:45px; border-radius:50%;">
-          <div style="color:white;">
-            <div style="font-weight:700;">{{ contact.fullName }}</div>
-            <small style="opacity:0.6;">{{ contact.role }}</small>
+    <!-- Contacts Sidebar -->
+    <aside class="chat-sidebar" [class.mobile-hide]="chatService.selectedContact()">
+      <div class="sidebar-header">
+        <div class="sh-top">
+          <h2 class="sh-title">Messages</h2>
+          <div class="sh-actions">
+            <button class="icon-btn"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+          </div>
+        </div>
+        <div class="search-container">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Search or start new chat" 
+                   [(ngModel)]="searchQuery" 
+                   (ngModelChange)="searchQuery.set($event)">
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="chat-main px-2 py-2"
-         *ngIf="chatService.selectedContact()"
-         [class.mobile-full]="chatService.selectedContact()">
-
-      <header class="chat-header" style="display:flex; align-items:center; padding:15px; background:white; border-bottom:1px solid #eee;">
-        <button class="btn d-md-none p-0 me-3" (click)="closeChat()">
-          <i class="fa-solid fa-arrow-left fs-4" style="color:#0a3d20;"></i>
-        </button>
-        <div style="display:flex; align-items:center; gap:10px;">
-          <img [src]="getAvatarUrl(chatService.selectedContact())"
-               style="width:35px; border-radius:50%;">
-          <strong style="color:#0a3d20;">{{ chatService.selectedContact()?.fullName }}</strong>
+      <div class="contact-list custom-scrollbar">
+        <div class="contact-item"
+             *ngFor="let contact of filteredContacts()"
+             (click)="selectContact(contact)"
+             [class.active]="chatService.selectedContact()?.email === contact.email">
+          
+          <div class="ci-avatar-wrap">
+            <img [src]="getAvatarUrl(contact)" class="ci-avatar" [alt]="contact.fullName">
+            <span class="status-dot online"></span>
+          </div>
+          
+          <div class="ci-content">
+            <div class="ci-header">
+              <span class="ci-name">{{ contact.fullName }}</span>
+              <span class="ci-time">12:45 PM</span>
+            </div>
+            <div class="ci-footer">
+              <span class="ci-role-tag">{{ contact.role || 'Guest' }}</span>
+              <span class="ci-preview" *ngIf="contact.email === chatService.selectedContact()?.email">Active Chat</span>
+              <span class="ci-preview" *ngIf="contact.email !== chatService.selectedContact()?.email">Tap to message...</span>
+            </div>
+          </div>
         </div>
-        <span class="badge-role mt-3">{{ chatService.selectedContact()?.role || 'guest' }}</span>
+
+        <div *ngIf="filteredContacts().length === 0" class="empty-search">
+          <i class="fa-solid fa-user-slash"></i>
+          <p>No contacts found matching "{{ searchQuery() }}"</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Chat Window -->
+    <main class="chat-main" *ngIf="chatService.selectedContact()" [class.mobile-full]="chatService.selectedContact()">
+      
+      <header class="chat-header-bar">
+        <div class="ch-left">
+          <button class="back-btn d-md-none" (click)="closeChat()">
+            <i class="fa-solid fa-arrow-left"></i>
+          </button>
+          <div class="ch-user-info" (click)="viewProfile(chatService.selectedContact())">
+            <img [src]="getAvatarUrl(chatService.selectedContact())" class="ch-avatar">
+            <div class="ch-text">
+              <span class="ch-name">{{ chatService.selectedContact()?.fullName }}</span>
+              <span class="ch-status">Online</span>
+            </div>
+          </div>
+        </div>
+        <div class="ch-right">
+          <button class="icon-btn"><i class="fa-solid fa-video"></i></button>
+          <button class="icon-btn"><i class="fa-solid fa-phone"></i></button>
+          <div class="divider"></div>
+          <button class="icon-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
       </header>
 
-      <div class="chat-messages-area" #chatScroll>
-        <div class="messages-wrapper" style="display:flex; flex-direction:column;">
+      <div class="chat-messages-area custom-scrollbar" #chatScroll>
+        <div class="messages-container">
+          <div class="date-divider"><span>Today</span></div>
+
           <div *ngFor="let msg of chatService.messages()"
-               class="message-wrapper"
-               [ngClass]="msg.senderEmail === currentUserEmail ? 'msg-sent' : 'msg-received'"
-               style="display:flex; flex-direction:column; width:100%;">
-            <div class="message-bubble">{{ msg.content }}</div>
+               class="message-row"
+               [ngClass]="msg.senderEmail === currentUserEmail ? 'msg-sent' : 'msg-received'">
+            
+            <div class="msg-bubble shadow-sm">
+              <div class="msg-text">{{ msg.content }}</div>
+              <div class="msg-meta">
+                <span class="msg-time">{{ msg.sentAt | date:'shortTime' }}</span>
+                <i class="fa-solid fa-check-double read-receipt" *ngIf="msg.senderEmail === currentUserEmail"></i>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="chat-input-wrapper">
-        <div class="input-container">
-          <input type="text" class="ai-input" placeholder="Type a message..." [(ngModel)]="newMessage" (keyup.enter)="sendMessage()">
-          <button (click)="sendMessage()"
-                  style="background:#22c55e; color:white; border:none; width:45px; height:45px; border-radius:10px;">
+      <footer class="chat-footer-bar">
+        <div class="input-panel">
+          <button class="icon-btn emoji-btn"><i class="fa-regular fa-face-smile"></i></button>
+          <button class="icon-btn attach-btn"><i class="fa-solid fa-paperclip"></i></button>
+          <div class="message-input-wrap">
+            <input type="text" placeholder="Type a message" 
+                   [(ngModel)]="newMessage" 
+                   (keyup.enter)="sendMessage()">
+          </div>
+          <button class="send-btn" (click)="sendMessage()" [disabled]="!newMessage.trim()">
             <i class="fa-solid fa-paper-plane"></i>
           </button>
         </div>
-      </div>
-    </div>
+      </footer>
+    </main>
 
-    <div class="no-contact-selected d-none d-md-flex"
-         *ngIf="!chatService.selectedContact()"
-         style="flex:1; flex-direction:column; align-items:center; justify-content:center; color:#6b7280;">
-      <i class="fa-regular fa-comments" style="font-size:4rem; margin-bottom:15px; opacity:0.3;"></i>
-      <h2>Select a contact to start chatting</h2>
+    <!-- Empty State -->
+    <div class="chat-empty-state d-none d-md-flex" *ngIf="!chatService.selectedContact()">
+      <div class="empty-content">
+        <div class="empty-icon-wrap">
+          <i class="fa-solid fa-comments"></i>
+        </div>
+        <h2>FarmEase Web Messenger</h2>
+        <p>Send and receive messages with farmers and customers in real-time. End-to-end encrypted messaging for secure farm business.</p>
+        <div class="encryption-tag">
+          <i class="fa-solid fa-lock"></i> End-to-end encrypted
+        </div>
+      </div>
     </div>
 
   </div>

@@ -10,14 +10,17 @@ export interface CartItem {
   quantity: number;
   imageUrl?: string;
   category?: string;
+  productType: string;
 }
+
+import { API_URL } from '../core/api.config';
 
 // Map the backend model to the frontend structure where possible
 @Injectable({ providedIn: 'root' })
 export class CartService {
   private http = inject(HttpClient);
   private adminInbox = inject(AdminInboxService);
-  private backendUrl = 'https://backend-farmease-1.onrender.com/api/cart';
+  private backendUrl = `${API_URL}/cart`;
 
   private _items = signal<CartItem[]>([]);
 
@@ -64,7 +67,8 @@ export class CartService {
       price: product.price,
       quantity: qty,
       imageUrl: product.image || product.imageUrl,
-      category: product.category || product.subtitle
+      category: product.category || product.subtitle,
+      productType: product.type || 'machinery'
     };
 
     this.http.post<CartItem>(this.backendUrl, dto).subscribe({

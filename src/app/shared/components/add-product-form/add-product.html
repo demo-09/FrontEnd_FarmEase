@@ -1,0 +1,109 @@
+<div class="bento-form-container">
+  <!-- Header -->
+  <div class="bento-header mb-4">
+    <div class="d-flex align-items-center gap-3">
+      <div class="bento-icon-main bg-success text-white">
+        <i class="fa-solid" [ngClass]="newItem.category === 'Machinery' ? 'fa-tractor' : newItem.category === 'Vegetables' ? 'fa-carrot' : 'fa-plus'"></i>
+      </div>
+      <div>
+        <h1 class="bento-title">{{ isEditing ? 'Edit Product' : 'Add ' + (newItem.category || 'Product') }}</h1>
+        <p class="text-muted m-0">Fill in the details to list this item on the marketplace.</p>
+      </div>
+    </div>
+    <button class="btn-glass outline sm" (click)="resetForm()">
+      <i class="fa-solid fa-rotate-left"></i> {{ isEditing ? 'Cancel Edit' : 'Reset Form' }}
+    </button>
+  </div>
+
+  <div class="bento-grid">
+    <!-- Section 1: Basic Information -->
+    <div class="bento-card span-2 glass-panel">
+      <div class="card-label"><i class="fa-solid fa-circle-info me-2"></i> Core Details</div>
+      <div class="form-grid-mini mt-3">
+        <div class="form-group-bento">
+          <label>Display Name</label>
+          <input type="text" [(ngModel)]="newItem.name" [placeholder]="'E.g. ' + (newItem.category === 'Vegetables' ? 'Red Tomato' : 'John Deere')">
+        </div>
+        <div class="form-group-bento">
+          <label>Internal Category</label>
+          <div class="fake-input bg-light-subtle">{{ newItem.category || 'General' }}</div>
+        </div>
+        <div class="form-group-bento full-width">
+          <label>Description</label>
+          <textarea rows="3" [(ngModel)]="newItem.description" placeholder="Technical specs, origin, or usage instructions..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Pricing & Availability -->
+    <div class="bento-card glass-panel highlight-border">
+      <div class="card-label"><i class="fa-solid fa-tag me-2"></i> Economics</div>
+      <div class="form-grid-mini mt-3">
+        <div class="form-group-bento">
+          <label>Price (₹)</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-indian-rupee-sign"></i>
+            <input type="number" [(ngModel)]="newItem.price" placeholder="0.00">
+          </div>
+        </div>
+        <div class="form-group-bento">
+          <label>Stock Quantity</label>
+          <input type="number" [(ngModel)]="newItem.quantity" placeholder="0">
+        </div>
+        <div class="form-group-bento full-width">
+          <label>{{ newItem.type === 'machinery' ? 'Machine Condition' : 'Product Grade' }}</label>
+          <select [(ngModel)]="newItem.condition" class="bento-select">
+            <ng-container *ngIf="newItem.type === 'machinery'">
+              <option value="New">Brand New</option>
+              <option value="Refurbished">Refurbished</option>
+              <option value="Used - Good">Used - Good</option>
+            </ng-container>
+            <ng-container *ngIf="newItem.type === 'agriitem'">
+              <option value="Fresh">Freshly Harvested</option>
+              <option value="Organic">Organic Certified</option>
+              <option value="Export Grade">Export Grade</option>
+            </ng-container>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Media & Presentation -->
+    <div class="bento-card span-2 glass-panel">
+      <div class="card-label"><i class="fa-solid fa-camera-retro me-2"></i> Visuals</div>
+      
+      <div class="media-upload-zone mt-3" (click)="openProductMediaUpload()" *ngIf="newItem.media.length === 0">
+        <i class="fa-solid fa-cloud-arrow-up fs-2 text-success mb-2"></i>
+        <p class="m-0 fw-bold">Click to Upload Images/Videos</p>
+        <small class="text-muted">High-quality visuals sell 3x faster</small>
+      </div>
+
+      <div class="bento-media-scroll mt-3" *ngIf="newItem.media.length > 0">
+        <div class="bento-media-item" *ngFor="let m of newItem.media; let i = index" [class.is-primary]="m.isPrimary">
+          <img *ngIf="m.mediaType === 'image'" [src]="m.url">
+          <div *ngIf="m.mediaType === 'video'" class="video-placeholder">
+            <i class="fa-solid fa-play-circle"></i>
+          </div>
+          <div class="media-overlay">
+            <button (click)="setPrimaryMedia(i)" [class.active]="m.isPrimary"><i class="fa-solid fa-star"></i></button>
+            <button (click)="removeMedia(i)" class="text-danger"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+        <button class="add-more-media" (click)="openProductMediaUpload()">
+          <i class="fa-solid fa-plus"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Action Card -->
+    <div class="bento-card action-card bg-success text-white">
+      <div class="card-label text-white-50">Ready to Publish?</div>
+      <div class="d-flex flex-column h-100 justify-content-center py-3">
+        <p class="small mb-4 opacity-75">Your product will be live immediately after verification.</p>
+        <button class="btn btn-light fw-bold py-3 rounded-4 shadow-sm" (click)="handleItemAddOrUpdate()">
+          <i class="fa-solid fa-check-circle me-2"></i> {{ isEditing ? 'Update Listing' : 'Confirm & Publish' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

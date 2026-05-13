@@ -1,0 +1,305 @@
+<div class="sales-page-container mesh-bg py-4">
+  <div class="container-fluid px-lg-5">
+    
+    <!-- Top Stats Row -->
+    <div class="row mb-4 anim-fade-up">
+      <div class="col-12 col-xl-8">
+        <div class="welcome-banner glass-card p-4 d-flex align-items-center justify-content-between">
+          <div>
+            <h1 class="display-6 fw-bold text-dark mb-1">Farmer Dashboard</h1>
+            <p class="text-muted m-0">Monitor your agricultural business performance in real-time.</p>
+          </div>
+          <div class="d-none d-md-flex gap-2">
+            <button class="btn btn-success rounded-pill px-4" routerLink="/add-product">
+              <i class="fa-solid fa-plus me-2"></i> New Listing
+            </button>
+            <button class="btn btn-outline-success rounded-pill px-4" (click)="fetchData()">
+              <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-xl-4 mt-3 mt-xl-0">
+        <div class="earnings-glass p-4 text-white">
+          <div class="small opacity-75">Total Revenue</div>
+          <div class="h2 fw-bold my-2">₹{{ getTotalEarnings() | number:'1.0-0' }}</div>
+          <div class="earnings-footer">
+            <span class="badge bg-white text-success rounded-pill"><i class="fa-solid fa-arrow-up"></i> 14%</span>
+            <span class="small opacity-75 ms-2">since last month</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row anim-fade-up" style="animation-delay: 0.1s">
+      <!-- Main Content Area -->
+      <div class="col-12 col-xl-9">
+        
+        <!-- Sales Table Card -->
+        <div class="glass-card mb-4 overflow-hidden">
+          <div class="p-4 border-bottom d-flex align-items-center justify-content-between bg-white bg-opacity-50">
+            <h3 class="h5 fw-bold m-0 text-dark"><i class="fa-solid fa-chart-line text-success me-2"></i>Recent Sales</h3>
+            <span class="badge bg-success-subtle text-success rounded-pill">{{ sales.length }} items sold</span>
+          </div>
+          <div class="table-responsive custom-scrollbar">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="bg-light">
+                <tr>
+                  <th class="ps-4">Product Details</th>
+                  <th>Customer</th>
+                  <th>Order Info</th>
+                  <th>Earnings</th>
+                  <th class="pe-4">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of sales" class="sale-row" (click)="openSaleDetails(item)">
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center gap-3">
+                      <img [src]="item.imageUrl || 'assets/placeholder.png'" class="prod-thumbnail rounded-3 shadow-sm">
+                      <div>
+                        <div class="fw-bold text-dark">{{ item.productName }}</div>
+                        <div class="small text-muted">{{ item.category }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="small fw-bold text-dark">{{ item.customerName }}</div>
+                    <div class="x-small text-muted text-truncate" style="max-width: 150px;">{{ item.customerEmail }}</div>
+                  </td>
+                  <td>
+                    <div class="small">{{ item.orderDate | date:'mediumDate' }}</div>
+                    <div class="x-small text-muted">ID: #ORD-{{ item.orderId }}</div>
+                  </td>
+                  <td>
+                    <div class="fw-bold text-success">₹{{ item.price * item.quantity }}</div>
+                    <div class="x-small text-muted">{{ item.quantity }} units @ ₹{{ item.price }}</div>
+                  </td>
+                  <td class="pe-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="status-badge paid">Paid</span>
+                        <i class="fa-solid fa-chevron-right text-muted x-small"></i>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="sales.length === 0 && !isLoading">
+                  <td colspan="5" class="text-center py-5">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4076/4076432.png" width="80" class="opacity-50 mb-3">
+                    <p class="text-muted">No sales yet. Try promoting your listings!</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Active Listings Bento Grid -->
+        <div class="listings-section mb-4">
+          <div class="d-flex align-items-center justify-content-between mb-4">
+            <h3 class="h5 fw-bold m-0"><i class="fa-solid fa-boxes-stacked text-primary me-2"></i>Your Live Listings</h3>
+          </div>
+
+          <div class="row g-4">
+            <!-- Machinery Items -->
+            <div class="col-12 col-md-6 col-lg-4" *ngFor="let m of listings().machinery">
+              <div class="listing-card-bento anim-fade-up" [class.sold-out-card]="m.quantity === 0">
+                <div class="lc-media">
+                  <img [src]="m.image" alt="Product">
+                  <div class="lc-overlay">
+                    <button class="lc-btn edit" (click)="editListing(m, 'Machinery')"><i class="fa-solid fa-pen"></i></button>
+                    <button class="lc-btn delete" (click)="deleteListing(m.id, 'Machinery')"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                  <div class="lc-badge">Machinery</div>
+                  <div class="sold-out-badge" *ngIf="m.quantity === 0">Sold Out</div>
+                </div>
+                <div class="lc-content p-3">
+                  <h4 class="h6 fw-bold mb-1">{{ m.name }}</h4>
+                  <p class="x-small text-muted text-truncate mb-2">{{ m.description }}</p>
+                  <div class="d-flex align-items-center justify-content-between mt-auto">
+                    <span class="fw-bold text-dark">₹{{ m.price }}</span>
+                    <span class="stock-pill" [class.low]="m.quantity < 3" [class.out]="m.quantity === 0">
+                      Stock: {{ m.quantity }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agri Items -->
+            <div class="col-12 col-md-6 col-lg-4" *ngFor="let a of listings().agriItems">
+              <div class="listing-card-bento anim-fade-up" [class.sold-out-card]="a.quantity === 0">
+                <div class="lc-media">
+                  <img [src]="a.image" alt="Product">
+                  <div class="lc-overlay">
+                    <button class="lc-btn edit" (click)="editListing(a, 'AgriItem')"><i class="fa-solid fa-pen"></i></button>
+                    <button class="lc-btn delete" (click)="deleteListing(a.id, 'AgriItem')"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                  <div class="lc-badge agri">Produce</div>
+                  <div class="sold-out-badge" *ngIf="a.quantity === 0">Sold Out</div>
+                </div>
+                <div class="lc-content p-3">
+                  <h4 class="h6 fw-bold mb-1">{{ a.name }}</h4>
+                  <p class="x-small text-muted text-truncate mb-2">{{ a.description }}</p>
+                  <div class="d-flex align-items-center justify-content-between mt-auto">
+                    <span class="fw-bold text-dark">₹{{ a.price }}</span>
+                    <span class="stock-pill" [class.low]="a.quantity < 20" [class.out]="a.quantity === 0">
+                      Qty: {{ a.quantity }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-12" *ngIf="listings().machinery.length === 0 && listings().agriItems.length === 0 && !isLoading">
+              <div class="glass-card p-5 text-center text-muted">
+                <i class="fa-solid fa-plus-circle display-4 mb-3 opacity-25"></i>
+                <p>You haven't listed any products yet.</p>
+                <button class="btn btn-success rounded-pill" routerLink="/add-product">Create Your First Listing</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Sidebar: Stats & Insights -->
+      <div class="col-12 col-xl-3">
+        <div class="glass-card p-4 mb-4">
+          <h4 class="h6 fw-bold mb-4 text-dark">Quick Insights</h4>
+          <div class="insight-item mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="small text-muted">Order Fulfillment</span>
+              <span class="small fw-bold">98%</span>
+            </div>
+            <div class="progress" style="height: 6px">
+              <div class="progress-bar bg-success" style="width: 98%"></div>
+            </div>
+          </div>
+          <div class="insight-item mb-4">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="small text-muted">Active Listings</span>
+              <span class="small fw-bold">{{ listings().machinery.length + listings().agriItems.length }}</span>
+            </div>
+            <div class="progress" style="height: 6px">
+              <div class="progress-bar bg-primary" [style.width.%]="(listings().machinery.length + listings().agriItems.length) * 10"></div>
+            </div>
+          </div>
+          
+          <div class="stats-mini-grid mt-4">
+            <div class="stat-mini-box">
+              <div class="sm-val">{{ sales.length }}</div>
+              <div class="sm-lbl">Sold</div>
+            </div>
+            <div class="stat-mini-box">
+              <div class="sm-val">4.8</div>
+              <div class="sm-lbl">Rating</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card p-4">
+          <h4 class="h6 fw-bold mb-3 text-dark">Top Products</h4>
+          <div class="top-prod-list">
+            <div class="top-prod-item" *ngFor="let p of getSoldOutProducts() | slice:0:3">
+              <div class="tp-rank">{{ p.name.charAt(0) }}</div>
+              <div class="tp-info">
+                <div class="tp-name">{{ p.name }}</div>
+                <div class="tp-sales">{{ p.qty }} units sold</div>
+              </div>
+            </div>
+            <div *ngIf="sales.length === 0" class="text-muted small py-3 text-center">
+              Sales data will appear here.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= EDIT MODAL OVERLAY ================= -->
+<div class="edit-overlay" *ngIf="isEditing()" (click)="closeEdit()">
+  <div class="edit-modal-content anim-scale-up" (click)="$event.stopPropagation()">
+    <div class="modal-header-bento">
+      <h2 class="h5 fw-bold m-0">Edit Listing</h2>
+      <button class="btn-close-glass" (click)="closeEdit()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body-bento">
+      <app-add-product-form 
+        [isEditing]="true"
+        [editingId]="editingItem().id"
+        [editData]="editingItem()"
+        [selectedCategory]="editingItem().category"
+        (saved)="onSaved()"
+        (cancel)="closeEdit()"
+      ></app-add-product-form>
+    </div>
+  </div>
+</div>
+
+<!-- ================= SALE DETAIL OVERLAY ================= -->
+<div class="edit-overlay" *ngIf="isViewingDetails()" (click)="closeSaleDetails()">
+  <div class="detail-modal-content anim-scale-up" (click)="$event.stopPropagation()">
+    <div class="modal-header-bento">
+      <h2 class="h5 fw-bold m-0">Order Details</h2>
+      <button class="btn-close-glass" (click)="closeSaleDetails()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body-bento p-0">
+      <div class="detail-hero p-4 bg-light d-flex align-items-center gap-4">
+        <img [src]="selectedSale().imageUrl" class="detail-img rounded-4 shadow">
+        <div>
+            <div class="badge bg-success-subtle text-success mb-2">{{ selectedSale().category }}</div>
+            <h3 class="h4 fw-bold mb-1">{{ selectedSale().productName }}</h3>
+            <p class="text-muted m-0">Order #ORD-{{ selectedSale().orderId }} • {{ selectedSale().orderDate | date:'fullDate' }}</p>
+        </div>
+      </div>
+      
+      <div class="p-4">
+          <div class="row g-4">
+              <div class="col-md-6">
+                  <div class="info-group">
+                      <label class="text-uppercase small fw-bold text-muted mb-3 d-block">Customer Information</label>
+                      <div class="glass-card p-3">
+                          <div class="d-flex align-items-center gap-3 mb-3">
+                              <div class="avatar-sm bg-primary-subtle text-primary">{{ selectedSale().customerName?.charAt(0) }}</div>
+                              <div>
+                                  <div class="fw-bold">{{ selectedSale().customerName }}</div>
+                                  <div class="small text-muted">{{ selectedSale().customerEmail }}</div>
+                              </div>
+                          </div>
+                          <div class="contact-info">
+                              <div class="mb-2"><i class="fa-solid fa-phone text-muted me-2"></i> {{ selectedSale().customerPhone || 'Not provided' }}</div>
+                              <div><i class="fa-solid fa-location-dot text-muted me-2"></i> {{ selectedSale().customerAddress || 'No address saved' }}</div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-md-6">
+                  <div class="info-group">
+                      <label class="text-uppercase small fw-bold text-muted mb-3 d-block">Financial Breakdown</label>
+                      <div class="glass-card p-3">
+                          <div class="d-flex justify-content-between mb-2">
+                              <span class="text-muted">Unit Price</span>
+                              <span>₹{{ selectedSale().price }}</span>
+                          </div>
+                          <div class="d-flex justify-content-between mb-2">
+                              <span class="text-muted">Quantity</span>
+                              <span>x {{ selectedSale().quantity }}</span>
+                          </div>
+                          <hr>
+                          <div class="d-flex justify-content-between">
+                              <span class="fw-bold">Total Earnings</span>
+                              <span class="fw-bold text-success h5">₹{{ selectedSale().price * selectedSale().quantity }}</span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <div class="modal-footer-bento p-4 border-top text-center">
+        <button class="btn btn-success rounded-pill px-5" (click)="closeSaleDetails()">Close View</button>
+    </div>
+  </div>
+</div>

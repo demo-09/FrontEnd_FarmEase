@@ -9,6 +9,9 @@ import { CartService } from '../../services/cart.service';
 import { WishlistService, WishlistItem } from '../wishlist/wishlist';
 import { AuthService } from '../../core/services/auth.service';
 import { AdminInboxService } from '../../services/admin-inbox.service';
+import { LiveStockService } from '../../services/live-stock.service';
+
+import { API_URL } from '../../core/api.config';
 
 @Component({
   selector: 'app-product-detail',
@@ -25,6 +28,8 @@ export class ProductDetail {
   public cartService = inject(CartService);
   public wishlistService = inject(WishlistService);
   public inbox = inject(AdminInboxService);
+  public liveStock = inject(LiveStockService);
+
   constructor(public auth: AuthService) {
     // Log product view when it successfully loads
     effect(() => {
@@ -36,24 +41,24 @@ export class ProductDetail {
   }
   private routeParams = toSignal(this.route.paramMap, { initialValue: null });
 
+  activeMediaIndex = signal(0);
+
   private allData = toSignal(
     forkJoin({
-      machinery: this.http.get<any[]>('https://backend-farmease-1.onrender.com/api/machinery').pipe(catchError(() => of([]))),
-      agriitems: this.http.get<any[]>('https://backend-farmease-1.onrender.com/api/agriitems').pipe(catchError(() => of([])))
+      machinery: this.http.get<any[]>(`${API_URL}/machinery`).pipe(catchError(() => of([]))),
+      agriitems: this.http.get<any[]>(`${API_URL}/agriitems`).pipe(catchError(() => of([])))
     }).pipe(
       map(res => {
         const m = res.machinery.map(x => ({ ...x, type: 'machinery' }));
         const a = res.agriitems.map(x => ({ ...x, type: 'agriitem' }));
         return [...m, ...a].map(item => ({
-          id: item.id.toString(),
+          id: item.id?.toString() || '',
           type: item.type,
           title: item.name || 'Untitled Product',
           subtitle: item.category || 'Product Category',
           description: item.description || `High-quality ${item.name} available now.`,
           imageUrl: item.image || '',
-          label: item.quantity > 0 ? 'In Stock' : 'Out of Stock',
-          inStock: item.quantity > 0,
-          metaText: `₹${item.price}`,
+          media: item.media || [],
           price: item.price,
           quantity: item.quantity
         }));
@@ -62,9 +67,29 @@ export class ProductDetail {
     { initialValue: undefined }
   );
 
+  // Combine base data with live stock updates
+  private liveData = computed(() => {
+    const base = this.allData() || [];
+    const updates = this.liveStock.stockUpdates();
+
+    return base.map(p => {
+      const numericId = parseInt(p.id);
+      const reduction = (updates as any)[numericId] || 0;
+      const currentQty = Math.max(0, (p.quantity || 0) + reduction);
+
+      return {
+        ...p,
+        quantity: currentQty,
+        inStock: currentQty > 0,
+        label: currentQty > 0 ? 'In Stock' : 'Out of Stock',
+        metaText: `₹${p.price}`
+      };
+    });
+  });
+
   product = computed(() => {
     const params = this.routeParams();
-    const data = this.allData();
+    const data = this.liveData();
     if (!params || !data) return undefined;
 
     const id = params.get('id');
@@ -74,7 +99,7 @@ export class ProductDetail {
   });
 
   suggestions = computed(() => {
-    const data = this.allData();
+    const data = this.liveData();
     const currProduct = this.product();
     if (!data || !currProduct) return [];
 
@@ -108,6 +133,7 @@ export class ProductDetail {
       price: product.price,
       image: product.imageUrl,
       category: product.subtitle,
+      type: product.type
     });
     // Temporary "In Cart" feedback for 1 second only
     this.showTemporaryInCart(product.id);
@@ -138,6 +164,7 @@ export class ProductDetail {
     this.router.navigate(['/order-detail'], {
       queryParams: {
         id: product.id,
+        type: product.type,
         title: product.title,
         price: product.price,
         image: product.imageUrl,

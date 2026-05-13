@@ -14,6 +14,7 @@ import { WishlistComponent } from './pages/wishlist/wishlist';
 import { DataComponent } from './pages/data-cs/data-cs';
 import { Contact } from './pages/contact/contact';
 import { AddProduct } from './pages/add-product/add-product';
+import { MySales } from './pages/my-sales/my-sales';
 import { ProductDetail } from './pages/product-detail/product-detail';
 import { Chat } from './pages/chat/chat';
 import { Admin } from './pages/admin/admin';
@@ -27,12 +28,15 @@ export const routes: Routes = [
 
   // Public
   { path: 'home', component: HomePage },
+  { path: 'HomePage', redirectTo: 'home' },
   { path: 'signup', component: Signup },
   { path: 'Signup', redirectTo: 'signup' },
   { path: 'login', component: Login },
   { path: 'Login', redirectTo: 'login' },
   { path: 'about', component: About },
+  { path: 'About', redirectTo: 'about' },
   { path: 'ai', component: AichatComponent },
+  { path: 'Ai', redirectTo: 'ai' },
 
 
 
@@ -43,11 +47,13 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { roles: ['admin', 'farmer', 'customer'] }
   },
+  { path: 'News', redirectTo: 'news' },
   {
     path: 'profile',
     component: Profile,
     canActivate: [authGuard]
   },
+  { path: 'Profile', redirectTo: 'profile' },
   {
     path: 'contact',
     component: Contact,
@@ -58,6 +64,14 @@ export const routes: Routes = [
     component: Chat,
     canActivate: [authGuard]
   },
+  {
+    path: 'Chat',
+    redirectTo: 'chat'
+  },
+  {
+    path: 'CustomerSupport',
+    redirectTo: 'contact'
+  },
 
   // Product Flow
   {
@@ -66,6 +80,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { roles: ['admin', 'farmer', 'customer'] }
   },
+  { path: 'Products', redirectTo: 'products' },
   {
     path: 'product-detail/:type/:id',
     component: ProductDetail,
@@ -79,12 +94,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { roles: ['farmer', 'customer'] }
   },
+  { path: 'Cart', redirectTo: 'cart' },
   {
     path: 'orders',
     component: OrdersComponent,
     canActivate: [authGuard],
     data: { roles: ['farmer', 'customer'] }
   },
+  { path: 'Orders', redirectTo: 'orders' },
   {
     path: 'order-detail',
     component: OrderDetail,
@@ -96,6 +113,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { roles: ['farmer', 'customer'] }
   },
+  { path: 'WishlistComponent', redirectTo: 'wishlist' },
 
   // Farmer
   {
@@ -104,6 +122,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { roles: ['farmer', 'admin'] }
   },
+  { path: 'AddProduct', redirectTo: 'add-product' },
+  {
+    path: 'my-sales',
+    component: MySales,
+    canActivate: [authGuard],
+    data: { roles: ['farmer', 'admin'] }
+  },
+  { path: 'MySales', redirectTo: 'my-sales' },
 
   // Admin
   {
@@ -112,12 +138,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { roles: ['admin'] }
   },
+  { path: 'admin/Admin', redirectTo: 'admin' },
   {
     path: 'data',
     component: DataComponent,
     canActivate: [authGuard],
     data: { roles: ['admin', 'farmer'] }
   },
+  { path: 'DataComponent', redirectTo: 'data' },
 
   // Fallback
   { path: '**', redirectTo: 'home' }

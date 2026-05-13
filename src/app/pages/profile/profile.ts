@@ -4,6 +4,9 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { API_URL } from '../../core/api.config';
+
+declare var cloudinary: any;
 
 @Component({
   selector: 'app-profile',
@@ -75,6 +78,28 @@ export class Profile implements OnInit {
     this.showEditModal = true;
   }
 
+  openAvatarUpload() {
+    const myWidget = cloudinary.createUploadWidget(
+      {
+        cloudName: 'djp74r2pg',
+        uploadPreset: 'FARMEASE',
+        sources: ['local', 'url', 'camera'],
+        multiple: false,
+        cropping: true,
+        showSkipCropButton: false,
+        croppingAspectRatio: 1,
+        resourceType: 'image',
+        clientAllowedFormats: ['png', 'jpg', 'jpeg', 'webp']
+      },
+      (error: any, result: any) => {
+        if (!error && result && result.event === 'success') {
+          this.editForm.avatar = result.info.secure_url;
+        }
+      }
+    );
+    myWidget.open();
+  }
+
   closeModal(): void {
     this.showEditModal = false;
     this.saveSuccess = false;
@@ -105,7 +130,7 @@ export class Profile implements OnInit {
     localStorage.setItem('CurrentUser', JSON.stringify(updatedUser));
     
     // Background Sync
-    const backendUrl = 'https://backend-farmease-1.onrender.com/api/users';
+    const backendUrl = `${API_URL}/users`;
     this.http.put(`${backendUrl}/${this.currentUser.id}`, updatedUser).subscribe({
       next: (res: any) => {
         this.currentUser = { ...updatedUser, ...res };

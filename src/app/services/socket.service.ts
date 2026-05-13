@@ -1,4 +1,5 @@
 import * as signalR from '@microsoft/signalr';
+import { HUB_URL } from '../core/api.config';
 import { Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
@@ -12,7 +13,7 @@ export class SocketService {
     if (this.hub?.state === signalR.HubConnectionState.Connected) return;
 
     this.hub = new signalR.HubConnectionBuilder()
-      .withUrl('https://backend-farmease-1.onrender.com/chatHub', {
+      .withUrl(HUB_URL, {
         accessTokenFactory: () => localStorage.getItem('token') || ''
       })
       .withAutomaticReconnect()

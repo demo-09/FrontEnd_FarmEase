@@ -1,0 +1,330 @@
+.sales-page-container {
+  min-height: 100vh;
+  background-color: #f1f5f9;
+  font-family: 'Inter', sans-serif;
+}
+
+.mesh-bg {
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(22, 163, 74, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(37, 99, 235, 0.05) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(245, 158, 11, 0.05) 0px, transparent 50%);
+}
+
+/* Glass Cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+.welcome-banner {
+  background: white;
+}
+
+.earnings-glass {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  border-radius: 24px;
+  box-shadow: 0 15px 30px -10px rgba(22, 163, 74, 0.4);
+}
+
+/* Table Styling */
+.smart-table {
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+.sale-row {
+  transition: all 0.2s;
+  cursor: default;
+}
+
+.sale-row:hover {
+  background-color: rgba(22, 163, 74, 0.02) !important;
+  transform: scale(1.002);
+}
+
+.prod-thumbnail {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.paid {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* Bento Listings */
+.listing-card-bento {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0,0,0,0.05);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.listing-card-bento:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.lc-media {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.lc-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+
+.listing-card-bento:hover .lc-media img {
+  transform: scale(1.1);
+}
+
+.lc-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.lc-media:hover .lc-overlay {
+  opacity: 1;
+}
+
+.lc-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: transform 0.2s;
+}
+
+.lc-btn.edit { background: #2563eb; }
+.lc-btn.delete { background: #ef4444; }
+.lc-btn:hover { transform: scale(1.1); }
+
+.lc-badge {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: rgba(37, 99, 235, 0.9);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.lc-badge.agri { background: rgba(16, 185, 129, 0.9); }
+
+.stock-pill {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.stock-pill.low {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.stock-pill.out {
+  background: #1e293b;
+  color: white;
+}
+
+.sold-out-card {
+  filter: grayscale(0.4);
+  opacity: 0.9;
+}
+
+.sold-out-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  background: rgba(239, 44, 44, 0.9);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  border: 3px solid white;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Sidebar Widgets */
+.stat-mini-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat-mini-box {
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.sm-val { font-weight: 700; font-size: 1.2rem; color: #1e293b; }
+.sm-lbl { font-size: 0.7rem; color: #64748b; text-transform: uppercase; }
+
+.top-prod-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.tp-rank {
+  width: 32px;
+  height: 32px;
+  background: #dcfce7;
+  color: #16a34a;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.tp-name { font-weight: 600; font-size: 0.9rem; color: #1e293b; }
+.tp-sales { font-size: 0.75rem; color: #64748b; }
+
+/* Edit Overlay */
+.edit-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.edit-modal-content, .detail-modal-content {
+  background: white;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  border-radius: 32px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-hero {
+  background: linear-gradient(to right, #f8fafc, #f1f5f9);
+}
+
+.detail-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+}
+
+.avatar-sm {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.bg-primary-subtle { background: rgba(37, 99, 235, 0.1); }
+
+.contact-info {
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.modal-header-bento {
+  padding: 20px 30px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-body-bento {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.btn-close-glass {
+  background: #f1f5f9;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-close-glass:hover { background: #e2e8f0; transform: rotate(90deg); }
+
+/* Animations */
+.anim-fade-up {
+  animation: fadeUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.anim-scale-up {
+  animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.x-small { font-size: 0.7rem; }

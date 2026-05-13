@@ -3,7 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AgriItem } from '../models/agri-item.model';
 
-const API_BASE = 'https://backend-farmease-1.onrender.com/api/agriitems';
+import { API_URL } from '../core/api.config';
+
+const API_BASE = `${API_URL}/agriitems`;
 
 @Injectable({ providedIn: 'root' })
 export class AgriItemService {

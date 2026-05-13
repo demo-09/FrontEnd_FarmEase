@@ -164,14 +164,19 @@
                 <img [src]="av" alt="Avatar option">
               </button>
             </div>
-            <div class="auth-input-wrap mt-2">
-              <i class="fa-solid fa-link auth-input-icon"></i>
-              <input
-                name="avatar"
-                [(ngModel)]="signupData.avatar"
-                type="text"
-                class="auth-input"
-                placeholder="Or paste custom image URL...">
+            
+            <div class="avatar-custom-upload mt-3">
+              <button type="button" class="btn-avatar-upload" (click)="openAvatarUpload()">
+                <i class="fa-solid fa-camera me-2"></i>
+                {{ signupData.avatar && !presetAvatars.includes(signupData.avatar) ? 'Change Custom Photo' : 'Upload Custom Photo' }}
+              </button>
+              
+              <div class="avatar-preview-mini" *ngIf="signupData.avatar && !presetAvatars.includes(signupData.avatar)">
+                <img [src]="signupData.avatar" alt="Preview">
+                <button type="button" class="btn-remove-avatar" (click)="signupData.avatar = ''">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
             </div>
           </div>
 

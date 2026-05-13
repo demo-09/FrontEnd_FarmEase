@@ -11,27 +11,22 @@ import { CommonModule } from '@angular/common';
 export class Contact {
   
   // Hardcoded Support/Contact details
-  supportPhone = '919876543210';
-  supportEmail = 'support@farmease.in';
+  supportPhone = '9327333522';
+  supportEmail = 'ujjavalkarangiya24@gmail.com';
 
   getWhatsAppLink(): string {
     const text = encodeURIComponent(`Hello FarmEase Support, I need some help!`);
-    return `https://wa.me/9327333522?text=${text}`;
+    return `https://wa.me/${this.supportPhone}?text=${text}`;
   }
 
   getPhoneLink(): string {
-    return `tel:+919327333522`;
+    return `tel:+91${this.supportPhone}`;
   }
 
   getMailLink(): string {
     const subject = encodeURIComponent(`FarmEase Support Request`);
     const body = encodeURIComponent(`Hi Support Team,\n\nI have a question regarding...`);
     return `mailto:${this.supportEmail}?subject=${subject}&body=${body}`;
-  }
-
-  getVideoCallLink(): string {
-    // Generalized video meeting fallback link
-    return 'https://meet.google.com/new'; 
   }
 
   submitMessage(event: Event) {

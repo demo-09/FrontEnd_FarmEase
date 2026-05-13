@@ -14,6 +14,8 @@ export interface InboxMessage {
   metadata?: any;
 }
 
+import { API_URL } from '../core/api.config';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -23,8 +25,8 @@ export class AdminInboxService implements OnDestroy {
   private pollingSub?: Subscription;
 
   private http = inject(HttpClient);
-  private activityUrl = 'https://backend-farmease-1.onrender.com/api/activity';
-  private ordersUrl = 'https://backend-farmease-1.onrender.com/api/orders';
+  private activityUrl = `${API_URL}/activity`;
+  private ordersUrl = `${API_URL}/orders`;
 
   constructor() {
     this.loadFromStorage();
@@ -47,6 +49,15 @@ export class AdminInboxService implements OnDestroy {
   }
 
   refreshInbox(): void {
+    const userStr = localStorage.getItem('CurrentUser');
+    if (!userStr) return;
+    try {
+      const user = JSON.parse(userStr);
+      if (user.role !== 'admin') return;
+    } catch (e) {
+      return;
+    }
+
     forkJoin({
       orders: this.http.get<any[]>(`${this.ordersUrl}/all`).pipe(catchError(() => of([]))),
       activities: this.http.get<any[]>(`${this.activityUrl}/all`).pipe(catchError(() => of([])))

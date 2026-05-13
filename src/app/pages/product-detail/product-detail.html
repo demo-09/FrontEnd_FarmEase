@@ -38,8 +38,22 @@
         <!-- Left: Image Gallery -->
         <div class="pd-image-side">
           <div class="pd-img-main-wrap">
-            <img [src]="p.imageUrl || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600'"
-                 [alt]="p.title" class="pd-main-img" loading="eager">
+            <!-- Show Video if active is video -->
+            <ng-container *ngIf="p.media && p.media.length > 0; else defaultImg">
+              <div class="pd-main-media-container">
+                <img *ngIf="p.media[activeMediaIndex()].mediaType === 'image'" 
+                     [src]="p.media[activeMediaIndex()].url"
+                     [alt]="p.title" class="pd-main-img" loading="eager">
+                
+                <video *ngIf="p.media[activeMediaIndex()].mediaType === 'video'"
+                       [src]="p.media[activeMediaIndex()].url"
+                       class="pd-main-video" controls autoplay muted loop></video>
+              </div>
+            </ng-container>
+            <ng-template #defaultImg>
+              <img [src]="p.imageUrl || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600'"
+                   [alt]="p.title" class="pd-main-img" loading="eager">
+            </ng-template>
 
             <div class="pd-stock-badge" [class.out]="!p.inStock">
               <i [class]="p.inStock ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'"></i>
@@ -51,6 +65,18 @@
                     id="detail-wish-btn">
               <i [class]="isInWishlist(p.id) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
             </button>
+          </div>
+
+          <!-- Thumbnails -->
+          <div class="pd-thumbnails" *ngIf="p.media && p.media.length > 1">
+            <div class="pd-thumb" *ngFor="let m of p.media; let i = index"
+                 [class.active]="activeMediaIndex() === i"
+                 (click)="activeMediaIndex.set(i)">
+              <img *ngIf="m.mediaType === 'image'" [src]="m.url" alt="Thumb">
+              <div *ngIf="m.mediaType === 'video'" class="pd-thumb-video">
+                <i class="fa-solid fa-play"></i>
+              </div>
+            </div>
           </div>
 
           <div class="pd-trust-strip">

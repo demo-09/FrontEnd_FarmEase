@@ -1,9 +1,11 @@
 import { Component, inject, OnInit, signal, ChangeDetectionStrategy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { API_URL } from '../../core/api.config';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CartService } from '../../services/cart.service';
+import { PaymentService } from '../../services/payment.service';
 
 @Component({
   selector: 'app-order-detail',
@@ -18,6 +20,7 @@ export class OrderDetail implements OnInit {
   private router = inject(Router);
   private http = inject(HttpClient);
   private cartService = inject(CartService);
+  private paymentService = inject(PaymentService);
 
   // MODE: 'product' = single item from product-detail | 'cart' = full cart checkout
   mode = signal<'product' | 'cart'>('product');
@@ -75,7 +78,7 @@ export class OrderDetail implements OnInit {
       // Pre-fill email if logged in
       const user = JSON.parse(localStorage.getItem('CurrentUser') || '{}');
       if (user?.email) this.shippingInfo.email = user.email;
-      if (user?.name)  this.shippingInfo.fullName = user.name;
+      if (user?.fullName) this.shippingInfo.fullName = user.fullName;
     } else {
       // ── SINGLE PRODUCT MODE ──
       this.mode.set('product');
@@ -83,6 +86,7 @@ export class OrderDetail implements OnInit {
         if (params['id']) {
           this.productData.set({
             id: params['id'],
+            type: params['type'],
             title: params['title'],
             price: parseFloat(params['price']),
             image: params['image'],
@@ -90,7 +94,7 @@ export class OrderDetail implements OnInit {
           });
           const user = JSON.parse(localStorage.getItem('CurrentUser') || '{}');
           if (user?.email) this.shippingInfo.email = user.email;
-          if (user?.name)  this.shippingInfo.fullName = user.name;
+          if (user?.fullName) this.shippingInfo.fullName = user.fullName;
         } else {
           this.router.navigate(['/Products']);
         }
@@ -102,55 +106,64 @@ export class OrderDetail implements OnInit {
     this.deliveryDate.set(d.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' }));
   }
 
-  placeOrder() {
+  async placeOrder() {
     const info = this.shippingInfo;
     if (!info.fullName || !info.phone || !info.address || !info.pincode) {
       alert('Please fill in all required shipping details!');
       return;
     }
 
-    // Validate payment-specific fields
-    if (this.paymentMethod() === 'upi' && !this.upiId.trim()) {
-      alert('Please enter your UPI ID to proceed.');
-      return;
-    }
-    if (this.paymentMethod() === 'card') {
-      if (!this.cardNumber || !this.cardExpiry || !this.cardCvv || !this.cardName) {
-        alert('Please fill in all card details.');
-        return;
+    this.isProcessing.set(true);
+
+    let transactionId = 'COD';
+
+    // TRIGGER PAYMENT GATEWAY IF NOT COD
+    if (this.paymentMethod() !== 'cod') {
+      try {
+        const paymentResponse = await this.paymentService.initiatePayment(this.grandTotal, { id: 'NEW' });
+        transactionId = paymentResponse.razorpay_payment_id;
+        console.log('[PAYMENT] Success. Txn ID:', transactionId);
+      } catch (err) {
+        console.error('[PAYMENT FAILED]', err);
+        this.isProcessing.set(false);
+        return; // Stop checkout if payment fails
       }
     }
 
-    this.isProcessing.set(true);
+    console.log('[ORDER] Placing order. Mode:', this.mode());
 
-    if (this.mode() === 'cart') {
-      // POST to backend
-      this.http.post<any>('https://backend-farmease-1.onrender.com/api/orders', { checkoutFromCart: true }).subscribe({
-        next: (res) => {
-          this.cartService.clearLocalCart();
-          const id = res?.id || Math.floor(100000 + Math.random() * 900000);
-          this.orderId.set(`FE-${id}`);
-          this.isProcessing.set(false);
-          this.orderPlaced.set(true);
-        },
-        error: () => {
-          // Still show success — cart checkout worked client-side
-          this.cartService.clearLocalCart();
-          const id = Math.floor(100000 + Math.random() * 900000);
-          this.orderId.set(`FE-${id}`);
-          this.isProcessing.set(false);
-          this.orderPlaced.set(true);
-        }
-      });
-    } else {
-      // Single product — simulate processing
-      setTimeout(() => {
-        const id = Math.floor(100000 + Math.random() * 900000);
+    const payload: any = {
+      checkoutFromCart: this.mode() === 'cart',
+      transactionId: transactionId,
+      shippingAddress: `${info.address}, ${info.city}, ${info.state} - ${info.pincode}`
+    };
+
+    if (this.mode() === 'product') {
+      const p = this.productData();
+      payload.items = [{
+        productId: parseInt(p.id),
+        productName: p.title,
+        price: p.price,
+        quantity: p.qty,
+        imageUrl: p.image,
+        productType: p.type
+      }];
+    }
+
+    this.http.post<any>(`${API_URL}/orders`, payload).subscribe({
+      next: (res) => {
+        if (this.mode() === 'cart') this.cartService.clearLocalCart();
+        const id = res?.id || Math.floor(100000 + Math.random() * 900000);
         this.orderId.set(`FE-${id}`);
         this.isProcessing.set(false);
         this.orderPlaced.set(true);
-      }, 1500);
-    }
+      },
+      error: (err) => {
+        console.error('[ORDER ERROR]', err);
+        alert(`Order failed: ${err.error?.message || 'Server error'}`);
+        this.isProcessing.set(false);
+      }
+    });
   }
 
   get grandTotal(): number {

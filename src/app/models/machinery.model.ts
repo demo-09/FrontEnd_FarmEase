@@ -1,3 +1,11 @@
+export interface MachineryMedia {
+  id: number;
+  url: string;
+  publicId: string;
+  mediaType: 'image' | 'video';
+  isPrimary: boolean;
+}
+
 export interface Machinery {
   id: number;
   name: string;
@@ -7,4 +15,5 @@ export interface Machinery {
   quantity: number;
   category: string;
   description: string;
+  media: MachineryMedia[];
 }

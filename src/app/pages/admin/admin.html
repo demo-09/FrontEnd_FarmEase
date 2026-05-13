@@ -39,15 +39,24 @@
         Customer Directory <span class="sidebar-count">{{ customers().length }}</span>
       </button>
 
+      <div class="sidebar-nav-label text-secondary mt-3">Inventory Management</div>
+      
       <button class="sidebar-btn" [class.active]="activePage() === 'machinery'" (click)="setPage('machinery')">
         <div class="sbtn-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
         Global Inventory
       </button>
 
-      <button class="sidebar-btn" [class.active]="activePage() === 'AddProduct'" (click)="setPage('AddProduct')">
-        <div class="sbtn-icon"><i class="fa-solid fa-square-plus"></i></div>
-        Add New Product
-      </button>
+      <div class="sidebar-sub-menu">
+        <button class="sidebar-btn sub" [class.active]="activePage() === 'AddProduct' && selectedCategory() === 'Machinery'" (click)="setPage('AddProduct'); selectCategory('Machinery', 'machinery')">
+          <div class="sbtn-icon"><i class="fa-solid fa-tractor"></i></div> Add Machinery
+        </button>
+        <button class="sidebar-btn sub" [class.active]="activePage() === 'AddProduct' && selectedCategory() === 'Vegetables'" (click)="setPage('AddProduct'); selectCategory('Vegetables', 'agriitem')">
+          <div class="sbtn-icon"><i class="fa-solid fa-carrot"></i></div> Add Vegetables
+        </button>
+        <button class="sidebar-btn sub" [class.active]="activePage() === 'AddProduct' && selectedCategory() === 'Tools'" (click)="setPage('AddProduct'); selectCategory('Tools', 'machinery')">
+          <div class="sbtn-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div> Add Tools
+        </button>
+      </div>
 
       <a routerLink="/Chat" class="sidebar-btn" style="text-decoration: none;" (click)="isSidebarOpen.set(false)">
         <div class="sbtn-icon"><i class="fa-brands fa-whatsapp"></i></div>
@@ -187,6 +196,11 @@
           <div class="section-label">Product Database</div>
           <h1 class="admin-title">Global Inventory</h1>
         </div>
+        <button class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm border-0" 
+                style="background: linear-gradient(135deg, #dc3545, #b02a37); font-weight: 600;"
+                (click)="resetInventory()">
+          <i class="fa-solid fa-rotate-right me-2"></i> Reset All Products
+        </button>
       </div>
 
       <div class="mini-kpi-bar mb-4">
@@ -245,63 +259,16 @@
       </div>
     </section>
 
-    <!-- ==================== ADD PRODUCT FORM ==================== -->
+    <!-- ==================== STANDALONE ADD PRODUCT COMPONENT ==================== -->
     <section *ngIf="activePage() === 'AddProduct'" class="anim-fade-up">
-      <div class="form-panel-glass">
-        <h2 class="form-title mb-4">
-          <i class="fa-solid text-success" [ngClass]="isEditing() ? 'fa-pen-to-square' : 'fa-plus-circle'"></i> 
-          {{ isEditing() ? 'Modify Existing Product' : 'Add New Product to Inventory' }}
-        </h2>
-
-        <div class="form-grid">
-          <div class="form-group col-span-2">
-            <label>Product Name <span class="text-danger">*</span></label>
-            <input type="text" [(ngModel)]="newItem.name" placeholder="E.g. Premium Wheat Seeds 50kg">
-          </div>
-
-          <div class="form-group">
-            <label>Price (₹) <span class="text-danger">*</span></label>
-            <input type="number" [(ngModel)]="newItem.price" placeholder="4500">
-          </div>
-
-          <div class="form-group">
-            <label>Initial Quantity <span class="text-danger">*</span></label>
-            <input type="number" [(ngModel)]="newItem.quantity" placeholder="10">
-          </div>
-
-          <div class="form-group col-span-2">
-            <label>Category <span class="text-danger">*</span></label>
-            <select [(ngModel)]="newItem.category">
-              <option value="">Select Category</option>
-              <option value="Tractor">Tractor</option>
-              <option value="Harvester">Harvester</option>
-              <option value="Tools">Tools & Equipment</option>
-              <option value="Irrigation">Irrigation</option>
-              <option value="Seeds">Seeds</option>
-              <option value="Fertilizer">Fertilizer & Pesticides</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-
-          <div class="form-group col-span-2">
-            <label>Image URL</label>
-            <input type="text" [(ngModel)]="newItem.image" placeholder="https://example.com/product-image.jpg">
-          </div>
-
-          <div class="form-group col-span-2">
-            <label>Product Description</label>
-            <textarea rows="4" [(ngModel)]="newItem.description" placeholder="Write a detailed description detailing specifications..."></textarea>
-          </div>
-        </div>
-
-        <div class="form-footer mt-4">
-          <button class="btn-glass green-glass flex-1" (click)="handleItemAddOrUpdate(); setPage('machinery')">
-            <i class="fa-solid" [ngClass]="isEditing() ? 'fa-floppy-disk' : 'fa-upload'"></i> 
-            {{ isEditing() ? 'Save Changes' : 'Upload to Catalog' }}
-          </button>
-          <button *ngIf="isEditing()" class="btn-glass outline" (click)="resetForm()">Cancel Edit</button>
-        </div>
-      </div>
+      <app-add-product-form 
+        [isEditing]="isEditing()" 
+        [editingId]="editingId()"
+        [selectedCategory]="selectedCategory()"
+        [editData]="editingData()"
+        (saved)="loadInventory(); resetForm()"
+        (cancel)="resetForm()"
+      ></app-add-product-form>
     </section>
 
       <!-- ================= INBOX ================= -->
@@ -314,7 +281,7 @@
           </div>
         </div>
 
-        <div class="dash-panel glass-panel mt-4">
+        <div class="dash-panel inbox-panel glass-panel mt-4">
           <div class="table-responsive">
             <table class="table table-borderless table-hover align-middle smart-table w-100">
               <thead>
@@ -424,8 +391,19 @@
               <img [src]="av" alt="Avatar option">
             </button>
           </div>
-          <div class="auth-input-wrap mt-2">
-            <input type="text" name="avatar" [(ngModel)]="newUser.avatar" placeholder="Or paste custom image URL...">
+          
+          <div class="avatar-custom-upload mt-3">
+            <button type="button" class="btn-avatar-upload" (click)="openAvatarUpload()">
+              <i class="fa-solid fa-camera me-2"></i>
+              {{ newUser.avatar && !presetAvatars.includes(newUser.avatar) ? 'Change Custom Photo' : 'Upload Custom Photo' }}
+            </button>
+            
+            <div class="avatar-preview-mini" *ngIf="newUser.avatar && !presetAvatars.includes(newUser.avatar)">
+              <img [src]="newUser.avatar" alt="Preview">
+              <button type="button" class="btn-remove-avatar" (click)="newUser.avatar = ''">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
           </div>
         </div>
 

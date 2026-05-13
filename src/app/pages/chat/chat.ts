@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, effect, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, ViewChild, effect, inject, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService, Contact } from '../../services/chat.service';
@@ -13,6 +13,19 @@ import { ChatService, Contact } from '../../services/chat.service';
 export class Chat implements OnInit, OnDestroy {
   public chatService = inject(ChatService);
   @ViewChild('chatScroll') private chatScrollContainer!: ElementRef;
+
+  searchQuery = signal('');
+
+  filteredContacts = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    const contacts = this.chatService.contacts();
+    if (!query) return contacts;
+    return contacts.filter(c => 
+      c.fullName.toLowerCase().includes(query) || 
+      c.email.toLowerCase().includes(query) ||
+      (c.role && c.role.toLowerCase().includes(query))
+    );
+  });
 
   getAvatarUrl(contact: any): string {
     if (contact?.avatar) return contact.avatar;
@@ -64,6 +77,12 @@ export class Chat implements OnInit, OnDestroy {
   // Closes chat on mobile to show contacts/global nav again
   closeChat() {
     this.chatService.selectedContact.set(null);
+  }
+
+  viewProfile(contact: Contact | null) {
+    if (!contact) return;
+    console.log('Viewing profile:', contact.email);
+    // Future: navigate to profile page or show modal
   }
 
   sendMessage() {

@@ -7,6 +7,9 @@ import { FormsModule } from '@angular/forms';
     import { AdminInboxService } from '../../services/admin-inbox.service';
 
 declare var google: any;
+declare var cloudinary: any;
+
+import { API_URL } from '../../core/api.config';
 
 @Component({
   selector: 'app-signup',
@@ -21,7 +24,7 @@ export class Signup implements OnInit, AfterViewInit {
   private auth = inject(AuthService);
   private adminInbox = inject(AdminInboxService);
 
-  private backendUrl = 'https://backend-farmease-1.onrender.com/api/auth';
+  private backendUrl = `${API_URL}/auth`;
   
   // State Management
   selectedRole: UserRole = 'customer';
@@ -98,6 +101,28 @@ export class Signup implements OnInit, AfterViewInit {
     this.signupData.role = this.selectedRole;
   }
 
+  openAvatarUpload() {
+    const myWidget = cloudinary.createUploadWidget(
+      {
+        cloudName: 'djp74r2pg', // Using the cloud name from the user's .env
+        uploadPreset: 'FARMEASE',
+        sources: ['local', 'url', 'camera'],
+        multiple: false,
+        cropping: true,
+        showSkipCropButton: false,
+        croppingAspectRatio: 1,
+        resourceType: 'image',
+        clientAllowedFormats: ['png', 'jpg', 'jpeg', 'webp']
+      },
+      (error: any, result: any) => {
+        if (!error && result && result.event === 'success') {
+          this.signupData.avatar = result.info.secure_url;
+        }
+      }
+    );
+    myWidget.open();
+  }
+
   onRegister() {
     const { fullName, email, password } = this.signupData;
 
@@ -127,7 +152,7 @@ export class Signup implements OnInit, AfterViewInit {
       next: (res: any) => {
         this.isLoading = false;
         this.otpSent = true;
-        alert(res.mockOtp);
+        // Mock OTP alert removed for real email delivery
       },
       error: (err) => {
         this.isLoading = false;

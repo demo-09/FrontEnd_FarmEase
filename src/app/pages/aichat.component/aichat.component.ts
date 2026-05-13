@@ -14,6 +14,8 @@ export interface ChatMessage {
   isVoiceNote?: boolean;
 }
 
+declare var cloudinary: any;
+
 @Component({
   selector: 'app-aichat',
   standalone: true,
@@ -141,47 +143,65 @@ export class AichatComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  // ====================== IMAGE UPLOAD ======================
-  async onImageUpload(event: Event): Promise<void> {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (!file) return;
+  // ====================== IMAGE UPLOAD (CLOUDINARY) ======================
+  openCloudinaryUpload(): void {
+    const myWidget = cloudinary.createUploadWidget(
+      {
+        cloudName: 'djp74r2pg',
+        uploadPreset: 'FARMEASE',
+        sources: ['local', 'url', 'camera'],
+        multiple: false,
+        resourceType: 'image',
+        clientAllowedFormats: ['png', 'jpg', 'jpeg', 'webp']
+      },
+      async (error: any, result: any) => {
+        if (!error && result && result.event === 'success') {
+          const imageUrl = result.info.secure_url;
+          const format = result.info.format || 'jpeg';
+          const mimeType = `image/${format}`;
 
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const imageData = reader.result as string;
+          const userMsg: ChatMessage = {
+            id: 'msg-' + Date.now(),
+            role: 'user',
+            text: '📸 Sent farm photo',
+            imageData: imageUrl,
+            mimeType: mimeType,
+            timestamp: new Date()
+          };
 
-      const userMsg: ChatMessage = {
-        id: 'msg-' + Date.now(),
-        role: 'user',
-        text: '📸 Sent farm photo',
-        imageData,
-        mimeType: file.type,
-        timestamp: new Date()
-      };
+          this.messages.update(msgs => [...msgs, userMsg]);
+          this.isLoading.set(true);
 
-      this.messages.update(msgs => [...msgs, userMsg]);
-      this.isLoading.set(true);
-
-      try {
-        const response = await this.geminiService.sendMessage(
-          `Please analyze this farm image carefully.`,
-          { data: imageData.split(',')[1], mimeType: file.type }
-        );
-        const aiMsg: ChatMessage = {
-          id: 'msg-' + Date.now(),
-          role: 'assistant',
-          text: response ?? "I've analyzed the uploaded image.",
-          timestamp: new Date()
-        };
-        this.messages.update(msgs => [...msgs, aiMsg]);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        this.isLoading.set(false);
+          try {
+            // Fetch the image to get base64 for Gemini analysis
+            const responseBlob = await fetch(imageUrl).then(r => r.blob());
+            const reader = new FileReader();
+            reader.onload = async () => {
+              const base64Data = (reader.result as string).split(',')[1];
+              
+              const aiResponse = await this.geminiService.sendMessage(
+                `Please analyze this farm image carefully.`,
+                { data: base64Data, mimeType: mimeType }
+              );
+              
+              const aiMsg: ChatMessage = {
+                id: 'msg-' + Date.now(),
+                role: 'assistant',
+                text: aiResponse ?? "I've analyzed the uploaded image.",
+                timestamp: new Date()
+              };
+              this.messages.update(msgs => [...msgs, aiMsg]);
+              this.isLoading.set(false);
+            };
+            reader.readAsDataURL(responseBlob);
+          } catch (error) {
+            console.error('Image analysis failed', error);
+            this.isLoading.set(false);
+          }
+        }
       }
-    };
-    reader.readAsDataURL(file);
-    (event.target as HTMLInputElement).value = '';
+    );
+    myWidget.open();
   }
 
   // ====================== VOICE TO TEXT ======================

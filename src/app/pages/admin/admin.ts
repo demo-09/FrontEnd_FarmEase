@@ -1,12 +1,15 @@
 import { Component, OnInit, OnDestroy, inject, signal, computed } from "@angular/core";
 import { AuthService } from '../../core/services/auth.service';
 import { AdminInboxService } from '../../services/admin-inbox.service';
+import { LiveStockService } from '../../services/live-stock.service';
 import { Router, RouterLink } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
 import { forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { effect } from '@angular/core';
+import { AddProductForm } from '../../shared/components/add-product-form/add-product';
 
 interface InventoryItem {
   id: number;
@@ -20,10 +23,14 @@ interface InventoryItem {
   description: string;
 }
 
+import { API_URL } from "../../core/api.config";
+
+declare var cloudinary: any;
+
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, AddProductForm],
   templateUrl: './admin.html',
   styleUrls: ['./admin.css'],
 })
@@ -31,7 +38,7 @@ export class Admin implements OnInit, OnDestroy {
   activePage = signal('dashboard');
   sidebarOpen = signal(false);
 
-  private backendUrl = 'https://backend-farmease-1.onrender.com/api';
+  private backendUrl = API_URL;
 
   farmers = signal<any[]>([]);
   customers = signal<any[]>([]);
@@ -45,7 +52,8 @@ export class Admin implements OnInit, OnDestroy {
   // Track if we are editing an existing item
   isEditing = signal(false);
   editingId = signal<number | null>(null);
-  newItem = { type: 'machinery', name: '', price: 0, image: '', condition: '', quantity: 1, category: '', description: '' };
+  selectedCategory = signal<string>('');
+  editingData = signal<any>(null);
   
   // Smart/Analytics Mock State
   aiInsights = [
@@ -86,6 +94,31 @@ export class Admin implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   public auth = inject(AuthService);
   public inbox = inject(AdminInboxService);
+  public liveStock = inject(LiveStockService);
+
+  // Track original quantities to apply live reductions
+  private originalQuantities: Record<string, number> = {};
+
+  constructor() {
+    // Live Stock Sync Effect
+    effect(() => {
+      const updates = this.liveStock.stockUpdates();
+      const currentItems = this.inventoryItems();
+      
+      if (currentItems.length > 0 && Object.keys(updates).length > 0) {
+        this.inventoryItems.update(items => items.map(item => {
+          const compositeKey = `${item.type?.toLowerCase()}-${item.id}`;
+          const reduction = (updates as any)[compositeKey] || 0;
+          const original = this.originalQuantities[`${item.type}-${item.id}`] ?? item.quantity;
+          
+          return {
+            ...item,
+            quantity: Math.max(0, original + reduction)
+          };
+        }));
+      }
+    });
+  }
 
   getAvatarUrl(user: any): string {
     if (user?.avatar) return user.avatar;
@@ -96,9 +129,13 @@ export class Admin implements OnInit, OnDestroy {
   setPage(page: string): void {
     this.activePage.set(page);
     this.isSidebarOpen.set(false);
-    if (page === 'machinery' || page === 'inventory') {
+    if (page === 'machinery' || page === 'inventory' || page === 'AddProduct') {
       this.resetForm();
     }
+  }
+
+  selectCategory(cat: string, type: string) {
+    this.selectedCategory.set(cat);
   }
 
   ngOnInit(): void {
@@ -172,6 +209,29 @@ export class Admin implements OnInit, OnDestroy {
     this.isAddingUser.set(false);
   }
 
+  openAvatarUpload() {
+    const myWidget = cloudinary.createUploadWidget(
+      {
+        cloudName: 'djp74r2pg',
+        uploadPreset: 'FARMEASE',
+        sources: ['local', 'url', 'camera'],
+        multiple: false,
+        cropping: true,
+        showSkipCropButton: false,
+        croppingAspectRatio: 1,
+        resourceType: 'image',
+        clientAllowedFormats: ['png', 'jpg', 'jpeg', 'webp']
+      },
+      (error: any, result: any) => {
+        if (!error && result && result.event === 'success') {
+          this.newUser.avatar = result.info.secure_url;
+        }
+      }
+    );
+    myWidget.open();
+  }
+
+  // --- PRODUCT MEDIA ---
   submitNewUser(): void {
     if (!this.newUser.fullName || !this.newUser.email || !this.newUser.password) {
       alert('Please fill out all required fields.');
@@ -192,46 +252,10 @@ export class Admin implements OnInit, OnDestroy {
 
   // --- MACHINERY & AGRI-ITEMS MANAGEMENT (CREATE/UPDATE/DELETE) ---
 
-  handleItemAddOrUpdate(): void {
-    if (!this.newItem.name || this.newItem.price <= 0) {
-      alert('Please fill in required fields');
-      return;
-    }
-
-    const endpoint = this.newItem.type === 'agriitem' ? 'agriitems' : 'machinery';
-    const body = { ...this.newItem };
-
-    if (this.isEditing() && this.editingId()) {
-      // UPDATE logic
-      this.http.put(`${this.backendUrl}/${endpoint}/${this.editingId()}`, body).subscribe({
-        next: () => {
-          this.loadInventory();
-          this.resetForm();
-        },
-        error: (err: any) => console.error(`Failed to update ${this.newItem.type}`, err)
-      });
-    } else {
-      // CREATE logic
-      const itemToSave = {
-        ...body,
-        image: body.image || 'https://via.placeholder.com/150'
-      };
-      
-      this.http.post(`${this.backendUrl}/${endpoint}`, itemToSave).subscribe({
-        next: () => {
-          this.loadInventory();
-          this.resetForm();
-        },
-        error: (err) => console.error(`Failed to create ${this.newItem.type}`, err)
-      });
-    }
-  }
-
   editItem(item: any): void {
     this.isEditing.set(true);
     this.editingId.set(item.id);
-    this.newItem = { ...item };
-    if (!this.newItem.type) this.newItem.type = 'machinery'; // fallback
+    this.editingData.set({ ...item });
   }
 
   handleItemRemove(item: any): void {
@@ -262,6 +286,21 @@ export class Admin implements OnInit, OnDestroy {
     this.inbox.rejectRequest(id);
   }
 
+  resetInventory(): void {
+    if (confirm('CRITICAL: This will remove ALL current products and restore the default catalog. Are you absolutely sure?')) {
+      this.http.post(`${this.backendUrl}/machinery/reset`, {}).subscribe({
+        next: (res: any) => {
+          alert(res.message || 'Inventory reset successfully!');
+          this.loadInventory();
+        },
+        error: (err) => {
+          console.error('Reset failed', err);
+          alert('Failed to reset inventory: ' + (err.error?.message || err.message));
+        }
+      });
+    }
+  }
+
   loadInventory(): void {
     forkJoin({
       machinery: this.http.get<any[]>(`${this.backendUrl}/machinery`).pipe(catchError(() => of([]))),
@@ -270,16 +309,24 @@ export class Admin implements OnInit, OnDestroy {
       next: (res) => {
         const m = res.machinery.map(x => ({ ...x, type: 'machinery', image: x.image || '' }));
         const a = res.agriitems.map(x => ({ ...x, type: 'agriitem', image: x.image || '' }));
-        this.inventoryItems.set([...m, ...a]);
+        const all = [...m, ...a];
+        
+        // Store original quantities for live sync
+        all.forEach(item => {
+          this.originalQuantities[`${item.type}-${item.id}`] = item.quantity;
+        });
+        
+        this.inventoryItems.set(all);
       },
       error: (err) => console.error('Failed to load inventory', err)
     });
   }
   
   resetForm() {
-    this.newItem = { type: 'machinery', name: '', price: 0, image: '', condition: '', quantity: 1, category: '', description: '' };
     this.isEditing.set(false);
     this.editingId.set(null);
+    this.selectedCategory.set('');
+    this.editingData.set(null);
   }
 }
 

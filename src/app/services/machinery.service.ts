@@ -3,7 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Machinery } from '../models/machinery.model';
 
-const API_BASE = 'https://backend-farmease-1.onrender.com/api/machinery';
+import { API_URL } from '../core/api.config';
+
+const API_BASE = `${API_URL}/machinery`;
 
 @Injectable({ providedIn: 'root' })
 export class MachineryService {

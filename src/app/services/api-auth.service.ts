@@ -3,7 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthResponse, LoginDto, RegisterDto } from '../models/auth.model';
 
-const API_BASE = 'https://backend-farmease-1.onrender.com/api/auth';
+import { API_URL } from '../core/api.config';
+
+const API_BASE = `${API_URL}/auth`;
 
 @Injectable({ providedIn: 'root' })
 export class ApiAuthService {

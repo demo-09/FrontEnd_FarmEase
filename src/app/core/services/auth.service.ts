@@ -9,6 +9,18 @@ export class AuthService {
 
   private currentUser: { name: string; role: UserRole } | null = null;
 
+  get currentUserValue() {
+    const userJson = localStorage.getItem('CurrentUser');
+    if (userJson) {
+      try {
+        return JSON.parse(userJson);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  }
+
   login(role: UserRole) {
     this.currentUser = { name: 'User', role };
     localStorage.setItem('user_role', role);

@@ -8,6 +8,9 @@ import { map, catchError } from 'rxjs/operators';
 import { CartService } from '../../services/cart.service';
 import { WishlistService, WishlistItem } from '../wishlist/wishlist';
 import { AuthService } from '../../core/services/auth.service';
+import { LiveStockService } from '../../services/live-stock.service';
+
+import { API_URL } from '../../core/api.config';
 
 @Component({
   selector: 'app-products',
@@ -20,12 +23,13 @@ export class Products {
   private http = inject(HttpClient);
   private cartService = inject(CartService);
   private wishlistService = inject(WishlistService);
+  private liveStock = inject(LiveStockService);
 
   // ── Data Fetching via toSignal ──
   private productsData = toSignal(
     forkJoin({
-      machinery: this.http.get<any[]>('https://backend-farmease-1.onrender.com/api/machinery').pipe(catchError(() => of([]))),
-      agriitems: this.http.get<any[]>('https://backend-farmease-1.onrender.com/api/agriitems').pipe(catchError(() => of([])))
+      machinery: this.http.get<any[]>(`${API_URL}/machinery`).pipe(catchError(() => of([]))),
+      agriitems: this.http.get<any[]>(`${API_URL}/agriitems`).pipe(catchError(() => of([])))
     }).pipe(
       map(res => {
         const m = res.machinery.map(x => ({ ...x, type: 'machinery' }));
@@ -38,9 +42,6 @@ export class Products {
           subtitle: item.category || 'Product Category',
           description: item.description || `High-quality ${item.name} available now.`,
           imageUrl: item.image || '',
-          label: item.quantity > 0 ? 'In Stock' : 'Out of Stock',
-          inStock: item.quantity > 0,
-          metaText: `₹${item.price}`,
           price: item.price,
           quantity: item.quantity
         }));
@@ -50,7 +51,26 @@ export class Products {
   );
   constructor(public auth: AuthService) { };
   isLoading = computed(() => this.productsData() === undefined);
-  products = computed(() => this.productsData() || []);
+  
+  // Combine base data with live stock updates
+  products = computed(() => {
+    const base = this.productsData() || [];
+    const updates = this.liveStock.stockUpdates();
+    
+    return base.map((p: any) => {
+      const compositeKey = `${p.type?.toLowerCase()}-${p.id}`;
+      const reduction = (updates as any)[compositeKey] || 0;
+      const currentQty = Math.max(0, (p.quantity || 0) + reduction); 
+      
+      return {
+        ...p,
+        quantity: currentQty,
+        inStock: currentQty > 0,
+        label: currentQty > 0 ? 'In Stock' : 'Out of Stock',
+        metaText: `₹${p.price}`
+      };
+    });
+  });
 
   // ── UI States ──
   toastMessage = signal('');
@@ -161,6 +181,7 @@ private tempInCartIds = signal<Set<number>>(new Set());
       price: product.price,
       image: product.imageUrl,
       category: product.subtitle,
+      type: product.type
     });
 
     // Show temporary "In Cart" for 1 second

@@ -89,6 +89,55 @@
 .avatar-option:hover { transform: scale(1.1); }
 .avatar-option.selected { border-color: #16a34a; background: rgba(34,197,94,0.1); }
 
+.avatar-custom-upload {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.btn-avatar-upload {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-avatar-upload:hover {
+  background: rgba(34,197,94,0.15);
+  border-color: rgba(34,197,94,0.3);
+}
+.avatar-preview-mini {
+  position: relative;
+  width: 44px;
+  height: 44px;
+}
+.avatar-preview-mini img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #16a34a;
+}
+.btn-remove-avatar {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 16px;
+  height: 16px;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 @media (max-width: 576px) {
   .signup-grid-2 { grid-template-columns: 1fr; }
   .signup-roles  { grid-template-columns: repeat(3,1fr); }

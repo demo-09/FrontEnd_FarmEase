@@ -16,12 +16,14 @@ export interface Contact {
   role: string;
 }
 
+import { API_URL } from '../core/api.config';
+
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
   private http = inject(HttpClient);
-  private apiUrl = 'https://backend-farmease-1.onrender.com/api/Messages';
+  private apiUrl = `${API_URL}/Messages`;
 
   public contacts = signal<Contact[]>([]);
   public messages = signal<ChatMessage[]>([]);

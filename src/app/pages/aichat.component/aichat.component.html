@@ -131,11 +131,10 @@
       <div class="input-container-wrapper">
         <div class="ai-input-box" [class.recording-active]="isRecording">
           
-          <!-- Attach -->
-          <label class="action-icon attach" title="Upload Image">
+          <!-- Attach (Cloudinary) -->
+          <button class="action-icon attach" title="Upload Image" (click)="openCloudinaryUpload()">
             <i class="fa-solid fa-paperclip"></i>
-            <input #fileInput type="file" accept="image/*" (change)="onImageUpload($event)" hidden>
-          </label>
+          </button>
 
           <!-- Textarea -->
           <textarea 

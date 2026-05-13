@@ -144,16 +144,24 @@
     </div>
 
     <!-- Drawer Menu -->
-    <div *ngIf="auth.isLoggedIn() && currentUser?.role?.toLowerCase() !== 'admin'" class="drawer-menu">
+    <div *ngIf="auth.isLoggedIn()" class="drawer-menu">
       <div class="drawer-section-label">Field Management</div>
 
-      <a *ngIf="currentUser?.role === 'farmer'" routerLink="/AddProduct" class="drawer-item" data-bs-dismiss="offcanvas">
+      <a *ngIf="currentUser?.role?.toLowerCase() === 'farmer' || currentUser?.role?.toLowerCase() === 'admin'" 
+         routerLink="/AddProduct" class="drawer-item" data-bs-dismiss="offcanvas">
         <div class="drawer-item-icon"><i class="fa-solid fa-plus"></i></div>
         <span>Add Listing / Product</span>
         <i class="fa-solid fa-chevron-right drawer-arrow"></i>
       </a>
 
-      <a *ngIf="currentUser?.role === 'farmer'" routerLink="/CustomerSupport" class="drawer-item" data-bs-dismiss="offcanvas">
+      <a *ngIf="currentUser?.role?.toLowerCase() === 'farmer' || currentUser?.role?.toLowerCase() === 'admin'" 
+         routerLink="/my-sales" class="drawer-item" data-bs-dismiss="offcanvas">
+        <div class="drawer-item-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <span>My Sales & Earnings</span>
+        <i class="fa-solid fa-chevron-right drawer-arrow"></i>
+      </a>
+
+      <a *ngIf="currentUser?.role?.toLowerCase() === 'farmer'" routerLink="/CustomerSupport" class="drawer-item" data-bs-dismiss="offcanvas">
         <div class="drawer-item-icon"><i class="fa-solid fa-headset"></i></div>
         <span>Customer Support</span>
         <i class="fa-solid fa-chevron-right drawer-arrow"></i>
@@ -162,6 +170,12 @@
       <a routerLink="/Chat" class="drawer-item" data-bs-dismiss="offcanvas">
         <div class="drawer-item-icon"><i class="fa-brands fa-whatsapp"></i></div>
         <span>Chat</span>
+        <i class="fa-solid fa-chevron-right drawer-arrow"></i>
+      </a>
+      
+      <a routerLink="/CustomerSupport" class="drawer-item" data-bs-dismiss="offcanvas">
+        <div class="drawer-item-icon"><i class="fa-solid fa-headset"></i></div>
+        <span>Customer Support</span>
         <i class="fa-solid fa-chevron-right drawer-arrow"></i>
       </a>
 

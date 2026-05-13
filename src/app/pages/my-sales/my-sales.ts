@@ -32,24 +32,28 @@ export class MySales implements OnInit {
 
   constructor() {
     effect(() => {
-      const updates = this.liveStock.stockUpdates();
-      if (Object.keys(updates).length === 0) return;
+        const updates = this.liveStock.stockUpdates();
+        const overrides = this.liveStock.productOverrides();
+        
+        // Helper to update a list based on live updates and overrides
+        const updateList = (list: any[], type: string) => {
+            return list.map(item => {
+                const compositeKey = `${type.toLowerCase()}-${item.id}`;
+                
+                // 1. Apply attribute overrides (Price, Name, etc.)
+                const override = overrides[compositeKey];
+                let merged = override ? { ...item, ...override } : item;
 
-      this.listings.update(current => {
-        const updatedMachinery = current.machinery.map(m => {
-          const key = `machinery-${m.id}`;
-          const reduction = updates[key] || 0;
-          return { ...m, quantity: Math.max(0, (this.getOriginalQty('machinery', m.id) || m.quantity) + reduction) };
-        });
+                // 2. Apply stock delta
+                const reduction = updates[compositeKey] || 0;
+                return { ...merged, quantity: Math.max(0, (merged.quantity || 0) + reduction) };
+            });
+        };
 
-        const updatedAgriItems = current.agriItems.map(a => {
-          const key = `agriitem-${a.id}`;
-          const reduction = updates[key] || 0;
-          return { ...a, quantity: Math.max(0, (this.getOriginalQty('agriitem', a.id) || a.quantity) + reduction) };
-        });
-
-        return { machinery: updatedMachinery, agriItems: updatedAgriItems };
-      });
+        this.listings.update(prev => ({
+            machinery: updateList(this.originalMachinery, 'Machinery'),
+            agriItems: updateList(this.originalAgriItems, 'AgriItem')
+        }));
     });
   }
 

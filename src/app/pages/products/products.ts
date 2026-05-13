@@ -55,19 +55,32 @@ export class Products {
   // Combine base data with live stock updates
   products = computed(() => {
     const base = this.productsData() || [];
-    const updates = this.liveStock.stockUpdates();
+    const stockUpdates = this.liveStock.stockUpdates();
+    const overrides = this.liveStock.productOverrides();
     
     return base.map((p: any) => {
       const compositeKey = `${p.type?.toLowerCase()}-${p.id}`;
-      const reduction = (updates as any)[compositeKey] || 0;
-      const currentQty = Math.max(0, (p.quantity || 0) + reduction); 
+      
+      // Apply full object overrides if any (name, price, image, etc.)
+      const override = overrides[compositeKey];
+      const merged = override ? {
+         ...p,
+         title: override.name || p.title,
+         price: override.price ?? p.price,
+         imageUrl: override.image ?? p.imageUrl,
+         quantity: override.quantity ?? p.quantity
+      } : p;
+
+      // Apply dynamic stock reductions
+      const reduction = stockUpdates[compositeKey] || 0;
+      const currentQty = Math.max(0, (merged.quantity || 0) + reduction); 
       
       return {
-        ...p,
+        ...merged,
         quantity: currentQty,
         inStock: currentQty > 0,
         label: currentQty > 0 ? 'In Stock' : 'Out of Stock',
-        metaText: `₹${p.price}`
+        metaText: `₹${merged.price}`
       };
     });
   });

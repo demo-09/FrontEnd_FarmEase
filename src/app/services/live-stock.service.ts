@@ -19,6 +19,10 @@ export class LiveStockService {
   // key: "type-productId", value: cumulative reduction
   stockUpdates = signal<Record<string, number>>({});
 
+  // Signal to hold full product overrides
+  // key: "type-productId", value: full product object
+  productOverrides = signal<Record<string, any>>({});
+
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
       this.initHub();
@@ -55,6 +59,15 @@ export class LiveStockService {
     this.hubConnection.on('ReceiveRefresh', () => {
       console.log('[LIVE STOCK] Global refresh requested.');
       window.location.reload(); 
+    });
+
+    this.hubConnection.on('ReceiveProductUpdate', (product: any, type: string) => {
+      const compositeKey = `${type?.toLowerCase()}-${product.id}`;
+      console.log(`[LIVE PRODUCT] ${compositeKey} updated:`, product);
+      this.productOverrides.update(prev => ({
+        ...prev,
+        [compositeKey]: product
+      }));
     });
   }
 

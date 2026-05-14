@@ -1,17 +1,42 @@
-import { Component, signal, effect, ViewChild, ElementRef, inject, AfterViewInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  signal,
+  effect,
+  ViewChild,
+  ElementRef,
+  inject,
+  AfterViewInit,
+  OnDestroy,
+  ChangeDetectionStrategy
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 import { GeminiService } from '../../services/gemini.service';
 
 export interface ChatMessage {
+
   id: string;
+
   role: 'user' | 'assistant';
+
   text?: string;
+
   imageData?: string;
+
+  imageUrl?: string;
+
   mimeType?: string;
+
   audioData?: string;
+
+  audioUrl?: string;
+
   timestamp: Date;
+
   isVoiceNote?: boolean;
+
 }
 
 declare var cloudinary: any;
@@ -19,312 +44,615 @@ declare var cloudinary: any;
 @Component({
   selector: 'app-aichat',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './aichat.component.html',
   styleUrls: ['./aichat.component.css']
 })
-export class AichatComponent implements AfterViewInit, OnDestroy {
+
+export class AichatComponent
+  implements AfterViewInit, OnDestroy {
+
+  // ================= SERVICES =================
 
   private geminiService = inject(GeminiService);
 
+  // ================= SIGNALS =================
+
   messages = signal<ChatMessage[]>([]);
+
   isLoading = signal(false);
+
   inputText = signal('');
 
-  isRecording = false;                    // ← Must be public for template
+  // ================= UI =================
 
-  @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLDivElement>;
-  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  isRecording = false;
+
+  // ================= VIEWCHILD =================
+
+  @ViewChild('messagesContainer')
+  messagesContainer!: ElementRef<HTMLDivElement>;
+
+  @ViewChild('fileInput')
+  fileInput!: ElementRef<HTMLInputElement>;
+
+  // ================= AUDIO =================
 
   private recognition: any = null;
+
   private mediaRecorder: MediaRecorder | null = null;
+
   private audioChunks: Blob[] = [];
 
+  // ================= CONSTRUCTOR =================
+
   constructor() {
+
     this.initSpeechRecognition();
+
+    // FIXED EFFECT ERROR
+    effect(() => {
+
+      this.messages();
+
+      setTimeout(() => {
+        this.scrollToBottom();
+      }, 100);
+
+    });
+
   }
 
+  // ================= INIT =================
+
   ngAfterViewInit(): void {
+
     this.addWelcomeMessage();
-    effect(() => {
-      this.messages();
-      this.scrollToBottom();
-    });
+
   }
 
   ngOnDestroy(): void {
-    this.mediaRecorder?.stream?.getTracks().forEach(track => track.stop());
+
+    this.mediaRecorder
+      ?.stream
+      ?.getTracks()
+      .forEach(track => track.stop());
+
   }
 
+  // ================= SPEECH =================
+
   private initSpeechRecognition(): void {
+
     if ('webkitSpeechRecognition' in window) {
-      this.recognition = new (window as any).webkitSpeechRecognition();
+
+      this.recognition =
+        new (window as any).webkitSpeechRecognition();
+
       this.recognition.lang = 'en-IN';
+
       this.recognition.interimResults = false;
 
       this.recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        this.inputText.set((this.inputText() + ' ' + transcript).trim());
+
+        const transcript =
+          event.results[0][0].transcript;
+
+        this.inputText.set(
+          (this.inputText() + ' ' + transcript).trim()
+        );
+
       };
+
     }
+
   }
+
+  // ================= WELCOME =================
 
   private addWelcomeMessage(): void {
+
     const welcome: ChatMessage = {
+
       id: 'welcome-' + Date.now(),
+
       role: 'assistant',
-      text: 'Namaste! 🌱 Kem cho? I am your FarmEase AI assistant from Gujarat. How can I help you with your farming today?',
+
+      text:
+        'Namaste! 🌱 Kem cho? I am your FarmEase AI assistant from Gujarat. How can I help you with your farming today?',
+
       timestamp: new Date()
+
     };
+
     this.messages.set([welcome]);
+
   }
+
+  // ================= SCROLL =================
 
   private scrollToBottom(): void {
-    setTimeout(() => {
-      if (this.messagesContainer?.nativeElement) {
-        this.messagesContainer.nativeElement.scrollTop =
-          this.messagesContainer.nativeElement.scrollHeight;
-      }
-    }, 150);
+
+    if (!this.messagesContainer?.nativeElement) return;
+
+    this.messagesContainer.nativeElement.scrollTop =
+      this.messagesContainer.nativeElement.scrollHeight;
+
   }
 
-  // ====================== SEND MESSAGE ======================
+  // ================= SEND MESSAGE =================
+
   async sendMessage(): Promise<void> {
+
     const text = this.inputText().trim();
+
     if (!text || this.isLoading()) return;
 
+    // USER MESSAGE
     const userMsg: ChatMessage = {
+
       id: 'msg-' + Date.now(),
+
       role: 'user',
+
       text,
+
       timestamp: new Date()
+
     };
 
-    this.messages.update(msgs => [...msgs, userMsg]);
+    this.messages.update(msgs => [
+      ...msgs,
+      userMsg
+    ]);
+
     this.inputText.set('');
+
     this.isLoading.set(true);
 
-    const isImageRequest = text.toLowerCase().startsWith('generate image') || text.toLowerCase().startsWith('draw') || text.toLowerCase().startsWith('create an image');
+    // IMAGE GENERATION
+    const isImageRequest =
+      text.toLowerCase().startsWith('generate image') ||
+      text.toLowerCase().startsWith('draw') ||
+      text.toLowerCase().startsWith('create an image');
 
     if (isImageRequest) {
+
       try {
-        const imageData = await this.geminiService.generateFarmImage(text);
+
+        const imageData =
+          await this.geminiService.generateFarmImage(text);
+
         const aiMsg: ChatMessage = {
+
           id: 'msg-' + Date.now(),
+
           role: 'assistant',
+
           text: 'Here is your generated image! 🌾',
-          imageData: imageData,
+
+          imageData,
+
           timestamp: new Date()
+
         };
-        this.messages.update(msgs => [...msgs, aiMsg]);
+
+        this.messages.update(msgs => [
+          ...msgs,
+          aiMsg
+        ]);
+
       } catch (error) {
+
         console.error(error);
+
       } finally {
+
         this.isLoading.set(false);
+
       }
+
       return;
+
     }
 
-    // Normal Text
+    // NORMAL TEXT CHAT
     try {
-      const response = await this.geminiService.sendMessage(text);
+
+      const response =
+        await this.geminiService.sendMessage(text);
+
       const aiMsg: ChatMessage = {
+
         id: 'msg-' + Date.now(),
+
         role: 'assistant',
-        text: response ?? "I've received your message. How else can I help you today?",
+
+        text:
+          response ??
+          'I received your message 🌱',
+
         timestamp: new Date()
+
       };
-      this.messages.update(msgs => [...msgs, aiMsg]);
+
+      this.messages.update(msgs => [
+        ...msgs,
+        aiMsg
+      ]);
+
     } catch (error) {
+
       console.error(error);
+
     } finally {
+
       this.isLoading.set(false);
+
     }
+
   }
 
-  // ====================== IMAGE UPLOAD (CLOUDINARY) ======================
+  // ================= CLOUDINARY =================
+
   openCloudinaryUpload(): void {
-    const myWidget = cloudinary.createUploadWidget(
+
+    const widget = cloudinary.createUploadWidget(
+
       {
         cloudName: 'djp74r2pg',
-        uploadPreset: 'FARMEASE',
-        sources: ['local', 'url', 'camera'],
-        multiple: false,
-        resourceType: 'image',
-        clientAllowedFormats: ['png', 'jpg', 'jpeg', 'webp']
-      },
-      async (error: any, result: any) => {
-        if (!error && result && result.event === 'success') {
-          const imageUrl = result.info.secure_url;
-          const format = result.info.format || 'jpeg';
-          const mimeType = `image/${format}`;
 
+        uploadPreset: 'FARMEASE',
+
+        sources: [
+          'local',
+          'camera',
+          'url'
+        ],
+
+        multiple: false,
+
+        resourceType: 'image'
+      },
+
+      async (error: any, result: any) => {
+
+        if (
+          !error &&
+          result &&
+          result.event === 'success'
+        ) {
+
+          const imageUrl =
+            result.info.secure_url;
+
+          // USER IMAGE MESSAGE
           const userMsg: ChatMessage = {
+
             id: 'msg-' + Date.now(),
+
             role: 'user',
-            text: '📸 Sent farm photo',
+
+            text: '📸 Uploaded Image',
+
             imageData: imageUrl,
-            mimeType: mimeType,
+
             timestamp: new Date()
+
           };
 
-          this.messages.update(msgs => [...msgs, userMsg]);
+          this.messages.update(msgs => [
+            ...msgs,
+            userMsg
+          ]);
+
           this.isLoading.set(true);
 
           try {
-            // Fetch the image to get base64 for Gemini analysis
-            const responseBlob = await fetch(imageUrl).then(r => r.blob());
+
+            const blob =
+              await fetch(imageUrl)
+                .then(r => r.blob());
+
             const reader = new FileReader();
+
             reader.onload = async () => {
-              const base64Data = (reader.result as string).split(',')[1];
-              
-              const aiResponse = await this.geminiService.sendMessage(
-                `Please analyze this farm image carefully.`,
-                { data: base64Data, mimeType: mimeType }
-              );
-              
+
+              const base64 =
+                (reader.result as string)
+                  .split(',')[1];
+
+              const aiResponse =
+                await this.geminiService.sendMessage(
+
+                  'Analyze this farm image carefully.',
+
+                  {
+                    data: base64,
+                    mimeType: blob.type
+                  }
+
+                );
+
               const aiMsg: ChatMessage = {
+
                 id: 'msg-' + Date.now(),
+
                 role: 'assistant',
-                text: aiResponse ?? "I've analyzed the uploaded image.",
+
+                text: aiResponse,
+
                 timestamp: new Date()
+
               };
-              this.messages.update(msgs => [...msgs, aiMsg]);
+
+              this.messages.update(msgs => [
+                ...msgs,
+                aiMsg
+              ]);
+
               this.isLoading.set(false);
+
             };
-            reader.readAsDataURL(responseBlob);
-          } catch (error) {
-            console.error('Image analysis failed', error);
+
+            reader.readAsDataURL(blob);
+
+          } catch (err) {
+
+            console.error(err);
+
             this.isLoading.set(false);
+
           }
+
         }
+
       }
+
     );
-    myWidget.open();
+
+    widget.open();
+
   }
 
-  // ====================== VOICE TO TEXT ======================
+  // ================= VOICE TO TEXT =================
+
   startVoiceToText(): void {
+
     if (this.recognition) {
+
       this.recognition.start();
+
     } else {
-      alert('Speech recognition is not supported. Please use Chrome or Edge.');
+
+      alert(
+        'Speech recognition works in Chrome or Edge.'
+      );
+
     }
+
   }
 
-  // ====================== VOICE NOTE ======================
+  // ================= RECORD AUDIO =================
+
   async startVoiceNoteRecording(): Promise<void> {
+
     if (this.isRecording) return;
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      this.mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+
+      const stream =
+        await navigator.mediaDevices.getUserMedia({
+          audio: true
+        });
+
+      this.mediaRecorder =
+        new MediaRecorder(stream);
+
       this.audioChunks = [];
+
       this.isRecording = true;
 
-      this.mediaRecorder.ondataavailable = (e) => this.audioChunks.push(e.data);
+      this.mediaRecorder.ondataavailable =
+        (e) => {
+
+          this.audioChunks.push(e.data);
+
+        };
 
       this.mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
+
+        const audioBlob =
+          new Blob(this.audioChunks, {
+            type: 'audio/webm'
+          });
+
         const reader = new FileReader();
 
         reader.onload = async () => {
-          const audioData = reader.result as string;
+
+          const audioData =
+            reader.result as string;
 
           const userMsg: ChatMessage = {
+
             id: 'msg-' + Date.now(),
+
             role: 'user',
+
             audioData,
+
             isVoiceNote: true,
+
             timestamp: new Date()
+
           };
 
-          this.messages.update(msgs => [...msgs, userMsg]);
+          this.messages.update(msgs => [
+            ...msgs,
+            userMsg
+          ]);
+
           this.isLoading.set(true);
 
           try {
-            // Remove the data:audio/webm;base64, prefix for the raw API payload
-            const base64Audio = audioData.split(',')[1];
-            
-            const response = await this.geminiService.sendMessage(
-              '', 
-              undefined, 
-              { data: base64Audio, mimeType: 'audio/webm' }
-            );
-            
+
+            const base64Audio =
+              audioData.split(',')[1];
+
+            const response =
+              await this.geminiService.sendMessage(
+                '',
+                undefined,
+                {
+                  data: base64Audio,
+                  mimeType: 'audio/webm'
+                }
+              );
+
             const aiMsg: ChatMessage = {
+
               id: 'msg-' + Date.now(),
+
               role: 'assistant',
-              text: response ?? "I've listened to your voice note.",
+
+              text: response,
+
               timestamp: new Date()
+
             };
-            this.messages.update(msgs => [...msgs, aiMsg]);
-          } catch (error) {
-            console.error(error);
+
+            this.messages.update(msgs => [
+              ...msgs,
+              aiMsg
+            ]);
+
+          } catch (err) {
+
+            console.error(err);
+
           } finally {
+
             this.isLoading.set(false);
+
           }
+
         };
+
         reader.readAsDataURL(audioBlob);
-        stream.getTracks().forEach(track => track.stop());
+
+        stream.getTracks().forEach(track =>
+          track.stop()
+        );
+
       };
 
       this.mediaRecorder.start();
+
     } catch (err) {
-      console.error('Microphone access error:', err);
+
+      console.error(err);
+
       this.isRecording = false;
+
     }
+
   }
 
   stopVoiceNoteRecording(): void {
-    if (this.mediaRecorder && this.isRecording) {
+
+    if (
+      this.mediaRecorder &&
+      this.isRecording
+    ) {
+
       this.mediaRecorder.stop();
+
       this.isRecording = false;
+
     }
+
   }
 
-  // ====================== GENERATE FARM IMAGE ======================
-  async generateFarmImage(): Promise<void> {
-    const userPrompt = window.prompt('Describe the farm image you want to generate:\n(e.g. lush green cotton field in Gujarat at sunrise)');
-    if (!userPrompt) return;
+  // ================= GENERATE IMAGE =================
 
-    const userMsg: ChatMessage = {
-      id: 'msg-' + Date.now(),
-      role: 'user',
-      text: `🖼️ Generate: ${userPrompt}`,
-      timestamp: new Date()
-    };
-    this.messages.update(msgs => [...msgs, userMsg]);
+  async generateFarmImage(): Promise<void> {
+
+    const prompt =
+      window.prompt(
+        'Describe the farm image you want 🌾'
+      );
+
+    if (!prompt) return;
+
     this.isLoading.set(true);
 
     try {
-      const imageData = await this.geminiService.generateFarmImage(userPrompt);
+
+      const image =
+        await this.geminiService.generateFarmImage(
+          prompt
+        );
 
       const aiMsg: ChatMessage = {
+
         id: 'msg-' + Date.now(),
+
         role: 'assistant',
-        text: 'Here is your generated farm image 🌾',
-        imageData: imageData ?? undefined,   // Safe assignment
+
+        text: 'Generated farm image 🌱',
+
+        imageData: image,
+
         timestamp: new Date()
+
       };
-      this.messages.update(msgs => [...msgs, aiMsg]);
-    } catch (error) {
-      console.error(error);
+
+      this.messages.update(msgs => [
+        ...msgs,
+        aiMsg
+      ]);
+
+    } catch (err) {
+
+      console.error(err);
+
     } finally {
+
       this.isLoading.set(false);
+
     }
+
   }
+
+  // ================= RESET =================
 
   resetChat(): void {
-    if (confirm('Reset this chat history?')) {
-      this.messages.set([]);
-      this.addWelcomeMessage();
-    }
+
+    const confirmed =
+      confirm('Reset chat history?');
+
+    if (!confirmed) return;
+
+    this.messages.set([]);
+
+    this.addWelcomeMessage();
+
   }
 
-  // Used for ngFor tracking
-  trackById(index: number, msg: ChatMessage): string {
+  // ================= TRACKBY =================
+
+  trackById(
+    index: number,
+    msg: ChatMessage
+  ): string {
+
     return msg.id;
+
   }
+
 }

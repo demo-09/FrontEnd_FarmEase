@@ -34,7 +34,7 @@
 
     <!-- Order List -->
     <div *ngIf="filteredOrders.length > 0" class="row d-flex justify-content-center">
-      <div class="order-card col-sm-5  m-2" *ngFor="let order of filteredOrders">
+      <div class="order-card border border-1 border-success col-sm-5  m-2" *ngFor="let order of filteredOrders">
 
         <!-- Order Header -->
         <div class="order-header ">
@@ -51,7 +51,7 @@
             <i class="fa-solid me-2" [class]="statusIcon(order.status)"></i>{{ order.status }}
           </div>
         </div>
-
+        <hr />
         <!-- Items -->
         <div class="order-items">
           <div class="order-item" *ngFor="let item of order.items">
@@ -63,7 +63,7 @@
             <div class="order-item-total">₹{{ (item.quantity * item.price) | number }}</div>
           </div>
         </div>
-
+        <hr />
         <!-- Order Footer -->
         <div class="order-footer">
           <div>

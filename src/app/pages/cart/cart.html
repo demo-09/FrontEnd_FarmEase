@@ -49,7 +49,7 @@
             <i class="fa-solid fa-trash-can"></i> Clear All
           </button>
         </div>
-
+        <hr />
         <div class="cart-item" *ngFor="let item of cartItems(); let i = index" [id]="'cart-item-' + item.id">
           <div class="ci-image">
             <img [src]="item.imageUrl || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=200'"

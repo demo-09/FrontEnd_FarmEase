@@ -26,24 +26,7 @@
         and service providers already on FarmEase.
       </p>
 
-      <div class="signup-roles">
-        <div class="signup-role-card"
-             [class.active]="selectedRole === 'farmer'"
-             (click)="setRole('farmer')">
-          <div class="src-emoji">👨‍🌾</div>
-          <div class="src-title">Farmer</div>
-          <div class="src-desc">Sell produce & access tools</div>
-        </div>
-
-        <div class="signup-role-card"
-             [class.active]="selectedRole === 'customer'"
-             (click)="setRole('customer')">
-          <div class="src-emoji">🛒</div>
-          <div class="src-title">Customer</div>
-          <div class="src-desc">Buy fresh from farms</div>
-        </div>
-      </div>
-
+      
       <div class="auth-social-proof">
         <div class="asp-avatars">
           <img src="https://ui-avatars.com/api/?name=R+K&background=0a3d20&color=fff&bold=true&size=36" alt="user">
@@ -62,6 +45,23 @@
           <h2 class="auth-title">Create Account 🌱</h2>
           <p class="auth-subtitle">Fill in your details to join FarmEase</p>
         </div>
+        <div class="signup-roles pb-3">
+          <div class="signup-role-card bg-success"
+               [class.active]="selectedRole === 'farmer'"
+               (click)="setRole('farmer')">
+            <div class="src-emoji">👨‍🌾</div>
+            <div class="src-title">Farmer</div>
+            <div class="src-desc">Sell produce & access tools</div>
+          </div>
+
+          <div class="signup-role-card bg-success"
+               [class.active]="selectedRole === 'customer'"
+               (click)="setRole('customer')">
+            <div class="src-emoji">🛒</div>
+            <div class="src-title">Customer</div>
+            <div class="src-desc">Buy fresh from farms</div>
+          </div>
+        </div>
 
         <form class="auth-form"
               #signupForm="ngForm"
@@ -72,13 +72,12 @@
               <label class="auth-label">Full Name *</label>
               <div class="auth-input-wrap">
                 <i class="fa-solid fa-user auth-input-icon"></i>
-                <input
-                  name="fullName"
-                  [(ngModel)]="signupData.fullName"
-                  type="text"
-                  class="auth-input"
-                  placeholder="Your full name"
-                  required>
+                <input class="border border-1 border-success auth-input"
+                       name="fullName"
+                       [(ngModel)]="signupData.fullName"
+                       type="text"
+                       placeholder="Your full name"
+                       required>
               </div>
             </div>
 
@@ -86,13 +85,12 @@
               <label class="auth-label">Email Address *</label>
               <div class="auth-input-wrap">
                 <i class="fa-solid fa-envelope auth-input-icon"></i>
-                <input
-                  name="email"
-                  [(ngModel)]="signupData.email"
-                  type="email"
-                  class="auth-input"
-                  placeholder="you@example.com"
-                  required>
+                <input name="email"
+                       [(ngModel)]="signupData.email"
+                       type="email"
+                       class="auth-input border border-1 border-success"
+                       placeholder="you@example.com"
+                       required>
               </div>
             </div>
           </div>
@@ -102,12 +100,11 @@
               <label class="auth-label">Phone Number</label>
               <div class="auth-input-wrap">
                 <i class="fa-solid fa-phone auth-input-icon"></i>
-                <input
-                  name="phone"
-                  [(ngModel)]="signupData.phone"
-                  type="tel"
-                  class="auth-input"
-                  placeholder="+91 XXXXX XXXXX">
+                <input name="phone"
+                       [(ngModel)]="signupData.phone"
+                       type="tel"
+                       class="auth-input border border-1 border-success"
+                       placeholder="+91 XXXXX XXXXX">
               </div>
             </div>
 
@@ -115,12 +112,11 @@
               <label class="auth-label">Date of Birth</label>
               <div class="auth-input-wrap">
                 <i class="fa-solid fa-calendar auth-input-icon"></i>
-                <input
-                  name="birthDate"
-                  [(ngModel)]="signupData.birthDate"
-                  type="date"
-                  class="auth-input"
-                  style="padding-right:12px">
+                <input name="birthDate"
+                       [(ngModel)]="signupData.birthDate"
+                       type="date"
+                       class="auth-input border border-1 border-success"
+                       style="padding-right:12px">
               </div>
             </div>
           </div>
@@ -129,12 +125,11 @@
             <label class="auth-label">Address</label>
             <div class="auth-input-wrap">
               <i class="fa-solid fa-location-dot auth-input-icon textarea-icon"></i>
-              <textarea
-                name="address"
-                [(ngModel)]="signupData.address"
-                class="auth-input auth-textarea"
-                rows="2"
-                placeholder="Village, District, State"></textarea>
+              <textarea name="address"
+                        [(ngModel)]="signupData.address"
+                        class="auth-input auth-textarea border border-1 border-success"
+                        rows="2"
+                        placeholder="Village, District, State"></textarea>
             </div>
           </div>
 
@@ -145,35 +140,34 @@
             </label>
             <div class="auth-input-wrap">
               <i class="fa-solid fa-pen auth-input-icon textarea-icon"></i>
-              <textarea
-                name="bio"
-                [(ngModel)]="signupData.bio"
-                class="auth-input auth-textarea"
-                rows="2"
-                placeholder="Tell us about yourself..."></textarea>
+              <textarea name="bio"
+                        [(ngModel)]="signupData.bio"
+                        class="auth-input auth-textarea border border-1 border-success"
+                        rows="2"
+                        placeholder="Tell us about yourself..."></textarea>
             </div>
           </div>
 
           <div class="auth-field" *ngIf="!otpSent">
             <label class="auth-label">Choose Avatar</label>
             <div class="avatar-selector-grid">
-              <button type="button" class="avatar-option" 
+              <button type="button" class="avatar-option"
                       *ngFor="let av of presetAvatars"
                       [class.selected]="signupData.avatar === av"
                       (click)="signupData.avatar = av">
                 <img [src]="av" alt="Avatar option">
               </button>
             </div>
-            
+
             <div class="avatar-custom-upload mt-3">
-              <button type="button" class="btn-avatar-upload" (click)="openAvatarUpload()">
+              <button type="button" class="btn-avatar-upload border border-1 border-success text-success" (click)="openAvatarUpload()">
                 <i class="fa-solid fa-camera me-2"></i>
                 {{ signupData.avatar && !presetAvatars.includes(signupData.avatar) ? 'Change Custom Photo' : 'Upload Custom Photo' }}
               </button>
-              
+
               <div class="avatar-preview-mini" *ngIf="signupData.avatar && !presetAvatars.includes(signupData.avatar)">
                 <img [src]="signupData.avatar" alt="Preview">
-                <button type="button" class="btn-remove-avatar" (click)="signupData.avatar = ''">
+                <button type="button" class="btn-remove-avatar border border-1 border-success" (click)="signupData.avatar = ''">
                   <i class="fa-solid fa-xmark"></i>
                 </button>
               </div>
@@ -187,14 +181,13 @@
             </label>
             <div class="auth-input-wrap">
               <i class="fa-solid fa-lock auth-input-icon"></i>
-              <input
-                name="password"
-                [(ngModel)]="signupData.password"
-                type="password"
-                class="auth-input"
-                minlength="6"
-                placeholder="Create a strong password"
-                required>
+              <input name="password"
+                     [(ngModel)]="signupData.password"
+                     type="password"
+                     class="auth-input border border-1 border-success"
+                     minlength="6"
+                     placeholder="Create a strong password"
+                     required>
             </div>
           </div>
 
@@ -214,12 +207,11 @@
             </div>
           </div>
 
-          <button
-            *ngIf="!otpSent"
-            type="submit"
-            class="auth-submit-btn"
-            [class.loading]="isLoading"
-            [disabled]="isLoading || !signupForm.valid">
+          <button *ngIf="!otpSent"
+                  type="submit"
+                  class="auth-submit-btn"
+                  [class.loading]="isLoading"
+                  [disabled]="isLoading || !signupForm.valid">
 
             <i class="fa-solid fa-rocket" *ngIf="!isLoading"></i>
             <span *ngIf="isLoading" class="btn-spinner"></span>
@@ -227,12 +219,11 @@
             {{ isLoading ? 'Sending OTP...' : 'Create Free Account' }}
           </button>
 
-          <button
-            *ngIf="otpSent"
-            type="submit"
-            class="auth-submit-btn"
-            [class.loading]="isLoading"
-            [disabled]="isLoading || !otpCode">
+          <button *ngIf="otpSent"
+                  type="submit"
+                  class="auth-submit-btn"
+                  [class.loading]="isLoading"
+                  [disabled]="isLoading || !otpCode">
 
             <i class="fa-solid fa-check-circle" *ngIf="!isLoading"></i>
             <span *ngIf="isLoading" class="btn-spinner"></span>
@@ -250,7 +241,7 @@
 
           <div class="auth-footer-text">
             Already have an account?
-            <a routerLink="/login" class="auth-link">
+            <a routerLink="/Login" class="auth-link">
               Sign In →
             </a>
           </div>

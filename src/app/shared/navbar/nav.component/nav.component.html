@@ -5,30 +5,38 @@
     <!-- Main Navbar Content -->
     <div class="d-flex w-100 justify-content-between align-items-center">
       <div class="d-flex">
+        <!-- Mobile Toggle -->
+        <button class="mobile-toggle d-lg-none"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#mobileNav"
+                aria-controls="mobileNav"
+                aria-expanded="false">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <!-- Brand -->
+        <a class="nav-brand mx-3" routerLink="/">
+          <div class="brand-icon">
+            <i class="fa-solid fa-seedling"></i>
+          </div>
+          <span class="brand-text">farm<span class="brand-accent">Ease</span></span>
+        </a>
 
-      <!-- Brand -->
-      <a class="nav-brand mx-3" routerLink="/">
-        <div class="brand-icon">
-          <i class="fa-solid fa-seedling"></i>
-        </div>
-        <span class="brand-text">farm<span class="brand-accent">Ease</span></span>
-      </a>
-
-      <!-- Desktop Navigation Links -->
-      <ul class="nav-links d-none d-lg-flex">
-        <li>
-          <a routerLink="/HomePage" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="nav-link-item">Home</a>
-        </li>
-        <li>
-          <a routerLink="/About" routerLinkActive="active" class="nav-link-item">About</a>
-        </li>
-        <li *ngIf="auth.isLoggedIn()">
-          <a routerLink="/Products" routerLinkActive="active" class="nav-link-item">Products</a>
-        </li>
-        <li *ngIf="auth.isLoggedIn() && currentUser?.role?.toLowerCase() === 'admin'">
-          <a routerLink="/admin/Admin" routerLinkActive="active" class="nav-link-item">Dashboard</a>
-        </li>
-      </ul>
+        <!-- Desktop Navigation Links -->
+        <ul class="nav-links d-none d-lg-flex">
+          <li>
+            <a routerLink="/HomePage" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="nav-link-item">Home</a>
+          </li>
+          <li>
+            <a routerLink="/About" routerLinkActive="active" class="nav-link-item">About</a>
+          </li>
+          <li *ngIf="auth.isLoggedIn()">
+            <a routerLink="/Products" routerLinkActive="active" class="nav-link-item">Products</a>
+          </li>
+          <li *ngIf="auth.isLoggedIn() && currentUser?.role?.toLowerCase() === 'admin'">
+            <a routerLink="/admin/Admin" routerLinkActive="active" class="nav-link-item">Dashboard</a>
+          </li>
+        </ul>
 
       </div>
       <!-- Right Side Actions -->
@@ -59,6 +67,8 @@
             <span class="nav-badge" *ngIf="cartCount() > 0">{{ cartCount() }}</span>
           </button>
 
+
+
           <!-- Avatar -->
           <button class="user-avatar-btn"
                   data-bs-toggle="offcanvas"
@@ -70,16 +80,6 @@
 
         </ng-container>
 
-        <!-- Mobile Toggle -->
-        <button class="mobile-toggle d-lg-none"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#mobileNav"
-                aria-controls="mobileNav"
-                aria-expanded="false">
-          <i class="fa-solid fa-bars"></i>
-        </button>
-
       </div>
     </div>
 
@@ -90,7 +90,11 @@
           <a routerLink="/HomePage" class="mobile-link" data-bs-toggle="collapse" data-bs-target="#mobileNav">Home</a>
           <a routerLink="/About" class="mobile-link" data-bs-toggle="collapse" data-bs-target="#mobileNav">About</a>
           <a routerLink="/Products" class="mobile-link" data-bs-toggle="collapse" data-bs-target="#mobileNav">Products</a>
-
+          <!-- Guest User -->
+          <ng-container *ngIf="!auth.isLoggedIn()">
+            <a class="btn-nav-glass" routerLink="/Signup">Register</a>
+            <a class="btn-nav-white" routerLink="/Login">Sign In</a>
+          </ng-container>
           <ng-container *ngIf="auth.isLoggedIn() && currentUser?.role?.toLowerCase() === 'admin'">
             <a routerLink="/admin/Admin" class="mobile-link" data-bs-toggle="collapse" data-bs-target="#mobileNav">Dashboard</a>
           </ng-container>
@@ -146,14 +150,6 @@
     <!-- Drawer Menu -->
     <div *ngIf="auth.isLoggedIn()" class="drawer-menu">
       <div class="drawer-section-label">Field Management</div>
-
-      <a *ngIf="currentUser?.role?.toLowerCase() === 'farmer' || currentUser?.role?.toLowerCase() === 'admin'" 
-         routerLink="/AddProduct" class="drawer-item" data-bs-dismiss="offcanvas">
-        <div class="drawer-item-icon"><i class="fa-solid fa-plus"></i></div>
-        <span>Add Listing / Product</span>
-        <i class="fa-solid fa-chevron-right drawer-arrow"></i>
-      </a>
-
       <a *ngIf="currentUser?.role?.toLowerCase() === 'farmer' || currentUser?.role?.toLowerCase() === 'admin'" 
          routerLink="/my-sales" class="drawer-item" data-bs-dismiss="offcanvas">
         <div class="drawer-item-icon"><i class="fa-solid fa-chart-line"></i></div>
@@ -173,11 +169,6 @@
         <i class="fa-solid fa-chevron-right drawer-arrow"></i>
       </a>
       
-      <a routerLink="/CustomerSupport" class="drawer-item" data-bs-dismiss="offcanvas">
-        <div class="drawer-item-icon"><i class="fa-solid fa-headset"></i></div>
-        <span>Customer Support</span>
-        <i class="fa-solid fa-chevron-right drawer-arrow"></i>
-      </a>
 
       <a routerLink="/Ai" class="drawer-item" data-bs-dismiss="offcanvas">
         <div class="drawer-item-icon"><i class="fa-solid fa-robot"></i></div>

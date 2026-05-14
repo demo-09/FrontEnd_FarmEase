@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { GoogleGenerativeAI, ChatSession, GenerativeModel } from '@google/generative-ai';
+import { environment } from '../../environments/environment';
 
 export interface ChatMessage {
   role: 'user' | 'model';
@@ -25,10 +26,12 @@ export class GeminiService {
 
   public messages = signal<ChatMessage[]>([]);
   public isLoading = signal<boolean>(false);
-  api = "AIzaSyC3pPlWH9poELVaC665lxnEIFNKn1l3WKI";
 
   constructor() {
-    this.genAI = new GoogleGenerativeAI(this.api);
+    this.genAI = new GoogleGenerativeAI(
+      environment.geminiApiKey
+    );
+    console.log(this.genAI);
 
     const systemInstruction = `
 You are FarmEase Assistant — a warm, knowledgeable, and super friendly AI farming buddy from Gujarat 🌱.

@@ -46,7 +46,7 @@
 
       <!-- Action Tiles (non-admin) -->
       <div class="quick-tiles-grid" *ngIf="currentUser?.role !== 'admin'">
-        <a class="quick-tile" routerLink="/Cart">
+        <a class="quick-tile border border-1 border-success" routerLink="/Cart">
           <div class="qt-icon amber"><i class="fa-solid fa-basket-shopping"></i></div>
           <div class="qt-info">
             <div class="qt-label">My Basket</div>
@@ -55,7 +55,7 @@
           <i class="fa-solid fa-chevron-right qt-arrow"></i>
         </a>
 
-        <a class="quick-tile" routerLink="/Orders">
+        <a class="quick-tile border border-1 border-success" routerLink="/Orders">
           <div class="qt-icon blue"><i class="fa-solid fa-receipt"></i></div>
           <div class="qt-info">
             <div class="qt-label">Purchase History</div>
@@ -64,7 +64,7 @@
           <i class="fa-solid fa-chevron-right qt-arrow"></i>
         </a>
 
-        <a class="quick-tile" routerLink="/WishlistComponent">
+        <a class="quick-tile border border-1 border-success" routerLink="/WishlistComponent">
           <div class="qt-icon red"><i class="fa-solid fa-heart"></i></div>
           <div class="qt-info">
             <div class="qt-label">Saved Items</div>
@@ -79,9 +79,10 @@
         
         <!-- Communication -->
         <div class="profile-card info-card">
-          <div class="info-card-header">
+          <div class="info-card-header p-0">
             <i class="fa-solid fa-address-book"></i> Contact Information
           </div>
+          <hr />
           <div class="info-row">
             <div class="icon-box green"><i class="fa-solid fa-envelope"></i></div>
             <div class="info-content">
@@ -100,9 +101,10 @@
 
         <!-- Logistics -->
         <div class="profile-card info-card">
-          <div class="info-card-header">
+          <div class="info-card-header p-0">
             <i class="fa-solid fa-truck-fast"></i> Farm Logistics
           </div>
+          <hr />
           <div class="info-row">
             <div class="icon-box amber"><i class="fa-solid fa-location-dot"></i></div>
             <div class="info-content">
@@ -133,13 +135,13 @@
       <button class="modal-close" (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
-    <div class="modal-body">
+    <div class="modal-body m-0 pb-0">
       <div class="alert alert-danger" *ngIf="saveError">{{ saveError }}</div>
       <div class="alert alert-success" *ngIf="saveSuccess">✅ Profile updated successfully!</div>
 
       <div class="edit-field">
         <label>Full Name</label>
-        <input type="text" [(ngModel)]="editForm.fullName" placeholder="Enter your full name">
+        <input class="border border-1 border-success" type="text" [(ngModel)]="editForm.fullName" placeholder="Enter your full name">
       </div>
 
       <div class="edit-field">
@@ -154,14 +156,14 @@
         </div>
 
         <div class="avatar-custom-upload mt-3">
-          <button type="button" class="btn-avatar-upload" (click)="openAvatarUpload()">
+          <button type="button" class="btn btn-outline-success" (click)="openAvatarUpload()">
             <i class="fa-solid fa-camera me-2"></i>
             {{ editForm.avatar && !presetAvatars.includes(editForm.avatar) ? 'Change Custom Photo' : 'Upload Custom Photo' }}
           </button>
           
           <div class="avatar-preview-mini" *ngIf="editForm.avatar && !presetAvatars.includes(editForm.avatar)">
             <img [src]="editForm.avatar" alt="Preview">
-            <button type="button" class="btn-remove-avatar" (click)="editForm.avatar = ''">
+            <button type="button" class="btn-remove-avatar " (click)="editForm.avatar = ''">
               <i class="fa-solid fa-xmark"></i>
             </button>
           </div>
@@ -171,24 +173,24 @@
       <div class="edit-grid">
         <div class="edit-field">
           <label>Phone Number</label>
-          <input type="text" [(ngModel)]="editForm.phone" placeholder="+91 XXXXX XXXXX">
+          <input class="border border-1 border-success" type="text" [(ngModel)]="editForm.phone" placeholder="+91 XXXXX XXXXX">
         </div>
         <div class="edit-field">
           <label>Date of Birth</label>
-          <input type="date" [(ngModel)]="editForm.dob">
+          <input class="border border-1 border-success" type="date" [(ngModel)]="editForm.dob">
         </div>
       </div>
 
       <div class="edit-field">
         <label>Registered Farm Address</label>
-        <textarea rows="2" [(ngModel)]="editForm.address" placeholder="Village, District, State"></textarea>
+        <textarea class="border border-1 border-success" rows="2" [(ngModel)]="editForm.address" placeholder="Village, District, State"></textarea>
       </div>
     </div>
 
     <div class="modal-footer">
       <button class="btn-cancel" (click)="closeModal()" [disabled]="isSaving">Cancel</button>
       <button class="btn-save" (click)="saveProfile()" [disabled]="isSaving">
-        <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2"></span>
+        <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2 btn-avatar-upload btn-avatar-upload"></span>
         {{ isSaving ? 'Saving...' : 'Save Changes' }}
       </button>
     </div>

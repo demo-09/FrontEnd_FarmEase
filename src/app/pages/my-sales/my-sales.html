@@ -4,9 +4,9 @@
     <!-- Top Stats Row -->
     <div class="row mb-4 anim-fade-up">
       <div class="col-12 col-xl-8">
-        <div class="welcome-banner glass-card p-4 d-flex align-items-center justify-content-between">
+        <div class="welcome-banner border border-1 border-success glass-card p-4 d-flex align-items-center justify-content-between">
           <div>
-            <h1 class="display-6 fw-bold text-dark mb-1">Farmer Dashboard</h1>
+            <h1 class="display-6 fw-bold text-success  mb-1">Farmer Dashboard</h1>
             <p class="text-muted m-0">Monitor your agricultural business performance in real-time.</p>
           </div>
           <div class="d-none d-md-flex gap-2">
@@ -36,7 +36,7 @@
       <div class="col-12 col-xl-9">
         
         <!-- Sales Table Card -->
-        <div class="glass-card mb-4 overflow-hidden">
+        <div class="glass-card mb-4 overflow-hidden border border-1 border-success">
           <div class="p-4 border-bottom d-flex align-items-center justify-content-between bg-white bg-opacity-50">
             <h3 class="h5 fw-bold m-0 text-dark"><i class="fa-solid fa-chart-line text-success me-2"></i>Recent Sales</h3>
             <span class="badge bg-success-subtle text-success rounded-pill">{{ sales.length }} items sold</span>
@@ -84,7 +84,6 @@
                 </tr>
                 <tr *ngIf="sales.length === 0 && !isLoading">
                   <td colspan="5" class="text-center py-5">
-                    <img src="https://cdn-icons-png.flaticon.com/512/4076/4076432.png" width="80" class="opacity-50 mb-3">
                     <p class="text-muted">No sales yet. Try promoting your listings!</p>
                   </td>
                 </tr>
@@ -102,7 +101,7 @@
           <div class="row g-4">
             <!-- Machinery Items -->
             <div class="col-12 col-md-6 col-lg-4" *ngFor="let m of listings().machinery">
-              <div class="listing-card-bento anim-fade-up" [class.sold-out-card]="m.quantity === 0">
+              <div class="listing-card-bento border border-1 border-success anim-fade-up" [class.sold-out-card]="m.quantity === 0">
                 <div class="lc-media">
                   <img [src]="m.image" alt="Product">
                   <div class="lc-overlay">
@@ -127,7 +126,7 @@
 
             <!-- Agri Items -->
             <div class="col-12 col-md-6 col-lg-4" *ngFor="let a of listings().agriItems">
-              <div class="listing-card-bento anim-fade-up" [class.sold-out-card]="a.quantity === 0">
+              <div class="listing-card-bento border border-1 border-success anim-fade-up" [class.sold-out-card]="a.quantity === 0">
                 <div class="lc-media">
                   <img [src]="a.image" alt="Product">
                   <div class="lc-overlay">
@@ -164,7 +163,7 @@
 
       <!-- Right Sidebar: Stats & Insights -->
       <div class="col-12 col-xl-3">
-        <div class="glass-card p-4 mb-4">
+        <div class="glass-card p-4 mb-4 border border-1 border-success">
           <h4 class="h6 fw-bold mb-4 text-dark">Quick Insights</h4>
           <div class="insight-item mb-3">
             <div class="d-flex justify-content-between mb-1">
@@ -175,7 +174,7 @@
               <div class="progress-bar bg-success" style="width: 98%"></div>
             </div>
           </div>
-          <div class="insight-item mb-4">
+          <div class="insight-item mb-4 ">
             <div class="d-flex justify-content-between mb-1">
               <span class="small text-muted">Active Listings</span>
               <span class="small fw-bold">{{ listings().machinery.length + listings().agriItems.length }}</span>
@@ -197,7 +196,7 @@
           </div>
         </div>
 
-        <div class="glass-card p-4">
+        <div class="glass-card p-4 border border-1 border-success">
           <h4 class="h6 fw-bold mb-3 text-dark">Top Products</h4>
           <div class="top-prod-list">
             <div class="top-prod-item" *ngFor="let p of getSoldOutProducts() | slice:0:3">

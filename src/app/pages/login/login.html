@@ -67,7 +67,7 @@
             <label class="auth-label" for="login-email">Email or Phone Number</label>
             <div class="auth-input-wrap">
               <i class="fa-solid fa-user auth-input-icon"></i>
-              <input type="text" id="login-email" name="emailOrPhone" class="auth-input" placeholder="you@example.com or +91XXXXX"
+              <input type="text" id="login-email" name="emailOrPhone" class="auth-input border border-1 border-success" placeholder="you@example.com or +91XXXXX"
                      [(ngModel)]="emailOrPhone" required autocomplete="username">
             </div>
           </div>
@@ -76,7 +76,7 @@
             <label class="auth-label" for="login-password">Password</label>
             <div class="auth-input-wrap">
               <i class="fa-solid fa-lock auth-input-icon"></i>
-              <input [type]="showPass ? 'text' : 'password'" id="login-password" name="password" class="auth-input"
+              <input [type]="showPass ? 'text' : 'password'" id="login-password" name="password" class="auth-input border border-1 border-success "
                      placeholder="Enter your password" [(ngModel)]="password" required autocomplete="current-password">
               <button type="button" class="auth-pass-toggle" (click)="showPass = !showPass">
                 <i [class]="showPass ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
@@ -93,7 +93,7 @@
             </div>
           </div>
 
-          <button type="submit" class="auth-submit-btn" id="login-submit-btn" *ngIf="!otpSent">
+          <button type="submit" class="auth-submit-btn " id="login-submit-btn" *ngIf="!otpSent">
             <i class="fa-solid fa-right-to-bracket"></i> Sign In to FarmEase
           </button>
 
@@ -107,7 +107,7 @@
 
           <div class="auth-divider"><span>or</span></div>
 
-          <div id="google-btn" style="display: flex; justify-content: center; margin-bottom: 20px;"></div>
+          <div id="google-btn"  style="display: flex; justify-content: center; margin-bottom: 20px;"></div>
 
           <div class="auth-footer-text">
             Don't have an account?

@@ -17,7 +17,7 @@ import {  RouterModule } from '@angular/router';
         <span class="faq-label">❓ FAQ</span>
         <h2 class="faq-title">Common <span>Questions</span></h2>
         <p class="faq-desc">Everything you need to know about FarmEase. Can't find your answer? Talk to our support team.</p>
-        <a routerLink="/Chat" class="faq-contact-btn">
+        <a routerLink="/ai" class="faq-contact-btn">
           <i class="fa-solid fa-headset"></i> Chat With Us
         </a>
         <div class="faq-contact-info">

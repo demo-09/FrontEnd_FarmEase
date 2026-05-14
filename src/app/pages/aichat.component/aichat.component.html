@@ -1,179 +1,323 @@
-<!-- FarmEase AI Chat — High-End AI Interface -->
+<!-- =========================================
+            FARMEASE AI INTERFACE
+========================================= -->
+
 <div class="fe-ai-layout">
 
-  <!-- Sidebar (Like ChatGPT/Claude) -->
-  <aside class="fe-ai-sidebar">
-    <div class="sidebar-top">
-      <button class="new-chat-btn" (click)="resetChat()">
-        <i class="fa-solid fa-plus"></i> New Chat
-      </button>
-    </div>
 
-    <div class="history-section">
-      <div class="history-label">Today</div>
-      <div class="history-item active">
-        <i class="fa-regular fa-message"></i> Farm Analysis & Tracking
-      </div>
-      <div class="history-item">
-        <i class="fa-regular fa-message"></i> Weather Prediction Request
-      </div>
-      
-      <div class="history-label mt-4">Previous 7 Days</div>
-      <div class="history-item">
-        <i class="fa-regular fa-message"></i> Crop Yield Estimates
-      </div>
-      <div class="history-item">
-        <i class="fa-regular fa-message"></i> Identifying Leaf Disease
-      </div>
-    </div>
+  <!-- ================= MAIN ================= -->
 
-    <!-- Upgrade / Account (Mock) -->
-    <div class="sidebar-bottom">
-      <div class="ai-upgrade-btn">
-        <div class="icon-wrap"><i class="fa-solid fa-bolt"></i></div>
-        <div class="info">
-          <span>Upgrade plan</span>
-          <small>Get FarmEase Pro</small>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Main Chat Area -->
   <main class="fe-ai-main">
 
-    <!-- Mobile Header (Hidden on Desktop) -->
-    <header class="fe-ai-mobile-header">
-      <button class="menu-btn"><i class="fa-solid fa-bars"></i></button>
-      <span>FarmEase AI</span>
-      <button class="new-btn" (click)="resetChat()"><i class="fa-solid fa-pen-to-square"></i></button>
-    </header>
 
-    <!-- Chat Canvas -->
-    <div class="fe-ai-chat-canvas" #messagesContainer>
-      
+    <!-- Logo -->
+    <div class="px-5 d-flex justify-content-between  m-3">
+
+       
+
+        <div class="px-3 d-flex ">
+          <div class="brand-icon">
+            <i class="fa-solid fa-seedling"></i>
+          </div>
+          <div class="px-4">
+          <h4>FarmEase AI</h4>
+          <small>Smart Farming Assistant</small>
+          </div>
+        </div>
+        <button class="new-chat-btn w-25"
+                (click)="resetChat()">
+          <i class="fa-solid fa-plus">
+
+          </i>
+          <span>New Chat</span>
+        </button>
+      </div>
+
+
+    <!-- New Chat -->
+    
+    <!-- ================= CHAT ================= -->
+
+    <div class="fe-ai-chat-canvas"
+         #messagesContainer>
+
       <div class="chat-wrapper-inner">
-        <!-- Messages -->
+
+        <!-- ================= MESSAGES ================= -->
+
         <ng-container *ngIf="messages().length > 0; else emptyState">
+
           <ng-container *ngFor="let msg of messages(); trackBy: trackById">
-            
-            <div class="ai-msg-row" [class.user-row]="msg.role === 'user'">
-              
+
+            <div class="ai-msg-row"
+                 [class.user-row]="msg.role === 'user'">
+
               <!-- Avatar -->
-              <div class="msg-avatar" *ngIf="msg.role === 'assistant'">
-                <img src="https://ui-avatars.com/api/?name=FE&background=16a34a&color=fff" alt="AI">
+              <div class="msg-avatar"
+                   *ngIf="msg.role === 'assistant'">
+
+                <img src="https://ui-avatars.com/api/?name=AI&background=16a34a&color=fff"
+                     alt="AI">
+
               </div>
-              <div class="msg-avatar user" *ngIf="msg.role === 'user'">
-                <img src="https://ui-avatars.com/api/?name=Me&background=0a3d20&color=fff" alt="User">
+
+              <div class="msg-avatar user"
+                   *ngIf="msg.role === 'user'">
+
+                <img src="https://ui-avatars.com/api/?name=U&background=111827&color=fff"
+                     alt="User">
+
               </div>
 
               <!-- Content -->
               <div class="msg-contentpane">
-                <div class="msg-sender-name">{{ msg.role === 'user' ? 'You' : 'FarmEase AI' }}</div>
-                
-                <div class="msg-text-bubble">
-                  <p *ngIf="msg.text">{{ msg.text }}</p>
-                  
-                  <img *ngIf="msg.imageData" [src]="msg.imageData" alt="Uploaded Image" class="msg-uploaded-img">
-                  <audio *ngIf="msg.audioData" [src]="msg.audioData" controls class="msg-audio"></audio>
+
+                <!-- Sender -->
+                <div class="msg-sender-name">
+
+                  {{
+                    msg.role === 'user'
+                    ? 'You'
+                    : 'FarmEase AI'
+                  }}
+
                 </div>
+
+                <!-- Bubble -->
+                <div class="msg-text-bubble">
+
+                  <!-- Text -->
+                  <p *ngIf="msg.text">
+                    {{ msg.text }}
+                  </p>
+
+                  <!-- Uploaded Image -->
+                  <img *ngIf="msg.imageData"
+                       [src]="msg.imageData"
+                       alt="Uploaded Image"
+                       class="msg-uploaded-img">
+
+                  <!-- Generated Image -->
+                  <img *ngIf="msg.imageUrl"
+                       [src]="msg.imageUrl"
+                       alt="Generated Image"
+                       class="msg-uploaded-img">
+
+                  <!-- Audio -->
+                  <audio *ngIf="msg.audioUrl"
+                         [src]="msg.audioUrl"
+                         controls
+                         class="msg-audio"></audio>
+
+                </div>
+
               </div>
+
             </div>
-            
+
           </ng-container>
 
-          <!-- Typing Indicator -->
-          <div class="ai-msg-row" *ngIf="isLoading()">
+          <!-- ================= TYPING ================= -->
+
+          <div class="ai-msg-row"
+               *ngIf="isLoading()">
+
             <div class="msg-avatar">
-              <img src="https://ui-avatars.com/api/?name=FE&background=16a34a&color=fff" alt="AI">
+
+              <img src="https://ui-avatars.com/api/?name=AI&background=16a34a&color=fff"
+                   alt="AI">
+
             </div>
+
             <div class="msg-contentpane">
-              <div class="msg-sender-name">FarmEase AI</div>
-              <div class="msg-text-bubble typing">
-                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+
+              <div class="msg-sender-name">
+                FarmEase AI
               </div>
+
+              <div class="msg-text-bubble typing">
+
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+
+              </div>
+
             </div>
+
           </div>
+
         </ng-container>
 
-        <!-- Empty State / Welcome Screen -->
+        <!-- ================= EMPTY STATE ================= -->
+
         <ng-template #emptyState>
+
           <div class="ai-welcome-screen">
+
+            <!-- Orb -->
             <div class="logo-orb">
               <i class="fa-solid fa-seedling"></i>
             </div>
-            <h2>How can I help you grow today?</h2>
-            
+
+            <h2>
+              How can I help you grow today?
+            </h2>
+
+            <p class="welcome-subtext">
+              Ask about farming, crops, fertilizers,
+              irrigation, weather, diseases and more.
+            </p>
+
+            <!-- Suggestions -->
             <div class="suggestion-grid">
-              <button class="suggest-chip" (click)="inputText.set('What is the best fertilizer for wheat?'); sendMessage()">
-                <i class="fa-solid fa-flask"></i> Fertilizer advice
+
+              <button class="suggest-chip"
+                      (click)="inputText.set('What is the best fertilizer for wheat?'); sendMessage()">
+
+                <i class="fa-solid fa-flask"></i>
+
+                <span>
+                  Fertilizer Advice
+                </span>
+
               </button>
-              <button class="suggest-chip" (click)="inputText.set('Predict the rainfall in Gujarat for the next month.'); sendMessage()">
-                <i class="fa-solid fa-cloud-sun-rain"></i> Weather forecast
+
+              <button class="suggest-chip"
+                      (click)="inputText.set('Predict the rainfall in Gujarat for the next month.'); sendMessage()">
+
+                <i class="fa-solid fa-cloud-sun-rain"></i>
+
+                <span>
+                  Weather Forecast
+                </span>
+
               </button>
-              <button class="suggest-chip" (click)="inputText.set('Diagnose crop disease from a photo.');">
-                <i class="fa-solid fa-camera"></i> Diagnose disease
+
+              <button class="suggest-chip"
+                      (click)="inputText.set('Diagnose crop disease from a photo.')">
+
+                <i class="fa-solid fa-camera"></i>
+
+                <span>
+                  Diagnose Disease
+                </span>
+
               </button>
-              <button class="suggest-chip" (click)="generateFarmImage()">
-                <i class="fa-solid fa-image"></i> Generate farm layout
+
+              <button class="suggest-chip"
+                      (click)="generateFarmImage()">
+
+                <i class="fa-solid fa-image"></i>
+
+                <span>
+                  Generate Farm Layout
+                </span>
+
               </button>
+
             </div>
+
           </div>
+
         </ng-template>
-        
+
         <!-- Bottom spacing -->
-        <div style="height: 30px;"></div>
+        <div style="height: 120px;"></div>
+
       </div>
+
     </div>
 
-    <!-- Input Footer -->
+    <!-- ================= INPUT FOOTER ================= -->
+
     <div class="fe-ai-footer">
+
       <div class="input-container-wrapper">
-        <div class="ai-input-box" [class.recording-active]="isRecording">
-          
-          <!-- Attach (Cloudinary) -->
-          <button class="action-icon attach" title="Upload Image" (click)="openCloudinaryUpload()">
+
+        <div class="ai-input-box"
+             [class.recording-active]="isRecording">
+
+          <!-- Upload -->
+          <button class="action-icon attach"
+                  title="Upload Image"
+                  (click)="openCloudinaryUpload()">
+
             <i class="fa-solid fa-paperclip"></i>
+
           </button>
 
           <!-- Textarea -->
-          <textarea 
-            class="ai-textarea" 
-            [(ngModel)]="inputText" 
-            placeholder="Message FarmEase AI..." 
-            rows="1"
-            (keydown.enter)="inputText() && !isLoading() ? sendMessage() : null; $event.preventDefault()">
-          </textarea>
+          <textarea class="ai-textarea"
+                    [(ngModel)]="inputText"
+                    placeholder="Message FarmEase AI..."
+                    rows="1"
+                    (keydown.enter)="
+              inputText()
+              && !isLoading()
+              ? sendMessage()
+              : null;
 
-          <!-- Voice & Send -->
+              $event.preventDefault()
+            "></textarea>
+
+          <!-- Right Actions -->
           <div class="input-actions-right">
-            <button class="action-icon mic" 
+
+            <!-- Voice Record -->
+            <button class="action-icon mic"
                     [class.recording]="isRecording"
                     (pointerdown)="startVoiceNoteRecording()"
                     (pointerup)="stopVoiceNoteRecording()"
                     (pointerleave)="stopVoiceNoteRecording()"
                     title="Hold to record audio">
+
               <i class="fa-solid fa-microphone"></i>
-            </button>
-            
-            <button class="action-icon dictation" (click)="startVoiceToText()" title="Speech to text">
-              <i class="fa-solid fa-wave-square"></i>
+
             </button>
 
-            <button class="send-btn" 
-                    (click)="sendMessage()" 
-                    [disabled]="!inputText() || isLoading()"
-                    [class.active]="inputText().length > 0">
-              <i class="fa-solid fa-arrow-up"></i>
+            <!-- Speech To Text -->
+            <button class="action-icon dictation"
+                    (click)="startVoiceToText()"
+                    title="Speech to text">
+
+              <i class="fa-solid fa-wave-square"></i>
+
             </button>
+
+            <!-- Send -->
+            <button class="send-btn"
+                    (click)="sendMessage()"
+                    [disabled]="
+                !inputText()
+                || isLoading()
+              "
+                    [class.active]="
+                    inputText().length>
+              0
+              "
+              >
+
+              <i class="fa-solid fa-arrow-up"></i>
+
+            </button>
+
           </div>
 
         </div>
+
+        <!-- Footer -->
         <div class="disclaimer">
-          FarmEase AI can make mistakes. Verify important agricultural advice.
+
+          FarmEase AI may generate inaccurate
+          agricultural advice. Verify important decisions.
+
         </div>
+
       </div>
+
     </div>
 
   </main>
+
 </div>

@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════
    CONTACT PAGE — Premium Redesign
 ══════════════════════════════════════════════ */
-.contact-page { min-height: 100vh; background: #f9fafb; padding-top: 72px; }
+.contact-page { min-height: 100vh; background: #f9fafb;   }
 
 /* Hero */
 .contact-hero-section { background:linear-gradient(145deg,#0a3d20,#166534); padding:90px 0 60px; position:relative; overflow:hidden; }
@@ -14,7 +14,7 @@
 
 /* Cards Grid */
 .contact-grid-section { padding: 60px 0; }
-.contact-cards { display:grid;grid-template-columns:repeat(2,1fr);gap:22px; }
+.contact-cards { display:grid;grid-template-columns:repeat(3,1fr);gap:22px; }
 
 .contact-card {
   display: flex;

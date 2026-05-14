@@ -4,11 +4,13 @@ import { HttpClient } from '@angular/common/http';
 import { API_URL } from '../../core/api.config';
 import { AddProductForm } from '../../shared/components/add-product-form/add-product';
 import { LiveStockService } from '../../services/live-stock.service';
+import { routes } from '../../app.routes';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-my-sales',
   standalone: true,
-  imports: [CommonModule, AddProductForm],
+  imports: [CommonModule, AddProductForm, RouterLink],
   templateUrl: './my-sales.html',
   styleUrls: ['./my-sales.css']
 })

@@ -1,9 +1,9 @@
 <!-- WhatsApp Premium Glassmorphism Chat Interface -->
 <div class="chat-page-container">
-  <div class="chat-wrapper">
+  <div class="chat-wrapper  border-1 border-success">
 
     <!-- Contacts Sidebar -->
-    <aside class="chat-sidebar" [class.mobile-hide]="chatService.selectedContact()">
+    <aside class="chat-sidebar  border-1 border-success" [class.mobile-hide]="chatService.selectedContact()">
       <div class="sidebar-header">
         <div class="sh-top">
           <h2 class="sh-title">Messages</h2>
@@ -12,7 +12,7 @@
           </div>
         </div>
         <div class="search-container">
-          <div class="search-box">
+          <div class="search-box border border-1 border-success">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" placeholder="Search or start new chat" 
                    [(ngModel)]="searchQuery" 
@@ -35,7 +35,7 @@
           <div class="ci-content">
             <div class="ci-header">
               <span class="ci-name">{{ contact.fullName }}</span>
-              <span class="ci-time">12:45 PM</span>
+     
             </div>
             <div class="ci-footer">
               <span class="ci-role-tag">{{ contact.role || 'Guest' }}</span>
@@ -57,22 +57,19 @@
       
       <header class="chat-header-bar">
         <div class="ch-left">
-          <button class="back-btn d-md-none" (click)="closeChat()">
-            <i class="fa-solid fa-arrow-left"></i>
-          </button>
+        
           <div class="ch-user-info" (click)="viewProfile(chatService.selectedContact())">
             <img [src]="getAvatarUrl(chatService.selectedContact())" class="ch-avatar">
             <div class="ch-text">
               <span class="ch-name">{{ chatService.selectedContact()?.fullName }}</span>
-              <span class="ch-status">Online</span>
             </div>
           </div>
         </div>
         <div class="ch-right">
-          <button class="icon-btn"><i class="fa-solid fa-video"></i></button>
-          <button class="icon-btn"><i class="fa-solid fa-phone"></i></button>
-          <div class="divider"></div>
-          <button class="icon-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+          <span class="ci-role-tag fw-4">{{ chatService.selectedContact()?.role || 'Guest' }}</span>
+          <button class="btn btn-outline-danger" (click)="closeChat()">
+            <i class="fa-solid fa-x"></i>
+          </button>
         </div>
       </header>
 
@@ -88,7 +85,6 @@
               <div class="msg-text">{{ msg.content }}</div>
               <div class="msg-meta">
                 <span class="msg-time">{{ msg.sentAt | date:'shortTime' }}</span>
-                <i class="fa-solid fa-check-double read-receipt" *ngIf="msg.senderEmail === currentUserEmail"></i>
               </div>
             </div>
           </div>
@@ -97,8 +93,6 @@
 
       <footer class="chat-footer-bar">
         <div class="input-panel">
-          <button class="icon-btn emoji-btn"><i class="fa-regular fa-face-smile"></i></button>
-          <button class="icon-btn attach-btn"><i class="fa-solid fa-paperclip"></i></button>
           <div class="message-input-wrap">
             <input type="text" placeholder="Type a message" 
                    [(ngModel)]="newMessage" 

@@ -63,46 +63,46 @@
     <div class="ck-layout">
 
       <!-- ═══ LEFT: FORMS ═══ -->
-      <div class="ck-left">
+      <div class="ck-left border border-1 border-dark rounded rounded-5 ">
 
         <!-- Shipping Details -->
-        <div class="ck-card anim-fade-up">
+        <div class="ck-card anim-fade-up rounded rounded-5">
           <h2 class="ck-card-title"><i class="fa-solid fa-truck-fast"></i> Delivery Information</h2>
           <form class="ck-form-grid mt-4">
             <div class="f-group cl-span-2">
               <label>Full Name *</label>
-              <input type="text" [(ngModel)]="shippingInfo.fullName" name="fn" placeholder="e.g. Ramesh Patel" required>
+              <input class="border border-1 border-success" type="text" [(ngModel)]="shippingInfo.fullName" name="fn" placeholder="e.g. Ramesh Patel" required>
             </div>
 
             <div class="f-group">
               <label>Phone Number *</label>
-              <input type="tel" [(ngModel)]="shippingInfo.phone" name="ph" placeholder="+91 98765 43210" maxlength="10" required>
+              <input class="border border-1 border-success" type="tel" [(ngModel)]="shippingInfo.phone" name="ph" placeholder="+91 98765 43210" maxlength="10" required>
             </div>
             <div class="f-group">
               <label>Email Address</label>
-              <input type="email" [(ngModel)]="shippingInfo.email" name="em" placeholder="you@example.com">
+              <input class="border border-1 border-success" type="email" [(ngModel)]="shippingInfo.email" name="em" placeholder="you@example.com">
             </div>
 
             <div class="f-group cl-span-2">
               <label>Street Address *</label>
-              <textarea [(ngModel)]="shippingInfo.address" name="addr" rows="2" placeholder="House/Farm No., Village/Street" required></textarea>
+              <textarea class="border border-1 border-success" [(ngModel)]="shippingInfo.address" name="addr" rows="2" placeholder="House/Farm No., Village/Street" required></textarea>
             </div>
 
             <div class="f-group">
               <label>City / District</label>
-              <input type="text" [(ngModel)]="shippingInfo.city" name="ct" placeholder="e.g. Rajkot">
+              <input class="border border-1 border-success" type="text" [(ngModel)]="shippingInfo.city" name="ct" placeholder="e.g. Rajkot">
             </div>
             <div class="f-group">
               <label>State</label>
-              <input type="text" [(ngModel)]="shippingInfo.state" name="st" placeholder="e.g. Gujarat">
+              <input class="border border-1 border-success" type="text" [(ngModel)]="shippingInfo.state" name="st" placeholder="e.g. Gujarat">
             </div>
             <div class="f-group">
               <label>Pincode *</label>
-              <input type="text" [(ngModel)]="shippingInfo.pincode" name="pin" placeholder="360005" maxlength="6" required>
+              <input class="border border-1 border-success" type="text" [(ngModel)]="shippingInfo.pincode" name="pin" placeholder="360005" maxlength="6" required>
             </div>
           </form>
         </div>
-
+        <hr />
         <!-- Payment Method -->
         <div class="ck-card anim-fade-up" style="animation-delay: 0.1s">
           <h2 class="ck-card-title"><i class="fa-solid fa-credit-card"></i> Payment Method</h2>
@@ -198,8 +198,8 @@
       </div>
 
       <!-- ═══ RIGHT: SUMMARY ═══ -->
-      <div class="ck-right">
-        <div class="ck-summary-sticky anim-fade-up" style="animation-delay: 0.2s">
+      <div class="ck-right border border-1 border-success rounded rounded-5">
+        <div class="ck-summary-sticky anim-fade-up rounded rounded-5" style="animation-delay: 0.2s">
           <h2 class="ck-card-title mb-4">
             <i class="fa-solid fa-receipt"></i>
             Order Summary

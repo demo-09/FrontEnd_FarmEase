@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════
    NEWS PAGE — Premium Redesign
 ══════════════════════════════════════════════ */
-.news-page { min-height: 100vh; background: #f9fafb; padding-top: 72px; }
+.news-page { min-height: 100vh; background: #f9fafb;   }
 
 /* Hero */
 .news-hero { background: linear-gradient(145deg, #052e10, #0a3d20, #166534); padding: 90px 0 60px; position: relative; overflow: hidden; }

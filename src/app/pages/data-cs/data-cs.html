@@ -35,10 +35,10 @@
     <!-- Data Cards Grid -->
     <div *ngIf="apiData.length > 0" class="cs-grid">
       
-      <div *ngFor="let record of apiData; let i = index" class="cs-card">
+      <div *ngFor="let record of apiData; let i = index" class="cs-card border-1 border-success">
         
         <!-- Header: State -->
-        <div class="cs-card-header">
+        <div class="cs-card-header border">
           <div class="csc-state-info">
             <span class="csc-label">State / UT</span>
             <h3 class="csc-state-name">{{ record.states___uts }}</h3>

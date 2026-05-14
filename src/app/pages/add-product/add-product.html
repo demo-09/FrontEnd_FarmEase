@@ -9,8 +9,8 @@
         <p class="text-muted lead">Choose a category to reach thousands of buyers instantly.</p>
       </div>
 
-      <div class="cat-grid-farmer">
-        <div class="cat-card-glass" *ngFor="let cat of categories" (click)="selectCategory(cat.name)">
+      <div class="cat-grid-farmer ">
+        <div class="cat-card-glass border border-1 border-success" *ngFor="let cat of categories" (click)="selectCategory(cat.name)">
           <div class="cat-icon-wrap" [ngClass]="cat.name">
             <i class="fa-solid" [ngClass]="cat.icon"></i>
           </div>

@@ -27,14 +27,21 @@
 .wishlist-layout { display: grid; grid-template-columns: 1fr 380px; gap: 28px; align-items: start; }
 
 /* Items Panel */
-.wishlist-items-panel { background: #fff; border: 1px solid rgba(34,197,94,0.1); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 20px rgba(10,61,32,0.07); }
+.wishlist-items-panel { background: #fff; border: 1px solid rgba(34,197,94,0.1); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 20px rgba(10,61,32,0.07);border:2px solid green; }
 .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid rgba(34,197,94,0.08); }
 .panel-title { display: flex; align-items: center; gap: 10px; font-family: 'Poppins', sans-serif; font-weight: 800; color: #0a3d20; font-size: 1rem; }
 .panel-title i { color: #ef4444; }
 .item-count { background: rgba(239,68,68,0.1); color: #ef4444; border-radius: 999px; padding: 2px 10px; font-size: 0.78rem; font-weight: 700; }
 
 /* Horizontal Wishlist Item (matches Cart Item) */
-.wishlist-item { display: flex; align-items: center; gap: 16px; padding: 18px 24px; border-bottom: 1px solid rgba(34,197,94,0.06); transition: background 0.2s ease; }
+.wishlist-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid rgba(34,197,94,0.06);
+  transition: background 0.2s ease;
+}
 .wishlist-item:last-child { border-bottom: none; }
 .wishlist-item:hover { background: rgba(34,197,94,0.03); }
 .wishlist-item.out-of-stock { opacity: 0.75; }
@@ -60,7 +67,16 @@
 .remove-btn:hover { background: rgba(239,68,68,0.18); transform: scale(1.1); }
 
 /* Summary Panel */
-.summary-card { background: #fff; border: 1px solid rgba(34,197,94,0.1); border-radius: 24px; padding: 28px 24px; box-shadow: 0 4px 20px rgba(10,61,32,0.07); position: sticky; top: 88px; }
+.summary-card {
+  background: #fff;
+  border: 1px solid rgba(34,197,94,0.1);
+  border-radius: 24px;
+  padding: 28px 24px;
+  box-shadow: 0 4px 20px rgba(10,61,32,0.07);
+  position: sticky;
+  top: 88px;
+  border: 2px solid green;
+}
 .summary-title { font-family:'Poppins',sans-serif; font-size: 1.1rem; font-weight: 800; color: #0a3d20; margin-bottom: 20px; }
 .summary-rows { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
 .summary-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.88rem; color: #6b7280; }

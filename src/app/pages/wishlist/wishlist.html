@@ -45,9 +45,8 @@
             <i class="fa-solid fa-heart"></i>
             Saved Items <span class="item-count">{{ wishlistItems().length }}</span>
           </div>
-          <!-- Optional clear all could go here -->
         </div>
-
+        <hr />
         <div class="wishlist-item" *ngFor="let item of wishlistItems(); trackBy: trackById"
              [class.out-of-stock]="!item.inStock" [id]="'wish-item-' + item.id">
           
@@ -59,12 +58,12 @@
               {{ item.inStock ? 'In Stock' : 'Out of Stock' }}
             </div>
           </div>
-          
           <div class="wi-info">
             <div class="wi-cat">{{ item.category }}</div>
             <div class="wi-name">{{ item.productName || item.name }}</div>
             <div class="wi-unit">₹{{ item.price | number }} per unit</div>
           </div>
+
           
           <div class="wi-controls">
             <div class="wi-total">₹{{ item.price | number }}</div>
@@ -76,7 +75,7 @@
             <button class="remove-btn" (click)="removeItem(item.id)" title="Remove item" [id]="'remove-' + item.id">
               <i class="fa-solid fa-xmark"></i>
             </button>
-          </div>
+          </div> 
         </div>
       </div>
 

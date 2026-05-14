@@ -87,7 +87,7 @@
         </div>
 
         <!-- Right: Product Info -->
-        <div class="pd-info-side">
+        <div class="pd-info-side border border-1 border-success p-4 rounded rounded-5">
           <!-- Category + Stock -->
           <div class="pd-cat-row">
             <span class="pd-cat-tag">{{ p.subtitle }}</span>
@@ -106,7 +106,7 @@
           </div>
 
           <!-- Price -->
-          <div class="pd-price-block">
+          <div class="pd-price-block p-0">
             <span class="pd-price">{{ p.metaText }}</span>
             <span class="pd-price-note">Inclusive of all taxes</span>
           </div>
@@ -161,7 +161,7 @@
           <h2 class="pd-sug-title">Similar <span>Products</span></h2>
         </div>
         <div class="pd-sug-grid">
-          <div class="product-card" *ngFor="let s of suggestions()"
+          <div class="product-card border border-1 border-success" *ngFor="let s of suggestions()"
                (click)="viewProduct(s)" style="cursor:pointer">
             <div class="product-img-wrap">
               <img [src]="s.imageUrl || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400'"

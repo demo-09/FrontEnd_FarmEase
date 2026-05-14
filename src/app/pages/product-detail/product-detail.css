@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════
    PRODUCT DETAIL PAGE — Premium Redesign
 ══════════════════════════════════════════════ */
-.pd-page { min-height: 100vh; background: #f9fafb; padding-top: 72px; }
+.pd-page { min-height: 100vh; background: #f9fafb;   }
 
 /* Loading */
 .pd-loading {

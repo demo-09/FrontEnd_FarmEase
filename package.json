@@ -23,6 +23,7 @@
     "@angular/ssr": "^21.2.2",
     "@google/generative-ai": "^0.24.1",
     "@microsoft/signalr": "^10.0.0",
+    "dotenv": "^17.4.2",
     "express": "^5.1.0",
     "groq-sdk": "^1.2.0",
     "rxjs": "~7.8.0",

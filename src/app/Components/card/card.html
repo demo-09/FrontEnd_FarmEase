@@ -1,5 +1,5 @@
 <!-- Premium Card Component -->
-<div class="fe-card">
+<div class="fe-card border border-1 border-success">
   
   <div class="fe-card-badge" *ngIf="data?.label">
     {{ data.label }}
@@ -36,7 +36,7 @@
       </div>
 
       <a [href]="data?.link || 'javascript:void(0)'" 
-         class="fe-card-btn" 
+         class="fe-card-btn btn btn-outline-success" 
          (click)="data?.action?.()">
         {{ data?.buttonText || 'Read Article' }} <i class="fa-solid fa-arrow-right"></i>
       </a>

@@ -76,7 +76,7 @@
 
             <div class="f-group">
               <label>Phone Number *</label>
-              <input type="tel" [(ngModel)]="shippingInfo.phone" name="ph" placeholder="+91 98765 43210" required>
+              <input type="tel" [(ngModel)]="shippingInfo.phone" name="ph" placeholder="+91 98765 43210" maxlength="10" required>
             </div>
             <div class="f-group">
               <label>Email Address</label>
@@ -126,7 +126,7 @@
             <div class="pay-detail-panel" *ngIf="paymentMethod() === 'upi'">
               <div class="upi-options">
                 <div class="upi-qr-side">
-                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=farmease@upi&pn=FarmEase&am={{grandTotal}}" class="qr-code" alt="Scan to pay">
+                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=ujjavalk2401-1@okicici&pn=FarmEase&am={{grandTotal}}" class="qr-code" alt="Scan to pay">
                   <p class="qr-label">Scan & Pay via any UPI app</p>
                 </div>
                 <div class="upi-divider-v"><span>or</span></div>

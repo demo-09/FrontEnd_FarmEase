@@ -1,0 +1,192 @@
+import { Injectable, signal } from '@angular/core';
+
+export interface ChatMessage {
+  role: 'user' | 'model';
+  text?: string;
+
+  imageData?: string;
+  mimeType?: string;
+
+  audioData?: string;
+  audioMimeType?: string;
+
+  audioUrl?: string;
+  duration?: string;
+  isPlaying?: boolean;
+
+  isImageGeneration?: boolean;
+  imageUrl?: string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class OllamaService {
+
+  // OLLAMA LOCAL API
+  private apiUrl = 'http://localhost:11434/api/generate';
+
+  // MODEL NAME
+  private model = 'llama3';
+
+  public messages = signal<ChatMessage[]>([]);
+  public isLoading = signal<boolean>(false);
+
+  constructor() {}
+
+  // ADD MESSAGE
+  addMessage(message: ChatMessage) {
+    this.messages.update(msgs => [...msgs, message]);
+  }
+
+  // MAIN CHAT METHOD
+  async sendMessage(
+    prompt: string = '',
+    image?: { data: string; mimeType: string },
+    audio?: { data: string; mimeType: string }
+  ): Promise<string> {
+
+    if (!prompt.trim() && !image && !audio) {
+      return '';
+    }
+
+    try {
+
+      this.isLoading.set(true);
+
+      let finalPrompt = `
+You are FarmEase Assistant 🌱
+
+You help Indian farmers with:
+- crops
+- irrigation
+- fertilizers
+- farming machinery
+- weather guidance
+- organic farming
+
+Speak naturally like a Gujarati farming friend.
+Keep answers short, practical, and friendly.
+
+User Message:
+${prompt}
+`;
+
+      // IMAGE CONTEXT
+      if (image) {
+        finalPrompt += `
+The user also uploaded a farming image.
+Try helping based on crop conditions if possible.
+`;
+      }
+
+      // AUDIO CONTEXT
+      if (audio) {
+        finalPrompt += `
+The user sent an agricultural voice note.
+Respond helpfully in English.
+`;
+      }
+
+      const response = await fetch(this.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: this.model,
+          prompt: finalPrompt,
+          stream: false
+        })
+      });
+
+      const data = await response.json();
+
+      const aiReply = data.response || 'No response';
+
+      // SAVE MESSAGE
+      this.addMessage({
+        role: 'model',
+        text: aiReply
+      });
+
+      // SPEAK RESPONSE
+      this.speak(aiReply);
+
+      return aiReply;
+
+    } catch (error) {
+
+      console.error('Ollama Error:', error);
+
+      return 'Sorry bhai 🌾 Ollama AI failed.';
+
+    } finally {
+
+      this.isLoading.set(false);
+
+    }
+  }
+
+  // FARM IMAGE GENERATION
+  async generateFarmImage(prompt: string): Promise<string> {
+
+    try {
+
+      this.isLoading.set(true);
+
+      const enhancedPrompt = `
+Hyper realistic Indian agriculture scene:
+${prompt}
+
+Cinematic lighting,
+4K,
+DSLR,
+ultra realistic farming,
+green fields,
+Indian village
+`;
+
+      return `https://image.pollinations.ai/prompt/${encodeURIComponent(
+        enhancedPrompt
+      )}?nologo=true&seed=${Math.floor(Math.random() * 10000)}`;
+
+    } catch (error) {
+
+      console.error(error);
+
+      return `https://image.pollinations.ai/prompt/${encodeURIComponent(
+        prompt
+      )}?nologo=true`;
+
+    } finally {
+
+      this.isLoading.set(false);
+
+    }
+  }
+
+  // TEXT TO SPEECH
+  speak(text: string) {
+
+    if ('speechSynthesis' in window) {
+
+      // STOP PREVIOUS SPEECH
+      window.speechSynthesis.cancel();
+
+      const utterance =
+        new SpeechSynthesisUtterance(text);
+
+      utterance.lang = 'en-IN';
+      utterance.rate = 0.95;
+      utterance.pitch = 1;
+
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  // RESET CHAT
+  resetChat() {
+    this.messages.set([]);
+  }
+}

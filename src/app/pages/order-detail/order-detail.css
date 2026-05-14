@@ -398,7 +398,7 @@
   align-items: center;
   justify-content: center;
   padding: 40px 24px;
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 2000;
 }

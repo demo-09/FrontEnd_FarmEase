@@ -25,7 +25,7 @@ export class GeminiService {
 
   public messages = signal<ChatMessage[]>([]);
   public isLoading = signal<boolean>(false);
-  api = "AIzaSyBunsabxrgXlopnqLKpZXG-3dwDBG8zfa8";
+  api = "AIzaSyC3pPlWH9poELVaC665lxnEIFNKn1l3WKI";
 
   constructor() {
     this.genAI = new GoogleGenerativeAI(this.api);

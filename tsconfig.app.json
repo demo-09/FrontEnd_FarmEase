@@ -8,10 +8,13 @@
       "node"
     ]
   },
-  "include": [
-    "src/**/*.ts"
-  ],
   "exclude": [
     "src/**/*.spec.ts"
+  ],
+  "files": [
+    "src/main.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts"
   ]
 }

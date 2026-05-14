@@ -153,7 +153,9 @@ export class Signup implements OnInit, AfterViewInit {
       next: (res: any) => {
         this.isLoading = false;
         this.otpSent = true;
-        // Mock OTP alert removed for real email delivery
+        alert('OTP sent successfully 🌱');
+
+        console.log(res);
       },
       error: (err) => {
         this.isLoading = false;

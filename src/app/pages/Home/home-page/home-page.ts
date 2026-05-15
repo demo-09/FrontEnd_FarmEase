@@ -1,7 +1,6 @@
 import { Component, OnInit, AfterViewInit, PLATFORM_ID, Inject, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { AboutUsComponent } from '../about-us';
 import { HeroSectionComponent } from '../hero-section.component';
 import { FaqSectionComponent } from '../faq';
 import { Services } from '../services';
@@ -9,7 +8,7 @@ import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-home-page',
-  imports: [CommonModule, RouterLink, AboutUsComponent, HeroSectionComponent, Services, FaqSectionComponent],
+  imports: [CommonModule, RouterLink, HeroSectionComponent, Services, FaqSectionComponent],
   templateUrl: './home-page.html',
   styleUrl: './home-page.css',
 })

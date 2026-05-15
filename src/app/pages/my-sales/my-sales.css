@@ -45,6 +45,10 @@
   background-color: rgba(22, 163, 74, 0.02) !important;
   transform: scale(1.002);
 }
+.scroll{
+    overflow:auto;
+    height :500px;
+}
 
 .prod-thumbnail {
   width: 48px;
@@ -127,8 +131,11 @@
   transition: transform 0.2s;
 }
 
-.lc-btn.edit { background: #2563eb; }
-.lc-btn.delete { background: #ef4444; }
+.lc-btn.edit { background: #2563eb;z-index:10; }
+  .lc-btn.delete {
+    background: #ef4444;
+    z-index: 10;
+  }
 .lc-btn:hover { transform: scale(1.1); }
 
 .lc-badge {

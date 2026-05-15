@@ -140,5 +140,5 @@
 
 @media (max-width: 576px) {
   .signup-grid-2 { grid-template-columns: 1fr; }
-  .signup-roles  { grid-template-columns: repeat(3,1fr); }
+  .signup-roles  { grid-template-columns: repeat(2,1fr); }
 }

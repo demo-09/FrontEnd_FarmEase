@@ -4,7 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { API_URL } from '../../core/api.config';
 import { AddProductForm } from '../../shared/components/add-product-form/add-product';
 import { LiveStockService } from '../../services/live-stock.service';
-import { routes } from '../../app.routes';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -17,130 +16,116 @@ import { RouterLink } from '@angular/router';
 export class MySales implements OnInit {
   private http = inject(HttpClient);
   private liveStock = inject(LiveStockService);
-  
+
   sales: any[] = [];
-  listings = signal<{ machinery: any[], agriItems: any[] }>({ machinery: [], agriItems: [] });
   isLoading = true;
 
-  // View State
+  // Signals for state management
   isEditing = signal(false);
   editingItem = signal<any>(null);
   isViewingDetails = signal(false);
   selectedSale = signal<any>(null);
 
-  // Original data for live sync
+  listings = signal<{ machinery: any[], agriItems: any[] }>({
+    machinery: [],
+    agriItems: []
+  });
+
   private originalMachinery: any[] = [];
   private originalAgriItems: any[] = [];
 
   constructor() {
     effect(() => {
-        const updates = this.liveStock.stockUpdates();
-        const overrides = this.liveStock.productOverrides();
-        
-        // Helper to update a list based on live updates and overrides
-        const updateList = (list: any[], type: string) => {
-            return list.map(item => {
-                const compositeKey = `${type.toLowerCase()}-${item.id}`;
-                
-                // 1. Apply attribute overrides (Price, Name, etc.)
-                const override = overrides[compositeKey];
-                let merged = override ? { ...item, ...override } : item;
+      const updates = this.liveStock.stockUpdates();
+      const overrides = this.liveStock.productOverrides();
 
-                // 2. Apply stock delta
-                const reduction = updates[compositeKey] || 0;
-                return { ...merged, quantity: Math.max(0, (merged.quantity || 0) + reduction) };
-            });
-        };
+      const updateList = (list: any[], type: string) => {
+        return list.map(item => {
+          const key = `${type.toLowerCase()}-${item.id}`;
+          const override = overrides[key];
+          let merged = override ? { ...item, ...override } : item;
+          const reduction = updates[key] || 0;
+          return { ...merged, quantity: Math.max(0, (merged.quantity || 0) + reduction) };
+        });
+      };
 
-        this.listings.update(prev => ({
-            machinery: updateList(this.originalMachinery, 'Machinery'),
-            agriItems: updateList(this.originalAgriItems, 'AgriItem')
-        }));
+      this.listings.set({
+        machinery: updateList(this.originalMachinery, 'machinery'),
+        agriItems: updateList(this.originalAgriItems, 'agriitem')
+      });
     });
   }
 
-  private getOriginalQty(type: string, id: number) {
-    const list = type === 'machinery' ? this.originalMachinery : this.originalAgriItems;
-    return list.find(x => x.id === id)?.quantity;
-  }
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.fetchData();
   }
 
-  fetchData() {
+  fetchData(): void {
     this.isLoading = true;
-    this.loadCount = 0;
-    
-    // Fetch Sales
+
+    // Fetch Sales History (for the table and top sellers)
     this.http.get<any[]>(`${API_URL}/Farmer/sales`).subscribe({
       next: (data) => {
         this.sales = data;
-        this.checkLoading();
       },
-      error: (err) => {
-        console.error('Failed to fetch sales', err);
-        this.checkLoading();
-      }
+      error: (err) => console.error('Sales fetch error:', err)
     });
 
-    // Fetch My Listings
+    // Fetch Current Listings (for the grid and inventory alerts)
     this.http.get<any>(`${API_URL}/Farmer/listings`).subscribe({
       next: (data) => {
-        const machinery = data.machinery || [];
-        const agriItems = data.agriItems || [];
-        
-        this.originalMachinery = [...machinery];
-        this.originalAgriItems = [...agriItems];
-
+        this.originalMachinery = (data.machinery || []).map((x: any) => ({ ...x, type: 'Machinery' }));
+        this.originalAgriItems = (data.agriItems || []).map((x: any) => ({ ...x, type: 'AgriItem' }));
         this.listings.set({
-            machinery: machinery,
-            agriItems: agriItems
+          machinery: [...this.originalMachinery],
+          agriItems: [...this.originalAgriItems]
         });
-        this.checkLoading();
+        this.isLoading = false;
       },
       error: (err) => {
-        console.error('Failed to fetch listings', err);
-        this.checkLoading();
+        console.error('Listings fetch error:', err);
+        this.isLoading = false;
       }
     });
   }
 
-  private loadCount = 0;
-  private checkLoading() {
-      this.loadCount++;
-      if (this.loadCount >= 2) {
-          this.isLoading = false;
-      }
+  // Helper method for "Top Sellers" sidebar
+  getTopSellers() {
+    const counts: any = {};
+    this.sales.forEach(s => {
+      counts[s.productName] = (counts[s.productName] || 0) + s.quantity;
+    });
+    return Object.keys(counts).map(name => ({ name, qty: counts[name] }))
+      .sort((a, b) => b.qty - a.qty)
+      .slice(0, 3);
   }
 
-  editListing(item: any, type: string) {
-    this.editingItem.set({ ...item, type });
+  // Helper method for "Inventory Alerts" sidebar
+  getSoldOutProducts() {
+    const all = [
+      ...this.listings().machinery,
+      ...this.listings().agriItems
+    ];
+    return all.filter(item => item.quantity === 0);
+  }
+
+  getTotalEarnings(): number {
+    return this.sales.reduce((acc, s) => acc + (s.price * s.quantity), 0);
+  }
+
+  editListing(item: any, type: string): void {
+    this.editingItem.set({ ...item, category: type });
     this.isEditing.set(true);
   }
 
-  deleteListing(id: number, type: string) {
-    if (!confirm('Are you sure you want to delete this listing?')) return;
-    
-    const endpoint = type === 'AgriItem' ? 'AgriItems' : 'Machinery';
-    this.http.delete(`${API_URL}/${endpoint}/${id}`).subscribe({
-      next: () => {
-        alert('Listing deleted successfully');
-        this.fetchData();
-      },
-      error: (err) => alert('Failed to delete listing')
-    });
-  }
-
-  onSaved() {
-    this.isEditing.set(false);
-    this.editingItem.set(null);
-    this.fetchData();
-  }
-
-  closeEdit() {
-    this.isEditing.set(false);
-    this.editingItem.set(null);
+  deleteListing(id: number, type: string): void {
+    if (confirm('Are you sure you want to delete this listing?')) {
+      const endpoint = type === 'Machinery' ? 'Machinery' : 'AgriItem';
+      this.http.delete(`${API_URL}/${endpoint}/${id}`).subscribe({
+        next: () => this.fetchData(),
+        error: (err) => alert('Delete failed: ' + err.message)
+      });
+    }
   }
 
   openSaleDetails(sale: any) {
@@ -150,20 +135,14 @@ export class MySales implements OnInit {
 
   closeSaleDetails() {
     this.isViewingDetails.set(false);
-    this.selectedSale.set(null);
   }
 
-  getSoldOutProducts() {
-    const productCounts: any = {};
-    this.sales.forEach(s => {
-      productCounts[s.productName] = (productCounts[s.productName] || 0) + s.quantity;
-    });
-    return Object.keys(productCounts)
-      .map(name => ({ name, qty: productCounts[name] }))
-      .sort((a, b) => b.qty - a.qty);
+  onSaved() {
+    this.isEditing.set(false);
+    this.fetchData();
   }
 
-  getTotalEarnings() {
-    return this.sales.reduce((acc, s) => acc + (s.price * s.quantity), 0);
+  closeEdit() {
+    this.isEditing.set(false);
   }
 }

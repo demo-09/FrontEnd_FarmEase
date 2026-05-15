@@ -17,7 +17,7 @@
 
   <div class="bento-grid">
     <!-- Section 1: Basic Information -->
-    <div class="bento-card span-2 glass-panel">
+    <div class="bento-card span-2 glass-panel border border-1 border-success">
       <div class="card-label"><i class="fa-solid fa-circle-info me-2"></i> Core Details</div>
       <div class="form-grid-mini mt-3">
         <div class="form-group-bento">
@@ -30,13 +30,13 @@
         </div>
         <div class="form-group-bento full-width">
           <label>Description</label>
-          <textarea rows="3" [(ngModel)]="newItem.description" placeholder="Technical specs, origin, or usage instructions..."></textarea>
+          <textarea class="border border-1 border-success" rows="3" [(ngModel)]="newItem.description" placeholder="Technical specs, origin, or usage instructions..."></textarea>
         </div>
       </div>
     </div>
 
     <!-- Section 2: Pricing & Availability -->
-    <div class="bento-card glass-panel highlight-border">
+    <div class="bento-card glass-panel highlight-border border border-1 border-success">
       <div class="card-label"><i class="fa-solid fa-tag me-2"></i> Economics</div>
       <div class="form-grid-mini mt-3">
         <div class="form-group-bento">
@@ -69,7 +69,7 @@
     </div>
 
     <!-- Section 3: Media & Presentation -->
-    <div class="bento-card span-2 glass-panel">
+    <div class="bento-card span-2 glass-panel border border-1 border-success">
       <div class="card-label"><i class="fa-solid fa-camera-retro me-2"></i> Visuals</div>
       
       <div class="media-upload-zone mt-3" (click)="openProductMediaUpload()" *ngIf="newItem.media.length === 0">
@@ -96,13 +96,13 @@
     </div>
 
     <!-- Action Card -->
-    <div class="bento-card action-card bg-success text-white">
+    <div class="bento-card action-card bg-success text-white d-flex flex-column">
       <div class="card-label text-white-50">Ready to Publish?</div>
       <div class="d-flex flex-column h-100 justify-content-center py-3">
         <p class="small mb-4 opacity-75">Your product will be live immediately after verification.</p>
-        <button class="btn btn-light fw-bold py-3 rounded-4 shadow-sm" (click)="handleItemAddOrUpdate()">
+        <a routerLink="/Products" class="btn btn-light fw-bold py-3 rounded-4 shadow-sm" (click)="handleItemAddOrUpdate()">
           <i class="fa-solid fa-check-circle me-2"></i> {{ isEditing ? 'Update Listing' : 'Confirm & Publish' }}
-        </button>
+        </a>
       </div>
     </div>
   </div>

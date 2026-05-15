@@ -3,14 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { API_URL } from '../../../core/api.config';
-import { AuthService } from '../../../core/services/auth.service';
+import { RouterLink } from '@angular/router';
+
 
 declare var cloudinary: any;
 
 @Component({
   selector: 'app-add-product-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './add-product.html',
   styleUrl: './add-product.css'
 })
@@ -24,20 +25,18 @@ export class AddProductForm implements OnChanges {
   @Output() cancel = new EventEmitter<void>();
 
   private http = inject(HttpClient);
-  private authService = inject(AuthService);
   private backendUrl = API_URL;
 
-  newItem: any = { 
-    type: 'Machinery', 
-    name: '', 
-    price: 0, 
-    image: '', 
-    condition: 'Fresh', 
-    quantity: 1, 
-    category: '', 
+  newItem: any = {
+    type: 'machinery',
+    name: '',
+    price: 0,
+    image: '',
+    condition: 'Fresh',
+    quantity: 1,
+    category: '',
     description: '',
-    media: [],
-    ownerEmail: ''
+    media: []
   };
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -46,10 +45,10 @@ export class AddProductForm implements OnChanges {
     }
     if (changes['selectedCategory'] && this.selectedCategory && !this.isEditing) {
       this.newItem.category = this.selectedCategory;
-      this.newItem.type = (this.selectedCategory === 'Machinery' || this.selectedCategory === 'Tools') ? 'Machinery' : 'AgriItem';
-      
+      this.newItem.type = (this.selectedCategory === 'Machinery' || this.selectedCategory === 'Tools') ? 'machinery' : 'agriitem';
+
       // Default conditions
-      if (this.newItem.type === 'Machinery') this.newItem.condition = 'New';
+      if (this.newItem.type === 'machinery') this.newItem.condition = 'New';
       else this.newItem.condition = 'Fresh';
     }
   }
@@ -101,18 +100,8 @@ export class AddProductForm implements OnChanges {
       return;
     }
 
-    const currentUser = this.authService.currentUserValue;
-    if (!currentUser?.email) {
-      alert('You must be logged in to perform this action.');
-      return;
-    }
-
-    const endpoint = this.newItem.type === 'AgriItem' ? 'AgriItems' : 'Machinery';
-    const body = { 
-      ...this.newItem,
-      ownerEmail: currentUser.email,
-      productType: this.newItem.type // Explicitly set for stock management logic
-    };
+    const endpoint = this.newItem.type === 'agriitem' ? 'agriitems' : 'machinery';
+    const body = { ...this.newItem };
 
     if (this.isEditing && this.editingId) {
       this.http.put(`${this.backendUrl}/${endpoint}/${this.editingId}`, body).subscribe({

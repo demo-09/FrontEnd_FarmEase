@@ -92,8 +92,8 @@
           <a routerLink="/Products" class="mobile-link" data-bs-toggle="collapse" data-bs-target="#mobileNav">Products</a>
           <!-- Guest User -->
           <ng-container *ngIf="!auth.isLoggedIn()">
-            <a class="btn-nav-glass" routerLink="/Signup">Register</a>
-            <a class="btn-nav-white" routerLink="/Login">Sign In</a>
+            <a class=" btn btn-warning mobile-link"data-bs-toggle="collapse" data-bs-target="#mobileNav" routerLink="/Signup">Register</a>
+            <a class="btn btn-outline-success mobile-link" data-bs-toggle="collapse" data-bs-target="#mobileNav" routerLink="/Login">Sign In</a>
           </ng-container>
           <ng-container *ngIf="auth.isLoggedIn() && currentUser?.role?.toLowerCase() === 'admin'">
             <a routerLink="/admin/Admin" class="mobile-link" data-bs-toggle="collapse" data-bs-target="#mobileNav">Dashboard</a>
@@ -146,48 +146,48 @@
         <span>Sign Out</span>
       </button>
     </div>
+  
+      <!-- Drawer Menu -->
+      <div *ngIf="currentUser?.role?.toLowerCase() !== 'admin'" class="drawer-menu">
+        <div class="drawer-section-label">Field Management</div>
+        <a *ngIf="currentUser?.role?.toLowerCase() === 'farmer' "
+           routerLink="/my-sales" class="drawer-item" data-bs-dismiss="offcanvas">
+          <div class="drawer-item-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <span>My Sales & Earnings</span>
+          <i class="fa-solid fa-chevron-right drawer-arrow"></i>
+        </a>
 
-    <!-- Drawer Menu -->
-    <div *ngIf="auth.isLoggedIn()" class="drawer-menu">
-      <div class="drawer-section-label">Field Management</div>
-      <a *ngIf="currentUser?.role?.toLowerCase() === 'farmer' || currentUser?.role?.toLowerCase() === 'admin'" 
-         routerLink="/my-sales" class="drawer-item" data-bs-dismiss="offcanvas">
-        <div class="drawer-item-icon"><i class="fa-solid fa-chart-line"></i></div>
-        <span>My Sales & Earnings</span>
-        <i class="fa-solid fa-chevron-right drawer-arrow"></i>
-      </a>
+        <a routerLink="/CustomerSupport" class="drawer-item" data-bs-dismiss="offcanvas">
+          <div class="drawer-item-icon"><i class="fa-solid fa-headset"></i></div>
+          <span>Customer Support</span>
+          <i class="fa-solid fa-chevron-right drawer-arrow"></i>
+        </a>
 
-      <a *ngIf="currentUser?.role?.toLowerCase() === 'farmer'" routerLink="/CustomerSupport" class="drawer-item" data-bs-dismiss="offcanvas">
-        <div class="drawer-item-icon"><i class="fa-solid fa-headset"></i></div>
-        <span>Customer Support</span>
-        <i class="fa-solid fa-chevron-right drawer-arrow"></i>
-      </a>
+        <a routerLink="/Chat" class="drawer-item" data-bs-dismiss="offcanvas">
+          <div class="drawer-item-icon"><i class="fa-brands fa-whatsapp"></i></div>
+          <span>Chat</span>
+          <i class="fa-solid fa-chevron-right drawer-arrow"></i>
+        </a>
 
-      <a routerLink="/Chat" class="drawer-item" data-bs-dismiss="offcanvas">
-        <div class="drawer-item-icon"><i class="fa-brands fa-whatsapp"></i></div>
-        <span>Chat</span>
-        <i class="fa-solid fa-chevron-right drawer-arrow"></i>
-      </a>
-      
 
-      <a routerLink="/Ai" class="drawer-item" data-bs-dismiss="offcanvas">
-        <div class="drawer-item-icon"><i class="fa-solid fa-robot"></i></div>
-        <span>AI Chat</span>
-        <i class="fa-solid fa-chevron-right drawer-arrow"></i>
-      </a>
+        <a routerLink="/Ai" class="drawer-item" data-bs-dismiss="offcanvas">
+          <div class="drawer-item-icon"><i class="fa-solid fa-robot"></i></div>
+          <span>AI Chat</span>
+          <i class="fa-solid fa-chevron-right drawer-arrow"></i>
+        </a>
 
-      <a routerLink="/News" class="drawer-item" data-bs-dismiss="offcanvas">
-        <div class="drawer-item-icon"><i class="fa-solid fa-newspaper"></i></div>
-        <span>Agri News</span>
-        <i class="fa-solid fa-chevron-right drawer-arrow"></i>
-      </a>
+        <a routerLink="/News" class="drawer-item" data-bs-dismiss="offcanvas">
+          <div class="drawer-item-icon"><i class="fa-solid fa-newspaper"></i></div>
+          <span>Agri News</span>
+          <i class="fa-solid fa-chevron-right drawer-arrow"></i>
+        </a>
 
-      <a routerLink="/DataComponent" class="drawer-item" data-bs-dismiss="offcanvas">
-        <div class="drawer-item-icon"><i class="fa-solid fa-database"></i></div>
-        <span>Cold Storage Data</span>
-        <i class="fa-solid fa-chevron-right drawer-arrow"></i>
-      </a>
-    </div>
+        <a *ngIf="currentUser?.role?.toLowerCase() === 'farmer' " routerLink="/DataComponent" class="drawer-item" data-bs-dismiss="offcanvas">
+          <div class="drawer-item-icon"><i class="fa-solid fa-database"></i></div>
+          <span>Cold Storage Data</span>
+          <i class="fa-solid fa-chevron-right drawer-arrow"></i>
+        </a>
+      </div>
 
     <!-- Promo Banner -->
     <div class="drawer-promo">

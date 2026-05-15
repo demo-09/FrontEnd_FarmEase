@@ -23,7 +23,6 @@ export class App implements AfterViewInit {
 
   showIntro = true;
   isActive = false; // 👈 control animation via binding
-
   constructor(
     public auth: AuthService,
     private ngZone: NgZone,

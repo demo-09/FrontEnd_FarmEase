@@ -6,18 +6,13 @@
 
   <!-- Sidebar -->
   <aside class="admin-sidebar" [class.mobile-open]="isSidebarOpen()">
-    <div class="sidebar-user">
-      <img [src]="currentAdminAvatar() || ('https://ui-avatars.com/api/?name=' + (currentAdminName() || 'Admin') + '&background=0f5132&color=fff&bold=true&size=60')"
-           class="sidebar-avatar" [alt]="currentAdminName()">
-      <div>
-        <div class="sidebar-uname">{{ currentAdminName() || 'Admin' }}</div>
-        <div class="sidebar-urole"><span class="glow-dot"></span> Administrator</div>
-      </div>
+    <div class="sidebar-nav-label ">
+  
     </div>
     
     <nav class="sidebar-nav">
       <div class="sidebar-nav-label text-secondary">Navigation</div>
-      
+
       <button class="sidebar-btn" [class.active]="activePage() === 'dashboard'" (click)="setPage('dashboard')">
         <div class="sbtn-icon"><i class="fa-solid fa-chart-line"></i></div>
         Dashboard Overview
@@ -40,27 +35,72 @@
       </button>
 
       <div class="sidebar-nav-label text-secondary mt-3">Inventory Management</div>
-      
+
       <button class="sidebar-btn" [class.active]="activePage() === 'machinery'" (click)="setPage('machinery')">
         <div class="sbtn-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
         Global Inventory
       </button>
-
       <div class="sidebar-sub-menu">
-        <button class="sidebar-btn sub" [class.active]="activePage() === 'AddProduct' && selectedCategory() === 'Machinery'" (click)="setPage('AddProduct'); selectCategory('Machinery', 'machinery')">
-          <div class="sbtn-icon"><i class="fa-solid fa-tractor"></i></div> Add Machinery
+
+        <button class="sidebar-btn sub"
+                [class.active]="activePage() === 'AddProduct' && selectedCategory() === 'Machinery'"
+                (click)="setPage('AddProduct'); selectCategory('Machinery', 'machinery')">
+          <div class="sbtn-icon">
+            <i class="fa-solid fa-tractor"></i>
+          </div>
+
+          <div class="sbtn-content">
+            <span class="title">Add Machinery</span>
+    
+          </div>
+
+          <i class="fa-solid fa-chevron-right arrow"></i>
         </button>
-        <button class="sidebar-btn sub" [class.active]="activePage() === 'AddProduct' && selectedCategory() === 'Vegetables'" (click)="setPage('AddProduct'); selectCategory('Vegetables', 'agriitem')">
-          <div class="sbtn-icon"><i class="fa-solid fa-carrot"></i></div> Add Vegetables
+
+
+        <button class="sidebar-btn sub"
+                [class.active]="activePage() === 'AddProduct' && selectedCategory() === 'Vegetables'"
+                (click)="setPage('AddProduct'); selectCategory('Vegetables', 'agriitem')">
+          <div class="sbtn-icon vegetable">
+            <i class="fa-solid fa-carrot"></i>
+          </div>
+
+          <div class="sbtn-content">
+            <span class="title">Add Vegetables</span>
+       
+          </div>
+
+          <i class="fa-solid fa-chevron-right arrow"></i>
         </button>
-        <button class="sidebar-btn sub" [class.active]="activePage() === 'AddProduct' && selectedCategory() === 'Tools'" (click)="setPage('AddProduct'); selectCategory('Tools', 'machinery')">
-          <div class="sbtn-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div> Add Tools
+
+
+        <button class="sidebar-btn sub"
+                [class.active]="activePage() === 'AddProduct' && selectedCategory() === 'Tools'"
+                (click)="setPage('AddProduct'); selectCategory('Tools', 'machinery')">
+          <div class="sbtn-icon tools">
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+          </div>
+
+          <div class="sbtn-content">
+            <span class="title">Add Tools</span>
+          </div>
+
+          <i class="fa-solid fa-chevron-right arrow"></i>
         </button>
+
       </div>
 
       <a routerLink="/Chat" class="sidebar-btn" style="text-decoration: none;" (click)="isSidebarOpen.set(false)">
         <div class="sbtn-icon"><i class="fa-brands fa-whatsapp"></i></div>
         Support Inbox
+      </a>
+      <a routerLink="/news" class="sidebar-btn" style="text-decoration: none;" (click)="isSidebarOpen.set(false)">
+        <div class="sbtn-icon"><i class="fa-solid fa-newspaper"></i></div>
+        Agri News
+      </a>
+      <a routerLink="/ai" class="sidebar-btn" style="text-decoration: none;" (click)="isSidebarOpen.set(false)">
+        <div class="sbtn-icon"><i class="fa-solid fa-robot"></i></div>
+        Ai
       </a>
     </nav>
 
@@ -101,8 +141,8 @@
       </div>
 
       <!-- KPI Glass Cards (Real Data) -->
-      <div class="kpi-grid">
-        <div class="kpi-card green-card" (click)="setPage('farmers')">
+      <div class="kpi-grid ">
+        <div class="kpi-card green-card border border-1 border-success" (click)="setPage('farmers')">
           <div class="kpi-icon"><i class="fa-solid fa-tractor"></i></div>
           <div class="kpi-meta">
             <div class="kpi-num">{{ farmers().length }}</div>
@@ -111,16 +151,16 @@
           </div>
         </div>
 
-        <div class="kpi-card blue-card" (click)="setPage('customers')">
+        <div class="kpi-card blue-card border border-1 border-primary" (click)="setPage('customers')">
           <div class="kpi-icon"><i class="fa-solid fa-users-line"></i></div>
           <div class="kpi-meta">
             <div class="kpi-num">{{ customers().length }}</div>
             <div class="kpi-label">Total Customers</div>
-            <div class="kpi-trend text-primary"><i class="fa-solid fa-check-circle"></i> Onboarded</div>
+            <div class="kpi-trend" style="color:cornflowerblue;">Onboarded</div>
           </div>
         </div>
 
-        <div class="kpi-card amber-card" (click)="setPage('machinery')">
+        <div class="kpi-card amber-card border border-1 border-warning" (click)="setPage('machinery')">
           <div class="kpi-icon"><i class="fa-solid fa-warehouse"></i></div>
           <div class="kpi-meta">
             <div class="kpi-num">{{ inventoryItems().length }}</div>
@@ -129,7 +169,7 @@
           </div>
         </div>
 
-        <div class="kpi-card red-card " (click)="setPage('machinery')">
+        <div class="kpi-card red-card border border-1 border-danger" (click)="setPage('machinery')">
           <div class="kpi-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
           <div class="kpi-meta">
             <div class="kpi-num">₹{{ totalValue() | number:'1.0-0' }}</div>
@@ -146,10 +186,10 @@
         <button class="btn-glass green-glass" (click)="setPage('AddProduct')">
           <i class="fa-solid fa-plus"></i> Add Product
         </button>
-        <button class="btn-glass outline" (click)="setPage('farmers')">
+        <button class="btn-glass outline border border-1 border-success text-success" (click)="setPage('farmers')">
           <i class="fa-solid fa-wheat-awn"></i> View Farmers
         </button>
-        <button class="btn-glass outline" routerLink="/Chat">
+        <button class="btn-glass outline border border-1 border-success text-success" routerLink="/Chat">
           <i class="fa-brands fa-whatsapp"></i> Check Support Messages
         </button>
       </div>
@@ -170,7 +210,7 @@
       </div>
 
       <div class="user-grid">
-        <div class="user-card" *ngFor="let user of (activePage() === 'farmers' ? farmers() : customers())">
+        <div class="user-card border border-1 border-success" *ngFor="let user of (activePage() === 'farmers' ? farmers() : customers())">
           <button class="user-delete-btn" (click)="handleUserDelete(user.email)" title="Remove Record">
             <i class="fa-solid fa-trash-can"></i>
           </button>
@@ -204,18 +244,18 @@
       </div>
 
       <div class="mini-kpi-bar mb-4">
-        <div class="mini-kpi">
+        <div class="mini-kpi border border-1 border-success">
           <div class="num text-success">₹{{ totalValue() | number:'1.0-0' }}</div>
           <div class="lbl">Asset Value</div>
         </div>
-        <div class="mini-kpi">
+        <div class="mini-kpi border border-1 border-success">
           <div class="num text-primary">{{ inventoryItems().length }}</div>
           <div class="lbl">Products Uploaded</div>
         </div>
       </div>
 
       <div class="inventory-list">
-        <div class="inventory-card-glass" *ngFor="let item of inventoryItems()">
+        <div class="inventory-card-glass border border-1 border-success" *ngFor="let item of inventoryItems()">
           <div class="inv-img-wrap">
             <img [src]="item.image || 'https://via.placeholder.com/150/f0fdf4/16a34a?text=No+Image'" alt="{{ item.name }}">
           </div>
@@ -223,7 +263,6 @@
             <div class="inv-header-row">
               <h3 class="inv-title">{{ item.name }}</h3>
               <div class="inv-actions">
-                <button class="icon-btn edit" (click)="editItem(item); setPage('AddProduct')"><i class="fa-solid fa-pen"></i></button>
                 <button class="icon-btn del" (click)="handleItemRemove(item)"><i class="fa-solid fa-trash-can"></i></button>
               </div>
             </div>
@@ -281,7 +320,7 @@
           </div>
         </div>
 
-        <div class="dash-panel inbox-panel glass-panel mt-4">
+        <div class="dash-panel inbox-panel border border-1 border-success glass-panel mt-4">
           <div class="table-responsive">
             <table class="table table-borderless table-hover align-middle smart-table w-100">
               <thead>
@@ -358,27 +397,27 @@
       <form #userForm="ngForm" class="form-grid mt-4">
         <div class="form-group col-span-2">
           <label>Full Name <span class="text-danger">*</span></label>
-          <input type="text" name="fullName" [(ngModel)]="newUser.fullName" required placeholder="John Doe">
+          <input class="border border-1 border-success" type="text" name="fullName" [(ngModel)]="newUser.fullName" required placeholder="John Doe">
         </div>
         
         <div class="form-group col-span-2">
           <label>Email Address <span class="text-danger">*</span></label>
-          <input type="email" name="email" [(ngModel)]="newUser.email" required placeholder="john@example.com">
+          <input class="border border-1 border-success" type="email" name="email" [(ngModel)]="newUser.email" required placeholder="john@example.com">
         </div>
 
         <div class="form-group col-span-2">
           <label>Password <span class="text-danger">*</span></label>
-          <input type="password" name="password" [(ngModel)]="newUser.password" minlength="6" required placeholder="Minimum 6 characters">
+          <input class="border border-1 border-success" type="password" name="password" [(ngModel)]="newUser.password" minlength="6" required placeholder="Minimum 6 characters">
         </div>
 
         <div class="form-group col-span-1">
           <label>Phone Number</label>
-          <input type="text" name="phone" [(ngModel)]="newUser.phone" placeholder="+91 9876543210">
+          <input class="border border-1 border-success" type="text" name="phone" [(ngModel)]="newUser.phone" placeholder="+91 9876543210">
         </div>
 
         <div class="form-group col-span-1">
           <label>Address / Geolocation</label>
-          <input type="text" name="address" [(ngModel)]="newUser.address" placeholder="Village, City">
+          <input class="border border-1 border-success" type="text" name="address" [(ngModel)]="newUser.address" placeholder="Village, City">
         </div>
 
         <div class="form-group col-span-2">
@@ -393,7 +432,7 @@
           </div>
           
           <div class="avatar-custom-upload mt-3">
-            <button type="button" class="btn-avatar-upload" (click)="openAvatarUpload()">
+            <button type="button" class="btn-avatar-upload border border-1 border-success text-success" (click)="openAvatarUpload()">
               <i class="fa-solid fa-camera me-2"></i>
               {{ newUser.avatar && !presetAvatars.includes(newUser.avatar) ? 'Change Custom Photo' : 'Upload Custom Photo' }}
             </button>

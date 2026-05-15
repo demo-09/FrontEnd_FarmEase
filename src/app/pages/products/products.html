@@ -139,7 +139,7 @@
                     <i [class]="isInCart(product.id) ? 'fa-solid fa-check' : 'fa-solid fa-cart-plus'"></i>
                     {{ isInCart(product.id) ? 'In Cart' : 'Add' }}
                   </button>
-                  <button class="product-view-btn" (click)="viewProduct(product, $event)" [id]="'view-' + product.id">
+                  <button class="product-view-btn"  [id]="'view-' + product.id">
                     <i class="fa-solid fa-eye"></i>
                   </button>
                 </div>

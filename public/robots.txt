@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://front-end-farm-ease.vercel.app/sitemap.xml

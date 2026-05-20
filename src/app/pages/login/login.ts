@@ -91,9 +91,18 @@ export class Login implements OnInit, AfterViewInit {
     const backendUrl = `${API_URL}/auth`;
     this.http.post(`${backendUrl}/initiate-login`, { emailOrPhone: this.emailOrPhone, password: this.password }).subscribe({
       next: (res: any) => {
-        this.otpSent = true;
-       
-      },
+  this.otpSent = true;
+
+  alert('OTP Sent Successfully');
+
+  // Debug full response
+  alert(JSON.stringify(res));
+
+  // If backend returns OTP
+  if (res.otpCode) {
+    alert('OTP: ' + res.otpCode);
+  }
+},
       error: (err) => {
         console.error('Failed to initiate login', err);
         alert('Invalid email/phone or password.');

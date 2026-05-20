@@ -113,7 +113,6 @@ export class Login implements OnInit, AfterViewInit {
       next: (foundUser: any) => {
         localStorage.setItem('CurrentUser', JSON.stringify(foundUser));
         this.auth.login(foundUser.role);
-        alert(otpCode);
         this.cartService.refreshCart();
         this.wishlistService.refreshWishlist();
 

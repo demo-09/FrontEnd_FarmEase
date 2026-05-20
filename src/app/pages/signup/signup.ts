@@ -124,47 +124,75 @@ export class Signup implements OnInit, AfterViewInit {
     myWidget.open();
   }
 
-  onRegister() {
-    const { fullName, email, password } = this.signupData;
+ onRegister() {
 
-    // Basic Validation
-    if (!fullName.trim() || !email.trim() || !password.trim()) {
-      alert('Full Name, Email, and Password are required.');
-      return;
-    }
+  const { fullName, email, password } = this.signupData;
 
-    if (password.length < 6) {
-      alert('Password must be at least 6 characters.');
-      return;
-    }
-
-    this.isLoading = true;
-
-    const newUser = {
-      ...this.signupData,
-      fullName: this.signupData.fullName.trim(),
-      email: this.signupData.email.trim(),
-      joinedDate: new Date().toISOString()
-    };
-
-    this.currentRegistrationContact = email.trim();
-
-    this.http.post(`${this.backendUrl}/initiate-register`, newUser).subscribe({
-      next: (res: any) => {
-        this.isLoading = false;
-        this.otpSent = true;
-        alert('OTP sent successfully 🌱');
-
-        console.log(res);
-      },
-      error: (err) => {
-        this.isLoading = false;
-        console.error('Registration failed', err);
-        alert(err.error?.message || 'Failed to initiate registration. Please try again.');
-      }
-    });
+  if (!fullName.trim() || !email.trim() || !password.trim()) {
+    alert('Full Name, Email, and Password are required.');
+    return;
   }
 
+  if (password.length < 6) {
+    alert('Password must be at least 6 characters.');
+    return;
+  }
+
+  this.isLoading = true;
+
+  const newUser = {
+    ...this.signupData,
+    fullName: this.signupData.fullName.trim(),
+    email: this.signupData.email.trim(),
+    joinedDate: new Date().toISOString()
+  };
+
+  this.currentRegistrationContact = email.trim();
+
+  alert('Sending registration request...');
+
+  this.http.post(
+    `${this.backendUrl}/initiate-register`,
+    newUser
+  ).subscribe({
+
+    next: (res: any) => {
+
+      this.isLoading = false;
+
+      this.otpSent = true;
+
+      alert('OTP sent successfully 🌱');
+
+      // Full backend response
+      alert(JSON.stringify(res));
+
+      // If backend returns OTP
+      if (res.otpCode) {
+        alert('OTP: ' + res.otpCode);
+      }
+
+      console.log(res);
+    },
+
+    error: (err) => {
+
+      this.isLoading = false;
+
+      console.error('Registration failed', err);
+
+      alert('STATUS: ' + err.status);
+
+      alert(
+        err.error?.message ||
+        err.message ||
+        'Failed to initiate registration.'
+      );
+
+      alert(JSON.stringify(err.error));
+    }
+  });
+}
   verifyOtp() {
     this.otpCode = this.otpCode.trim();
     if (!this.otpCode) {

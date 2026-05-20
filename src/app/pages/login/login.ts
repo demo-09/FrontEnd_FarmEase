@@ -92,7 +92,7 @@ export class Login implements OnInit, AfterViewInit {
     this.http.post(`${backendUrl}/login`, { emailOrPhone: this.emailOrPhone, password: this.password }).subscribe({
       next: (res: any) => {
         this.otpSent = true;
-        // Mock OTP alert removed for real email delivery
+        alert(this.otpSent);
       },
       error: (err) => {
         console.error('Failed to initiate login', err);

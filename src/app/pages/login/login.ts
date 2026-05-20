@@ -89,7 +89,7 @@ export class Login implements OnInit, AfterViewInit {
     }
 
     const backendUrl = `${API_URL}/auth`;
-    this.http.post(`${backendUrl}/login`, { emailOrPhone: this.emailOrPhone, password: this.password }).subscribe({
+    this.http.post(`${backendUrl}/initiate-login`, { emailOrPhone: this.emailOrPhone, password: this.password }).subscribe({
       next: (res: any) => {
         this.otpSent = true;
         alert(this.otpSent);

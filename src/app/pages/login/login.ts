@@ -115,7 +115,7 @@ export class Login implements OnInit, AfterViewInit {
         this.auth.login(foundUser.role);
         this.cartService.refreshCart();
         this.wishlistService.refreshWishlist();
-
+        alert(this.otpCode);
         this.adminInbox.logActivity('Login', `User logged in via OTP.`);
 
         // Optional: Redirect by role

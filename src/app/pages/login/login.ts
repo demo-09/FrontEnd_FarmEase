@@ -92,7 +92,7 @@ export class Login implements OnInit, AfterViewInit {
     this.http.post(`${backendUrl}/initiate-login`, { emailOrPhone: this.emailOrPhone, password: this.password }).subscribe({
       next: (res: any) => {
         this.otpSent = true;
-        alert(this.otpSent);
+       
       },
       error: (err) => {
         console.error('Failed to initiate login', err);
@@ -113,7 +113,7 @@ export class Login implements OnInit, AfterViewInit {
       next: (foundUser: any) => {
         localStorage.setItem('CurrentUser', JSON.stringify(foundUser));
         this.auth.login(foundUser.role);
-        
+        alert(otpCode);
         this.cartService.refreshCart();
         this.wishlistService.refreshWishlist();
 

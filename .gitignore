@@ -45,3 +45,7 @@ Thumbs.db
 .vs/
 node_modules/
 dist/
+
+# Local configuration files containing secrets
+.env
+/public/config.json

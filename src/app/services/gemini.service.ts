@@ -1,6 +1,5 @@
 import { Injectable, signal } from '@angular/core';
 import { GoogleGenerativeAI, ChatSession, GenerativeModel } from '@google/generative-ai';
-import { environment } from '../../environments/environment';
 
 export interface ChatMessage {
   role: 'user' | 'model';
@@ -29,7 +28,7 @@ export class GeminiService {
 
   constructor() {
     this.genAI = new GoogleGenerativeAI(
-      environment.geminiApiKey
+      process.env['GEMINI_API_KEY'] || ''
     );
     console.log(this.genAI);
 
@@ -40,7 +39,7 @@ Talk naturally like a helpful friend on WhatsApp.
 `;
 
     this.model = this.genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
+      model: "gemini-flash-latest",
       systemInstruction,
     });
 

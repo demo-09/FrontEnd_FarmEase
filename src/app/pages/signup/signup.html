@@ -49,16 +49,19 @@
 
         <form class="auth-form"
               #signupForm="ngForm"
-              (ngSubmit)="otpSent ? verifyOtp() : onRegister()">
+              (ngSubmit)="onRegister()">
 
+          <!-- Inline Alerts -->
+          <div *ngIf="errorMessage" class="inline-alert alert-error">
+            <i class="fa-solid fa-circle-exclamation"></i> {{ errorMessage }}
+          </div>
+          <div *ngIf="infoMessage" class="inline-alert alert-info">
+            <i class="fa-solid fa-circle-info"></i> {{ infoMessage }}
+          </div>
 
-          <!-- ===================================== -->
-          <!-- SIGNUP FORM -->
-          <!-- ===================================== -->
-
-          <div *ngIf="!otpSent">
+          <div>
             <div class="signup-roles pb-3">
-              <div class="signup-role-card bg-success"
+              <div class="signup-role-card"
                    [class.active]="selectedRole === 'farmer'"
                    (click)="setRole('farmer')">
                 <div class="src-emoji">👨‍🌾</div>
@@ -66,7 +69,7 @@
                 <div class="src-desc">Sell produce & access tools</div>
               </div>
 
-              <div class="signup-role-card bg-success"
+              <div class="signup-role-card"
                    [class.active]="selectedRole === 'customer'"
                    (click)="setRole('customer')">
                 <div class="src-emoji">🛒</div>
@@ -296,40 +299,10 @@
           </div>
 
           <!-- ===================================== -->
-          <!-- OTP SECTION -->
-          <!-- ===================================== -->
-
-          <div *ngIf="otpSent">
-
-            <div class="auth-field">
-
-              <label class="auth-label">
-                Enter Verification OTP
-              </label>
-
-              <div class="auth-input-wrap">
-
-                <i class="fa-solid fa-key auth-input-icon"></i>
-
-                <input type="text"
-                       name="otpCode"
-                       class="auth-input border border-1 border-success"
-                       placeholder="6-digit code"
-                       [(ngModel)]="otpCode"
-                       required>
-
-              </div>
-
-            </div>
-
-          </div>
-
-          <!-- ===================================== -->
           <!-- BUTTONS -->
           <!-- ===================================== -->
 
-          <button *ngIf="!otpSent"
-                  type="submit"
+          <button type="submit"
                   class="auth-submit-btn mt-4"
                   [class.loading]="isLoading"
                   [disabled]="isLoading || !signupForm.valid">
@@ -338,42 +311,13 @@
 
             <span *ngIf="isLoading" class="btn-spinner"></span>
 
-            {{ isLoading ? 'Sending OTP...' : 'Create Free Account' }}
+            {{ isLoading ? 'Creating Account...' : 'Create Free Account' }}
 
           </button>
-
-          <button *ngIf="otpSent"
-                  type="submit"
-                  class="auth-submit-btn mt-4"
-                  [class.loading]="isLoading"
-                  [disabled]="isLoading || !otpCode">
-
-            <i class="fa-solid fa-check-circle" *ngIf="!isLoading"></i>
-
-            <span *ngIf="isLoading" class="btn-spinner"></span>
-
-            {{ isLoading ? 'Verifying...' : 'Verify & Sign Up' }}
-
-          </button>
-
-          <!-- OTP BACK -->
-
-          <div class="text-center mt-3" *ngIf="otpSent">
-
-            <a href="javascript:void(0)"
-               class="auth-link"
-               (click)="otpSent = false; otpCode = ''">
-
-              Change Details?
-
-            </a>
-
-          </div>
 
           <!-- DIVIDER -->
 
-          <div class="auth-divider text-center my-4"
-               *ngIf="!otpSent">
+          <div class="auth-divider text-center my-4">
 
             <span>or</span>
 
@@ -382,8 +326,7 @@
           <!-- GOOGLE -->
 
           <div id="google-btn-signup"
-               class="d-flex justify-content-center mb-4"
-               *ngIf="!otpSent"></div>
+               class="d-flex justify-content-center mb-4"></div>
 
           <!-- FOOTER -->
 

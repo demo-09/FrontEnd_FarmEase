@@ -21,9 +21,9 @@ declare var google: any;
 export class Login implements OnInit, AfterViewInit {
   emailOrPhone = '';
   password = '';
-  otpCode = '';
-  otpSent = false;
   showPass = false;
+  errorMessage = '';
+  infoMessage = '';
 
   auth = inject(AuthService);
   router = inject(Router);
@@ -74,7 +74,8 @@ export class Login implements OnInit, AfterViewInit {
       error: (err) => {
         console.error('Google login failed', err);
         const msg = err.error?.message || err.message || 'Unknown Error';
-        alert(`Google login failed: ${msg}. Check console for details.`);
+        this.errorMessage = `Google login failed: ${msg}. Check console for details.`;
+        this.infoMessage = '';
       }
     });
   }
@@ -84,64 +85,33 @@ export class Login implements OnInit, AfterViewInit {
     this.password = this.password.trim();
 
     if (!this.emailOrPhone || !this.password) {
-      alert('Please enter an Email/Phone and Password');
+      this.errorMessage = 'Please enter an Email/Phone and Password';
+      this.infoMessage = '';
       return;
     }
 
     const backendUrl = `${API_URL}/auth`;
-    this.http.post(`${backendUrl}/initiate-login`, { emailOrPhone: this.emailOrPhone, password: this.password }).subscribe({
-      next: (res: any) => {
-  this.otpSent = true;
+    this.infoMessage = 'Signing in...';
+    this.errorMessage = '';
 
-  alert('OTP Sent Successfully');
-
-  // Debug full response
-  alert(JSON.stringify(res));
-
-  // If backend returns OTP
-  if (res.otpCode) {
-    alert('OTP: ' + res.otpCode);
-  }
-},
-      error: (err) => {
-        console.error('Failed to initiate login', err);
-        alert('Invalid email/phone or password.');
-      }
-    });
-  }
-
-  verifyOtp() {
-    this.otpCode = this.otpCode.trim();
-    if (!this.otpCode) {
-      alert('Please enter the OTP');
-      return;
-    }
-
-    const backendUrl = `${API_URL}/auth`;
-    this.http.post(`${backendUrl}/verify-otp-login`, { emailOrPhone: this.emailOrPhone, otpCode: this.otpCode }).subscribe({
+    this.http.post(`${backendUrl}/login`, { email: this.emailOrPhone, password: this.password }).subscribe({
       next: (foundUser: any) => {
+        this.infoMessage = 'Login Successful!';
+        this.errorMessage = '';
         localStorage.setItem('CurrentUser', JSON.stringify(foundUser));
         this.auth.login(foundUser.role);
         this.cartService.refreshCart();
         this.wishlistService.refreshWishlist();
-        alert(this.otpCode);
-        this.adminInbox.logActivity('Login', `User logged in via OTP.`);
+        this.adminInbox.logActivity('Login', `User logged in directly.`);
 
-        // Optional: Redirect by role
         this.redirectByRole(foundUser.role);
       },
       error: (err) => {
-        console.error('OTP verification failed', err);
-        alert('Invalid OTP. Please try again.');
+        console.error('Login failed', err);
+        this.errorMessage = err.error?.message || err.message || 'Invalid email/phone or password.';
+        this.infoMessage = '';
       }
     });
-  }
-
-  changeLoginDetails() {
-    this.otpSent = false;
-    this.otpCode = '';
-    // Optional: Keep password or clear it
-    this.password = '';
   }
 
   private redirectByRole(role: string) {

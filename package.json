@@ -2,6 +2,8 @@
   "name": "my-angular-app",
   "version": "0.0.0",
   "scripts": {
+    "prestart": "node set-env.js",
+    "prebuild": "node set-env.js",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",

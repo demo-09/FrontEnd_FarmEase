@@ -29,11 +29,8 @@ export class Signup implements OnInit, AfterViewInit {
   // State Management
   selectedRole: UserRole = 'customer';
   isLoading = false;
-  otpSent = false;
-  otpCode = '';
-
-  // Store email or phone locally during signup
-  currentRegistrationContact = '';
+  errorMessage = '';
+  infoMessage = '';
 
   // Form Model
   signupData = {
@@ -92,7 +89,8 @@ export class Signup implements OnInit, AfterViewInit {
       error: (err) => {
         console.error('Google registration failed', err);
         const msg = err.error?.message || err.message || 'Unknown Error';
-        alert(`Google registration failed: ${msg}. Check console for details.`);
+        this.errorMessage = `Google registration failed: ${msg}.`;
+        this.infoMessage = '';
       }
     });
   }
@@ -105,8 +103,8 @@ export class Signup implements OnInit, AfterViewInit {
   openAvatarUpload() {
     const myWidget = cloudinary.createUploadWidget(
       {
-        cloudName: 'djp74r2pg', // Using the cloud name from the user's .env
-        uploadPreset: 'FARMEASE',
+        cloudName: process.env['CLOUDINARY_CLOUD_NAME'] || '',
+        uploadPreset: process.env['CLOUDINARY_UPLOAD_PRESET'] || '',
         sources: ['local', 'url', 'camera'],
         multiple: false,
         cropping: true,
@@ -124,87 +122,40 @@ export class Signup implements OnInit, AfterViewInit {
     myWidget.open();
   }
 
- onRegister() {
+  onRegister() {
+    const { fullName, email, password } = this.signupData;
 
-  const { fullName, email, password } = this.signupData;
-
-  if (!fullName.trim() || !email.trim() || !password.trim()) {
-    alert('Full Name, Email, and Password are required.');
-    return;
-  }
-
-  if (password.length < 6) {
-    alert('Password must be at least 6 characters.');
-    return;
-  }
-
-  this.isLoading = true;
-
-  const newUser = {
-    ...this.signupData,
-    fullName: this.signupData.fullName.trim(),
-    email: this.signupData.email.trim(),
-    joinedDate: new Date().toISOString()
-  };
-
-  this.currentRegistrationContact = email.trim();
-
-  alert('Sending registration request...');
-
-  this.http.post(
-    `${this.backendUrl}/initiate-register`,
-    newUser
-  ).subscribe({
-
-    next: (res: any) => {
-
-      this.isLoading = false;
-
-      this.otpSent = true;
-
-      alert('OTP sent successfully 🌱');
-
-      // Full backend response
-      alert(JSON.stringify(res));
-
-      // If backend returns OTP
-      if (res.otpCode) {
-        alert('OTP: ' + res.otpCode);
-      }
-
-      console.log(res);
-    },
-
-    error: (err) => {
-
-      this.isLoading = false;
-
-      console.error('Registration failed', err);
-
-      alert('STATUS: ' + err.status);
-
-      alert(
-        err.error?.message ||
-        err.message ||
-        'Failed to initiate registration.'
-      );
-
-      alert(JSON.stringify(err.error));
+    if (!fullName.trim() || !email.trim() || !password.trim()) {
+      this.errorMessage = 'Full Name, Email, and Password are required.';
+      this.infoMessage = '';
+      return;
     }
-  });
-}
-  verifyOtp() {
-    this.otpCode = this.otpCode.trim();
-    if (!this.otpCode) {
-      alert('Please enter the OTP');
+
+    if (password.length < 6) {
+      this.errorMessage = 'Password must be at least 6 characters.';
+      this.infoMessage = '';
       return;
     }
 
     this.isLoading = true;
+    this.errorMessage = '';
+    this.infoMessage = 'Creating account...';
 
-    this.http.post(`${this.backendUrl}/verify-otp-register`, { emailOrPhone: this.currentRegistrationContact, otpCode: this.otpCode }).subscribe({
+    const newUser = {
+      ...this.signupData,
+      fullName: this.signupData.fullName.trim(),
+      email: this.signupData.email.trim(),
+      joinedDate: new Date().toISOString()
+    };
+
+    this.http.post(
+      `${this.backendUrl}/register`,
+      newUser
+    ).subscribe({
       next: (foundUser: any) => {
         this.isLoading = false;
+        this.infoMessage = 'Registration Successful!';
+        this.errorMessage = '';
         console.log('Registration Successful', foundUser);
 
         localStorage.setItem('CurrentUser', JSON.stringify(foundUser.user || foundUser));
@@ -216,8 +167,9 @@ export class Signup implements OnInit, AfterViewInit {
       },
       error: (err) => {
         this.isLoading = false;
-        console.error('OTP verification failed', err);
-        alert('Invalid OTP or session expired. Please try again.');
+        console.error('Registration failed', err);
+        this.errorMessage = err.error?.message || err.message || 'Failed to register account.';
+        this.infoMessage = '';
       }
     });
   }

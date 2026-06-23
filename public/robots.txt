@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://front-end-farm-ease.vercel.app/sitemap.xml
+Sitemap: https://farmease-24.netlify.app/sitemap.xml

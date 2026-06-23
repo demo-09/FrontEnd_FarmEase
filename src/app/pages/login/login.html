@@ -61,9 +61,17 @@
           <p class="auth-subtitle">Sign in to your FarmEase account</p>
         </div>
 
-        <form #loginForm="ngForm" class="auth-form" id="login-form" (ngSubmit)="otpSent ? verifyOtp() : login()">
+        <form #loginForm="ngForm" class="auth-form" id="login-form" (ngSubmit)="login()">
 
-          <div class="auth-field" *ngIf="!otpSent">
+          <!-- Inline Alerts -->
+          <div *ngIf="errorMessage" class="inline-alert alert-error">
+            <i class="fa-solid fa-circle-exclamation"></i> {{ errorMessage }}
+          </div>
+          <div *ngIf="infoMessage" class="inline-alert alert-info">
+            <i class="fa-solid fa-circle-info"></i> {{ infoMessage }}
+          </div>
+
+          <div class="auth-field">
             <label class="auth-label" for="login-email">Email or Phone Number</label>
             <div class="auth-input-wrap">
               <i class="fa-solid fa-user auth-input-icon"></i>
@@ -72,7 +80,7 @@
             </div>
           </div>
 
-          <div class="auth-field" *ngIf="!otpSent">
+          <div class="auth-field">
             <label class="auth-label" for="login-password">Password</label>
             <div class="auth-input-wrap">
               <i class="fa-solid fa-lock auth-input-icon"></i>
@@ -84,26 +92,9 @@
             </div>
           </div>
 
-          <div class="auth-field" *ngIf="otpSent">
-            <label class="auth-label" for="login-otp">Enter OTP</label>
-            <div class="auth-input-wrap">
-              <i class="fa-solid fa-key auth-input-icon"></i>
-              <input type="text" id="login-otp" name="otp" class="auth-input"
-                     placeholder="6-digit code" [(ngModel)]="otpCode" required>
-            </div>
-          </div>
-
-          <button type="submit" class="auth-submit-btn " id="login-submit-btn" *ngIf="!otpSent">
+          <button type="submit" class="auth-submit-btn " id="login-submit-btn">
             <i class="fa-solid fa-right-to-bracket"></i> Sign In to FarmEase
           </button>
-
-          <button type="submit" class="auth-submit-btn" id="verify-submit-btn" *ngIf="otpSent">
-            <i class="fa-solid fa-right-to-bracket"></i> Verify & Sign In
-          </button>
-
-          <div style="text-align: center; margin-top: 10px;" *ngIf="otpSent">
-            <a href="javascript:void(0)" class="auth-link" (click)="changeLoginDetails()">Change Login Details?</a>
-          </div>
 
           <div class="auth-divider"><span>or</span></div>
 

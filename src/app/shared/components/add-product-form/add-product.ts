@@ -56,8 +56,8 @@ export class AddProductForm implements OnChanges {
   openProductMediaUpload() {
     cloudinary.openUploadWidget(
       {
-        cloudName: 'djp74r2pg',
-        uploadPreset: 'FARMEASE',
+        cloudName: process.env['CLOUDINARY_CLOUD_NAME'] || '',
+        uploadPreset: process.env['CLOUDINARY_UPLOAD_PRESET'] || '',
         sources: ['local', 'url', 'camera'],
         showAdvancedOptions: false,
         cropping: true,

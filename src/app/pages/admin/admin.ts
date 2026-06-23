@@ -54,7 +54,7 @@ export class Admin implements OnInit, OnDestroy {
   editingId = signal<number | null>(null);
   selectedCategory = signal<string>('');
   editingData = signal<any>(null);
-  
+
   // Smart/Analytics Mock State
   aiInsights = [
     { title: 'Sales Spiked', desc: 'Wheat seed orders increased 20% in the last 48 hours.', icon: 'fa-arrow-trend-up', color: 'text-success' },
@@ -66,7 +66,7 @@ export class Admin implements OnInit, OnDestroy {
     { id: 'ALT-1090', user: 'Unknown IP', issue: 'Multiple failed OTP attempts (5x)', severity: 'high', time: '10 mins ago' },
     { id: 'ALT-1091', user: 'Kisan Traders', issue: 'Suspicious bulk order outside serviceable region.', severity: 'medium', time: '2 hrs ago' }
   ];
-  
+
   // Mobile Sidebar State
   isSidebarOpen = signal(false);
 
@@ -104,13 +104,13 @@ export class Admin implements OnInit, OnDestroy {
     effect(() => {
       const updates = this.liveStock.stockUpdates();
       const currentItems = this.inventoryItems();
-      
+
       if (currentItems.length > 0 && Object.keys(updates).length > 0) {
         this.inventoryItems.update(items => items.map(item => {
           const compositeKey = `${item.type?.toLowerCase()}-${item.id}`;
           const reduction = (updates as any)[compositeKey] || 0;
           const original = this.originalQuantities[`${item.type}-${item.id}`] ?? item.quantity;
-          
+
           return {
             ...item,
             quantity: Math.max(0, original + reduction)
@@ -193,13 +193,13 @@ export class Admin implements OnInit, OnDestroy {
 
   openAddUserModal(): void {
     this.isAddingUser.set(true);
-    this.newUser = { 
-      fullName: '', 
-      email: '', 
-      password: '', 
-      role: this.activePage() === 'customers' ? 'customer' : 'farmer', 
-      phone: '', 
-      address: '' ,
+    this.newUser = {
+      fullName: '',
+      email: '',
+      password: '',
+      role: this.activePage() === 'customers' ? 'customer' : 'farmer',
+      phone: '',
+      address: '',
       birthDate: '',
       avatar: ''
     };
@@ -212,8 +212,8 @@ export class Admin implements OnInit, OnDestroy {
   openAvatarUpload() {
     const myWidget = cloudinary.createUploadWidget(
       {
-        cloudName: 'djp74r2pg',
-        uploadPreset: 'FARMEASE',
+        cloudName: process.env['CLOUDINARY_CLOUD_NAME'] || '',
+        uploadPreset: process.env['CLOUDINARY_UPLOAD_PRESET'] || '',
         sources: ['local', 'url', 'camera'],
         multiple: false,
         cropping: true,
@@ -310,18 +310,18 @@ export class Admin implements OnInit, OnDestroy {
         const m = res.machinery.map(x => ({ ...x, type: 'machinery', image: x.image || '' }));
         const a = res.agriitems.map(x => ({ ...x, type: 'agriitem', image: x.image || '' }));
         const all = [...m, ...a];
-        
+
         // Store original quantities for live sync
         all.forEach(item => {
           this.originalQuantities[`${item.type}-${item.id}`] = item.quantity;
         });
-        
+
         this.inventoryItems.set(all);
       },
       error: (err) => console.error('Failed to load inventory', err)
     });
   }
-  
+
   resetForm() {
     this.isEditing.set(false);
     this.editingId.set(null);

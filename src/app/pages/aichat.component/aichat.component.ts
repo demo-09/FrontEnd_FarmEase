@@ -304,9 +304,9 @@ export class AichatComponent
     const widget = cloudinary.createUploadWidget(
 
       {
-        cloudName: 'djp74r2pg',
+        cloudName: process.env['CLOUDINARY_CLOUD_NAME'] || '',
 
-        uploadPreset: 'FARMEASE',
+        uploadPreset: process.env['CLOUDINARY_UPLOAD_PRESET'] || '',
 
         sources: [
           'local',

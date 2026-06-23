@@ -3,6 +3,37 @@
 <head>
   <meta charset="utf-8">
 
+  <!-- Load environment variables before Angular modules load -->
+  <script>
+    (function() {
+      var request = new XMLHttpRequest();
+      request.open('GET', '/config.json', false);
+      try {
+        request.send(null);
+        if (request.status === 200) {
+          var config = JSON.parse(request.responseText);
+          window.process = {
+            env: {
+              GEMINI_API_KEY: config.geminiApiKey || '',
+              API_URL: config.apiUrl || 'https://backend-farmease-1.onrender.com',
+              CLOUDINARY_CLOUD_NAME: config.cloudinaryCloudName || '',
+              CLOUDINARY_UPLOAD_PRESET: config.cloudinaryUploadPreset || ''
+            }
+          };
+        }
+      } catch (e) {
+        console.error('Failed to load configuration synchronously:', e);
+      }
+      if (!window.process) {
+        window.process = {
+          env: {
+            API_URL: 'https://backend-farmease-1.onrender.com'
+          }
+        };
+      }
+    })();
+  </script>
+
   <title>FarmEase - Smart Farming Platform</title>
 
   <base href="/">
@@ -27,8 +58,8 @@
   <meta property="og:description"
         content="AI-powered farming marketplace connecting farmers, buyers, and agriculture services." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://front-end-farm-ease.vercel.app/" />
-  <meta property="og:image" content="https://front-end-farm-ease.vercel.app/logo.png" />
+  <meta property="og:url" content="https://farmease-24.netlify.app/" />
+  <meta property="og:image" content="https://farmease-24.netlify.app/assets/images/logo.png" />
 
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="./assets/images/logo.png">
